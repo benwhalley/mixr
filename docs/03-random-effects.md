@@ -1,12 +1,11 @@
 # Random effects {#random-effects}
 
-
-
-![Image: [Wikimedia](https://en.wikipedia.org/wiki/Shoaling_and_schooling#/media/File:School_jacks_klein.JPG)](images/School_jacks_klein.JPG)
-
+![](images/randomeffectlines.png)
 
 
 
 ### In brief
 
-> TBC
+> In this session we specify more complex random effects, including examples from
+> experimental data with multiple sources of variation. We use visualisation techniques
+> to explore the concept of 'shrinkage'.

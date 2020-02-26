@@ -15,10 +15,11 @@ knitr::opts_chunk$set(echo = TRUE, collapse=TRUE, cache=TRUE, comment=NA, messag
 
 ![](images/spaghetti.png)
 
-> This option aims to extend skills to work with and analyse repeated measures data from
-> typical experimental and applies studies in psychology. We will cover repeat measures
-> Anova designs, mixed-effects models, touch on Bayesian parameter estimation for mixed,
-> and learn how to test specific hypotheses from mixed models.
+> This short course aims to extend your existing skills, and give you confidence when
+> working with and analysing repeated measures data. We cover examples typical
+> experimental and applied studies in psychology. We will cover repeat measures Anova
+> designs, mixed-effects models, touch on Bayesian parameter estimation for mixed
+> models, and learn how to test specific hypotheses from mixed models.
 
 ### Approach of the course
 
