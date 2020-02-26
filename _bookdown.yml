@@ -1,0 +1,15 @@
+book_filename: 'mixr'
+output_dir: docs
+delete_merged_file: true
+link-citations: true
+new_session: yes
+rmd_files:
+  [
+    "index.rmd",
+    "01-repeat-measures.rmd",
+    "02-mixed-models.rmd",
+    "03-random-effects.rmd",
+    "04-bayesian-estimation.rmd",
+    "assessment.rmd",
+    "references.rmd",
+]

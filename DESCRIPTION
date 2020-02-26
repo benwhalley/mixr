@@ -1,0 +1,5 @@
+Package: mixr
+Type: Book
+Title: Short masters option in mixed models
+Version: 0.0.1
+Imports: arm, BayesFactor, bookdown, corrgram, cowplot, DiagrammeR, gapminder, pander, psych, skimr, tidyverse
