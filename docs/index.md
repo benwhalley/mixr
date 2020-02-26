@@ -11,7 +11,14 @@ link-citations: yes
 
 # {-}
 
-![](images/spaghetti.png)
+
+![[image: needpix](https://www.needpix.com/photo/1798216/cocktails-watercolor-colorful-watercolour-paint-party-alcohol-painted-artistic)](images/cocktails.png)
+
+------------------
+
+
+
+<!-- ![](images/spaghetti.png) -->
 
 > This short course aims to extend your existing skills, and give you confidence when
 > working with and analysing repeated measures data. We cover examples typical
@@ -19,7 +26,7 @@ link-citations: yes
 > designs, mixed-effects models, touch on Bayesian parameter estimation for mixed
 > models, and learn how to test specific hypotheses from mixed models.
 
-### Approach of the course
+### Approach
 
 In common with all modules at Plymouth, we try to avoid the 'bag of tricks' approach to
 teaching research methods and try to integrate new skills into a broader approach to
