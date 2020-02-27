@@ -1,0 +1,60 @@
+---
+title: "Untitled"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+library(tidyverse)
+library(lmerTest)
+library(DiagrammeR)
+schools <- read_csv('data/cmm/5.1.txt')
+
+```
+
+```{r}
+m1 <- lmer(score ~  (1|schoolid), data=schools) 
+summary(m1)
+ranova(m1)
+```
+
+```{r}
+m2 <- lmer(score ~ female + (1|schoolid), data=schools) 
+summary(m2)
+ranova(m2)
+```
+
+
+
+
+```{r}
+ranef(m1) %>% as_tibble() %>% 
+  sample_n(40) %>% 
+  ggplot(aes(grp, condval, ymin=condval-condsd, ymax=condval+condsd)) + 
+  geom_pointrange() + 
+  geom_hline(yintercept=0)
+```
+
+
+
+
+
+
+
+
+
+```{r}
+grViz("
+      digraph ab {
+      Smoking -> Unknown -> Stroke2
+      Unknown -> Stroke1
+      Stroke1 -> Stroke2 [style=invis]
+      }
+      ", height=300)
+
+```
+

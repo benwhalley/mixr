@@ -1,0 +1,94 @@
+
+# Variance components
+
+
+```{r}
+set.seed(1234)
+df <- expand.grid(person=1:3, trial = 1:5) %>% 
+  group_by(person) %>% 
+  mutate(u =  person*2, 
+         u_x = person*3, x = round( u_x + trial)) %>% 
+  mutate(y = u + -.5*trial + .5*x + rnorm(n())) %>% 
+  arrange(person, trial) %>% 
+  ungroup() %>% 
+  mutate(person = LETTERS[person]) %>% 
+  mutate(grandmean = mean(y)+1) %>% 
+  group_by(person) %>% 
+  mutate(person.mean = mean(y), xmin=min(x)-1, xmax=max(x)+1, person.x.mean = mean(x)) %>% 
+  ungroup() 
+```
+
+```{r}
+df %>% 
+  ungroup() %>% 
+  mutate(grandmean = mean(y)) %>% 
+  group_by(person) %>% 
+  mutate(person.mean = mean(y), xmin=min(x)-1, xmax=max(x)+1) %>% 
+  ungroup() %>% 
+  ggplot(aes(x, y, color=person)) + 
+  geom_point() + coord_fixed()
+ggsave('images/variance-components-1-nolines.pdf')
+
+```
+
+```{r}
+df %>% 
+  ggplot(aes(x, y, color=person)) + 
+  geom_point() + 
+  geom_hline(aes(yintercept=grandmean), linetype="dotted") + 
+  geom_rect(aes(xmin=x, xmax=x+(y-grandmean), ymin=grandmean, ymax=y, fill=person), alpha=.3, color=F) +
+  coord_fixed(xlim=c(0,16)) + guides(fill=F, color=F)
+ggsave('images/variance-components-2-sumssquares.pdf')
+```
+
+
+
+
+```{r}
+df %>% 
+  ggplot(aes(x, y, color=person)) + 
+  geom_point() + 
+  geom_point(aes(x=person.x.mean, y=person.mean), shape=3, size=2)+
+  geom_segment(aes(x=xmin+2, y=person.mean, yend=person.mean, xend=xmax-2)) +
+  geom_rect(aes(ymin=person.mean, 
+                xmin= person.x.mean - (grandmean-person.mean), 
+                ymax=grandmean, 
+                xmax = person.x.mean, fill=person), alpha=.2, color=F) +
+  geom_hline(aes(yintercept=grandmean), linetype="dotted") +
+  coord_fixed(xlim=c(0,16)) + guides(fill=F, color=F)
+ggsave('images/variance-components-3-sumssquaresbetween.pdf')
+```
+
+
+
+```{r}
+df %>% 
+  ggplot(aes(x, y, color=person)) + 
+  geom_point() + 
+  geom_point(aes(x=person.x.mean, y=person.mean), shape=3, size=2)+
+  geom_segment(aes(x=xmin-1, y=person.mean, yend=person.mean, xend=xmax+1)) +
+  geom_rect(aes(xmin=x, xmax=x+(y-person.mean), ymin=person.mean, ymax=y, fill=person), alpha=.4, color=F) +
+  geom_hline(aes(yintercept=grandmean), linetype="dotted") + 
+  coord_fixed(xlim=c(0,16)) + guides(fill=F, color=F)
+ggsave('images/variance-components-3-sumssquareswithin.pdf')
+```
+
+
+```{r}
+df %>% 
+  ggplot(aes(x, y, color=person)) + 
+  geom_point() + 
+  geom_point(aes(x=person.x.mean, y=person.mean), shape=3, size=2)+
+  geom_segment(aes(x=xmin-1, y=person.mean, yend=person.mean, xend=xmax+1)) +
+  geom_rect(aes(xmin=x, xmax=x+(y-person.mean), ymin=person.mean, ymax=y, fill=person), alpha=.4, color=F) +
+  geom_rect(aes(ymin=person.mean, 
+                xmin= person.x.mean - (grandmean-person.mean), 
+                ymax=grandmean, 
+                xmax = person.x.mean), fill="black", alpha=.2, color=F) +
+  geom_hline(aes(yintercept=grandmean), linetype="dotted") + 
+  coord_fixed(xlim=c(0,16)) + guides(fill=F, color=F)
+ggsave('images/variance-components-3-sumssquareswithinandbetween.pdf')
+ggsave('images/variance-components-3-sumssquareswithinandbetween.png')
+
+```
+
