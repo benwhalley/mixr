@@ -14,6 +14,8 @@
 > with repeat measures data with appropriate techniques.
 
 
+Slides for today are here: [repeated-measures.pptx](slides/repeated-measures.pptx).
+
 
 
 
@@ -22,6 +24,17 @@
 
 
 
+<!-- A worked example
+To put some numbers to the claim above:
+
+Imagine we were studying a medium effect size (D=.5), in a situation where 15% of the variance in outcomes was explained by the school a child attended.
+
+We want to achieve power of 80% for alpha = .05.
+
+In this case, increasing the number of schools sampled from 20 to 21 would reduce the total N (total number of students) from 111 students to 105.
+
+That is, we sample fewer students, but gain statistical power.
+ -->
 
 ### Scottish School Leavers
 
@@ -33,7 +46,7 @@ These data form part of the Bristol CMM multilevel modelling course, which is fr
 
 ```r
 schools <- read_csv('data/cmm/5.1.txt')
-schools %>% skimr::skim() 
+schools %>% skimr::skim()
 ```
 
 
@@ -76,7 +89,7 @@ schdenom                 0               1       0.16       0.36    0      0.00 
 
 
 
-<div class='solution'><button>Hints</button>
+<div class='solution'><button class='solution-button'>Hints</button>
 
 
 One option would be a boxplot where `schoolid` is the x axis. Another would be to use `stat_summary` which would show the mean and SE for each school.
@@ -87,14 +100,14 @@ One option would be a boxplot where `schoolid` is the x axis. Another would be t
 
 - Use `group_by` and `summarize` to calculate the mean and variance of `score` within each of the schools, and the sample size in each school (you can use `n = length(score)` to count the number of observations within each school).
 
-- Plot the mean of each school (y axis) against the $1/var$ of the school (x axis). 
+- Plot the mean of each school (y axis) against the $1/var$ of the school (x axis).
 
 - Think about which observations you 'trust' most? Why?
 
 
 
 
-<div class='solution'><button>What is 1/var?</button>
+<div class='solution'><button class='solution-button'>What is 1/var?</button>
 
 
 Taking $1/var$ is often called the 'inverse variance' of a measurement. The larger $1/var$ is, the more confidence we have in the measurement.
@@ -112,7 +125,7 @@ $\hat{y} = \frac{\sum_i y_i / \sigma_i^2}{\sum_i 1/\sigma_i^2}$
 
 
 
-<div class='solution'><button>What pattern should I notice?!</button>
+<div class='solution'><button class='solution-button'>What pattern should I notice?!</button>
 
 
 If you make a plot as suggested (below) you can see that, looking at the high precision schools (those on the right of the plot), there are more above the mean than below (dotted line). These are still smaller-school (or, fewer students sampled in these schools) but if we 'trust'  lower-variance estimates more, then we might want to allow for that when we estimate the mean of all schools.
@@ -120,9 +133,9 @@ If you make a plot as suggested (below) you can see that, looking at the high pr
 
 
 ```r
-schools.agg <- schools %>% group_by(schoolid) %>% summarize(score.m=mean(score), var=var(score), n=length(score)) 
-schools.agg %>% 
-  ggplot(aes(1/var, score.m, size=n)) + 
+schools.agg <- schools %>% group_by(schoolid) %>% summarize(score.m=mean(score), var=var(score), n=length(score))
+schools.agg %>%
+  ggplot(aes(1/var, score.m, size=n)) +
   geom_point(alpha=.25) +
   geom_hline(yintercept=mean(schools$score), linetype="dashed")
 > Warning: Removed 8 rows containing missing values (geom_point).
@@ -145,7 +158,7 @@ Precision-weighting (and mixed models) work on the principle that we want to use
 
 #### Variance-weighting using mixed models
 
-Mixed models are another way to include information about variability when estimating the overall mean. 
+Mixed models are another way to include information about variability when estimating the overall mean.
 
 Before we do this, let's calculate the mean of `score` in the sample as a reference to compare against:
 
@@ -199,17 +212,17 @@ library(lmerTest)
 >        30.6
 ```
 
-The output here has extra information compared to `lm`. However like `lm` the coefficients from the model are listed, which `lmer` calls 'fixed effects'. 
+The output here has extra information compared to `lm`. However like `lm` the coefficients from the model are listed, which `lmer` calls 'fixed effects'.
 
 
 
 
-In this case we only have an intercept, which we can compare with the lm output. 
+In this case we only have an intercept, which we can compare with the lm output.
 
 - What is the difference between the weighted and unweighted average for all schools to 2 d.p.? <span class='webex-fitb' id = 'Q702894' ><input class='solveme  nospaces calculator' data-tol=0.05 data-digits=4 size=4  style='width:4em;'  data-answer='["0.49",".49"]'/><span class='solvedme'></span></span>
 
 
-<div class='solution'><button>Show answer</button>
+<div class='solution'><button class='solution-button'>Show answer</button>
 
 
 The difference is 0.49.
@@ -245,7 +258,7 @@ We can make a plot which shows how much the weighted averages 'shrink' towards t
 
 
 
-<div class='solution'><button>Show discussion</button>
+<div class='solution'><button class='solution-button'>Show discussion</button>
 
 
 The schools that are i) furthest from the mean and/or ii) smallest in size shrink most. This makes sense because these are the schools that we are least confident about.
@@ -271,17 +284,17 @@ The red line might not seem that different, but remember that the range of the y
 In the model above, we told `lmer` that `schoolid` was a grouping variable in our data. The formula was:
 
     y ~ 1 + (1|grouping)
-    
+
 You can see from this formula there are actually two types of intercept in the model.
 
 - The first `1` indicates we should fit the intercept representing the mean of all schools
-- The second `1`, in the `(1|grouping)` part of the formula tells lmer to fit a *random intercept*. 
+- The second `1`, in the `(1|grouping)` part of the formula tells lmer to fit a *random intercept*.
 
 By random intercept, we actually mean *fit an intercept (mean) for each school* individually. This means the model is like the one shown in the lecture slides:
 
 ![](images/variance-components-3-sumssquareswithinandbetween.png)
 
-The coloured lines in this plot are the random intercepts, and the dotted line is the overall intercept (average of all schools). 
+The coloured lines in this plot are the random intercepts, and the dotted line is the overall intercept (average of all schools).
 
 
 
@@ -299,7 +312,7 @@ Can you identify which numbers in the `lmer` output would refer to the size of e
 
 
 
-<div class='solution'><button>Show hint</button>
+<div class='solution'><button class='solution-button'>Show hint</button>
 
 
 The grey squares relate to the `schoolid` term in the 'Random effects' section. The coloured squares are the `Residual`.
@@ -309,7 +322,7 @@ The grey squares relate to the `schoolid` term in the 'Random effects' section. 
 
 
 
-<div class='solution'><button>Show answers</button>
+<div class='solution'><button class='solution-button'>Show answers</button>
 
 
 
@@ -348,7 +361,7 @@ To do this in R:
 - Can you think of examples in experimental settings where 'shrinkage' might be useful? Discuss why this might be the case.
 
 
-<div class='solution'><button>Show an example</button>
+<div class='solution'><button class='solution-button'>Show an example</button>
 
 
 One example would be in experiments where participants make many responses, e.g. in a computer-based task. If a participant is very variable in their responding then we might be less-certain about our estimate of their mean response.
@@ -412,7 +425,7 @@ We can see the there are two lines in this table, marked:
 
 If we add the `Variance` values together we get 320. This is, the total variance in the `score` outcome.
 
-However, because we have the variance split into two numbers we can calculate the *proportion* of total variance explained by differences between schools (what is left over is explained by variation between children). 
+However, because we have the variance split into two numbers we can calculate the *proportion* of total variance explained by differences between schools (what is left over is explained by variation between children).
 
 $var_{j} = \frac{between}{total}$
 
@@ -422,7 +435,7 @@ $var_{j} = \frac{between}{total}$
 Run `summary` on the saved lmer model and calculate the proportion of variance which is between schools, and how much is within schools.
 
 
-<div class='solution'><button>Show answer</button>
+<div class='solution'><button class='solution-button'>Show answer</button>
 
 
 61.2 / 319.6 * 100 = 19%
@@ -432,6 +445,3 @@ Run `summary` on the saved lmer model and calculate the proportion of variance w
 
 
 :::
-
-
-

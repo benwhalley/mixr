@@ -15,3 +15,8 @@
 > providing normalising priors for random effects parameters. We introduce the `RStan`
 > and `rstanarm` packages which make it straightforward to specify models and priors,
 > estimate using simulation-based techniques, and visualise and communicate results.
+
+
+
+
+

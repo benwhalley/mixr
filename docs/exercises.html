@@ -151,8 +151,19 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <ul>
 <li class="chapter" data-level="" data-path="exercises.html"><a href="exercises.html"><i class="fa fa-check"></i>Exercises</a></li>
 </ul></li>
-<li class="chapter" data-level="" data-path="mixed-models.html"><a href="mixed-models.html"><i class="fa fa-check"></i>Mixed models</a></li>
-<li class="chapter" data-level="" data-path="random-effects.html"><a href="random-effects.html"><i class="fa fa-check"></i>Random effects</a></li>
+<li class="chapter" data-level="" data-path="mixed-models.html"><a href="mixed-models.html"><i class="fa fa-check"></i>Mixed models</a>
+<ul>
+<li class="chapter" data-level="" data-path="piglets-random-slope.html"><a href="piglets-random-slope.html"><i class="fa fa-check"></i>Piglets (random intercepts)</a></li>
+<li><a href="r2-for-mixed-models.html#r2-for-mixed-models"><span class="math inline">\(R^2\)</span> for mixed models</a></li>
+<li class="chapter" data-level="" data-path="random-slopes.html"><a href="random-slopes.html"><i class="fa fa-check"></i>Random slopes</a></li>
+<li class="chapter" data-level="" data-path="likelihood-ratio-tests.html"><a href="likelihood-ratio-tests.html"><i class="fa fa-check"></i>Likelihood ratio tests</a></li>
+<li class="chapter" data-level="" data-path="school-leavers-longer-exercise.html"><a href="school-leavers-longer-exercise.html"><i class="fa fa-check"></i>Scottish school leavers data</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="random-effects.html"><a href="random-effects.html"><i class="fa fa-check"></i>Random effects</a>
+<ul>
+<li class="chapter" data-level="" data-path="politeness.html"><a href="politeness.html"><i class="fa fa-check"></i>Politeness</a></li>
+<li class="chapter" data-level="" data-path="further-reading.html"><a href="further-reading.html"><i class="fa fa-check"></i>Further reading</a></li>
+</ul></li>
 <li class="chapter" data-level="" data-path="bayesian-estimation.html"><a href="bayesian-estimation.html"><i class="fa fa-check"></i>Bayesian estimation</a></li>
 <li class="chapter" data-level="" data-path="assessments.html"><a href="assessments.html"><i class="fa fa-check"></i>Assessments</a></li>
 <li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
@@ -178,6 +189,17 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
             <section class="normal" id="section-">
 <div id="exercises" class="section level2">
 <h2>Exercises</h2>
+<!-- A worked example
+To put some numbers to the claim above:
+
+Imagine we were studying a medium effect size (D=.5), in a situation where 15% of the variance in outcomes was explained by the school a child attended.
+
+We want to achieve power of 80% for alpha = .05.
+
+In this case, increasing the number of schools sampled from 20 to 21 would reduce the total N (total number of students) from 111 students to 105.
+
+That is, we sample fewer students, but gain statistical power.
+ -->
 <div id="scottish-school-leavers" class="section level3">
 <h3>Scottish School Leavers</h3>
 <blockquote>
@@ -185,7 +207,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </blockquote>
 <p>These data form part of the Bristol CMM multilevel modelling course, which is free to students in the UK at <a href="https://www.cmm.bris.ac.uk/lemma/" class="uri">https://www.cmm.bris.ac.uk/lemma/</a></p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="exercises.html#cb1-1"></a>schools &lt;-<span class="st"> </span><span class="kw">read_csv</span>(<span class="st">&#39;data/cmm/5.1.txt&#39;</span>)</span>
-<span id="cb1-2"><a href="exercises.html#cb1-2"></a>schools <span class="op">%&gt;%</span><span class="st"> </span>skimr<span class="op">::</span><span class="kw">skim</span>() </span></code></pre></div>
+<span id="cb1-2"><a href="exercises.html#cb1-2"></a>schools <span class="op">%&gt;%</span><span class="st"> </span>skimr<span class="op">::</span><span class="kw">skim</span>()</span></code></pre></div>
 <table>
 <caption><span id="tab:readssldata">Table 1: </span>Data summary</caption>
 <tbody>
@@ -366,7 +388,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li><p>Use ggplot to visualise how much variation in <code>score</code> there is within and between schools. You might need to subset the data to avoid being overwhelmed.</p></li>
 </ul>
 <div class="solution">
-<button>
+<button class="solution-button">
 Hints
 </button>
 <p>One option would be a boxplot where <code>schoolid</code> is the x axis. Another would be to use <code>stat_summary</code> which would show the mean and SE for each school.</p>
@@ -377,7 +399,7 @@ Hints
 <li><p>Think about which observations you ‘trust’ most? Why?</p></li>
 </ul>
 <div class="solution">
-<button>
+<button class="solution-button">
 What is 1/var?
 </button>
 <p>Taking <span class="math inline">\(1/var\)</span> is often called the ‘inverse variance’ of a measurement. The larger <span class="math inline">\(1/var\)</span> is, the more confidence we have in the measurement.</p>
@@ -386,13 +408,13 @@ What is 1/var?
 <p><span class="math inline">\(\hat{y} = \frac{\sum_i y_i / \sigma_i^2}{\sum_i 1/\sigma_i^2}\)</span></p>
 </div>
 <div class="solution">
-<button>
+<button class="solution-button">
 What pattern should I notice?!
 </button>
 <p>If you make a plot as suggested (below) you can see that, looking at the high precision schools (those on the right of the plot), there are more above the mean than below (dotted line). These are still smaller-school (or, fewer students sampled in these schools) but if we ‘trust’ lower-variance estimates more, then we might want to allow for that when we estimate the mean of all schools.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="exercises.html#cb2-1"></a>schools.agg &lt;-<span class="st"> </span>schools <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">group_by</span>(schoolid) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">summarize</span>(<span class="dt">score.m=</span><span class="kw">mean</span>(score), <span class="dt">var=</span><span class="kw">var</span>(score), <span class="dt">n=</span><span class="kw">length</span>(score)) </span>
-<span id="cb2-2"><a href="exercises.html#cb2-2"></a>schools.agg <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb2-3"><a href="exercises.html#cb2-3"></a><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dv">1</span><span class="op">/</span>var, score.m, <span class="dt">size=</span>n)) <span class="op">+</span><span class="st"> </span></span>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="exercises.html#cb2-1"></a>schools.agg &lt;-<span class="st"> </span>schools <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">group_by</span>(schoolid) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">summarize</span>(<span class="dt">score.m=</span><span class="kw">mean</span>(score), <span class="dt">var=</span><span class="kw">var</span>(score), <span class="dt">n=</span><span class="kw">length</span>(score))</span>
+<span id="cb2-2"><a href="exercises.html#cb2-2"></a>schools.agg <span class="op">%&gt;%</span></span>
+<span id="cb2-3"><a href="exercises.html#cb2-3"></a><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dv">1</span><span class="op">/</span>var, score.m, <span class="dt">size=</span>n)) <span class="op">+</span></span>
 <span id="cb2-4"><a href="exercises.html#cb2-4"></a><span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">alpha=</span>.<span class="dv">25</span>) <span class="op">+</span></span>
 <span id="cb2-5"><a href="exercises.html#cb2-5"></a><span class="st">  </span><span class="kw">geom_hline</span>(<span class="dt">yintercept=</span><span class="kw">mean</span>(schools<span class="op">$</span>score), <span class="dt">linetype=</span><span class="st">&quot;dashed&quot;</span>)</span>
 <span id="cb2-6"><a href="exercises.html#cb2-6"></a><span class="op">&gt;</span><span class="st"> </span>Warning<span class="op">:</span><span class="st"> </span>Removed <span class="dv">8</span> rows containing missing <span class="kw">values</span> (geom_point).</span></code></pre></div>
@@ -438,7 +460,7 @@ What pattern should I notice?!
 <li>What is the difference between the weighted and unweighted average for all schools to 2 d.p.? <span id="Q702894" class="webex-fitb"><input class='solveme  nospaces calculator' data-tol=0.05 data-digits=4 size=4  style='width:4em;'  data-answer='["0.49",".49"]'/><span class="solvedme"></span></span></li>
 </ul>
 <div class="solution">
-<button>
+<button class="solution-button">
 Show answer
 </button>
 <p>The difference is 0.49.</p>
@@ -460,7 +482,7 @@ Show answer
 <li><p>How do you feel about the size of the change (i.e. difference between red and blue lines)? Should we care?</p></li>
 </ul>
 <div class="solution">
-<button>
+<button class="solution-button">
 Show discussion
 </button>
 <p>The schools that are i) furthest from the mean and/or ii) smallest in size shrink most. This makes sense because these are the schools that we are least confident about.</p>
@@ -488,13 +510,13 @@ Show discussion
 <li>Coloured squares: <span id="Q775351" class="webex-fitb"><input class='solveme  nospaces calculator' data-tol=1 data-digits=4 size=16  style='width:16em;'  data-answer='["258.356553464285"]'/><span class="solvedme"></span></span></li>
 </ul>
 <div class="solution">
-<button>
+<button class="solution-button">
 Show hint
 </button>
 <p>The grey squares relate to the <code>schoolid</code> term in the ‘Random effects’ section. The coloured squares are the <code>Residual</code>.</p>
 </div>
 <div class="solution">
-<button>
+<button class="solution-button">
 Show answers
 </button>
 <table style="width:42%;">
@@ -545,7 +567,7 @@ Show answers
 <li>Can you think of examples in experimental settings where ‘shrinkage’ might be useful? Discuss why this might be the case.</li>
 </ul>
 <div class="solution">
-<button>
+<button class="solution-button">
 Show an example
 </button>
 <p>One example would be in experiments where participants make many responses, e.g. in a computer-based task. If a participant is very variable in their responding then we might be less-certain about our estimate of their mean response.</p>
@@ -594,7 +616,7 @@ It avoids arbitrary cutoffs, can and might increase power when some participants
 <div class="exercise">
 <p>Run <code>summary</code> on the saved lmer model and calculate the proportion of variance which is between schools, and how much is within schools.</p>
 <div class="solution">
-<button>
+<button class="solution-button">
 Show answer
 </button>
 <p>61.2 / 319.6 * 100 = 19%</p>

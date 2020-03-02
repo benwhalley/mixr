@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Likelihood ratio tests | MixR: Mixed Models in R</title>
+  <meta name="description" content="Likelihood ratio tests | MixR: Mixed Models in R" />
+  <meta name="generator" content="bookdown 0.17 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Likelihood ratio tests | MixR: Mixed Models in R" />
+  <meta property="og:type" content="book" />
+  
+  
+  
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Likelihood ratio tests | MixR: Mixed Models in R" />
+  
+  
+  
+
+<meta name="author" content="Ben Whalley" />
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="random-slopes.html"/>
+<link rel="next" href="school-leavers-longer-exercise.html"/>
+<script src="libs/header-attrs-2.1/header-attrs.js"></script>
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<link href="media/webex.css" rel="stylesheet" />
+<link href="media/psystats.css" rel="stylesheet" />
+<script src="media/webex.js"></script>
+<script src="media/psystats.js"></script>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-118343766-4"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() {
+        dataLayer.push(arguments);
+    }
+    gtag('js', new Date());
+
+    gtag('config', 'UA-118343766-4');
+</script>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">MixR</a></li>
+
+<li class="divider"></li>
+<li><a href="index.html#section"></a></li>
+<li class="chapter" data-level="" data-path="repeated-measures.html"><a href="repeated-measures.html"><i class="fa fa-check"></i>Repeated measures</a>
+<ul>
+<li class="chapter" data-level="" data-path="exercises.html"><a href="exercises.html"><i class="fa fa-check"></i>Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="mixed-models.html"><a href="mixed-models.html"><i class="fa fa-check"></i>Mixed models</a>
+<ul>
+<li class="chapter" data-level="" data-path="piglets-random-slope.html"><a href="piglets-random-slope.html"><i class="fa fa-check"></i>Piglets (random intercepts)</a></li>
+<li><a href="r2-for-mixed-models.html#r2-for-mixed-models"><span class="math inline">\(R^2\)</span> for mixed models</a></li>
+<li class="chapter" data-level="" data-path="random-slopes.html"><a href="random-slopes.html"><i class="fa fa-check"></i>Random slopes</a></li>
+<li class="chapter" data-level="" data-path="likelihood-ratio-tests.html"><a href="likelihood-ratio-tests.html"><i class="fa fa-check"></i>Likelihood ratio tests</a></li>
+<li class="chapter" data-level="" data-path="school-leavers-longer-exercise.html"><a href="school-leavers-longer-exercise.html"><i class="fa fa-check"></i>Scottish school leavers data</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="random-effects.html"><a href="random-effects.html"><i class="fa fa-check"></i>Random effects</a>
+<ul>
+<li class="chapter" data-level="" data-path="politeness.html"><a href="politeness.html"><i class="fa fa-check"></i>Politeness</a></li>
+<li class="chapter" data-level="" data-path="further-reading.html"><a href="further-reading.html"><i class="fa fa-check"></i>Further reading</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="bayesian-estimation.html"><a href="bayesian-estimation.html"><i class="fa fa-check"></i>Bayesian estimation</a></li>
+<li class="chapter" data-level="" data-path="assessments.html"><a href="assessments.html"><i class="fa fa-check"></i>Assessments</a></li>
+<li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
+<li class="divider"></li>
+<li><a href="https://creativecommons.org/licenses/by-sa/4.0/" target="blank">Licence: CC BY-SA 4</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">MixR: Mixed Models in R</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="likelihood-ratio-tests" class="section level2">
+<h2>Likelihood ratio tests</h2>
+<p><a href="https://en.wikipedia.org/wiki/Likelihood-ratio_test">Wikipedia</a> helpfully defines the likelihood ratio test for us:</p>
+<blockquote>
+<p>In statistics, a likelihood ratio test (LR test) is a statistical test used for comparing the goodness of fit of two statistical models — a null model against an alternative model. The test is based on the likelihood ratio, which expresses how many times more likely the data are under one model than the other. This likelihood ratio … can then be used to compute a <em>p</em>-value … to decide whether to reject the null model.</p>
+</blockquote>
+<p>In R, the <code>anova</code> function can be used to compare two models of the same type. We just write:</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="likelihood-ratio-tests.html#cb22-1"></a><span class="kw">anova</span>(model1, model2)</span></code></pre></div>
+<ul>
+<li><p>For standard regression, this will produce an <em>F</em> test</p></li>
+<li><p>For mixed models (if you have loaded the <code>lmerTest</code> package), the <code>anova</code> function will actually returns a <span class="math inline">\(\chi^2\)</span> statistic from the likelihood ratio test.</p></li>
+</ul>
+<p>In both cases the interpretation is the same: The test says whether the extra predictors in the more <em>complex</em> model explain a significant amount of <em>extra</em> variation.</p>
+<ul>
+<li><p>A significant <em>p</em> value (e.g. &lt; .01) tells us than the more complex model provides a significantly better fit to the data (actually, that the simpler model is significantly <em>worse</em>).</p></li>
+<li><p>A non-significant <em>p</em> value tells us that the extra complexity is not worth the bother and we should prefer the simpler model.</p></li>
+</ul>
+<p><strong><em>The big caveat here is that p values tell you that you can’t reject the null, which isn’t the same thing as rejecting an experimental hypothesis. Use Bayes factors to express evidence for or against a hypothesis of interest.</em></strong></p>
+<div class="exercise">
+<ol style="list-style-type: decimal">
+<li>Use the <code>anova</code> command to compare the random intercept and random slope models.</li>
+</ol>
+<div class="solution">
+<button class="solution-button">
+Show the code
+</button>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="likelihood-ratio-tests.html#cb23-1"></a><span class="kw">anova</span>(pigs.ri, pigs.rs)</span></code></pre></div>
+<pre><code>## Data: pigs
+## Models:
+## pigs.ri: weight ~ week + (1 | id)
+## pigs.rs: weight ~ week + (week | id)
+##         Df    AIC    BIC   logLik deviance  Chisq Chi Df Pr(&gt;Chisq)    
+## pigs.ri  4 2037.8 2054.1 -1014.93   2029.8                             
+## pigs.rs  6 1749.9 1774.3  -868.96   1737.9 291.93      2  &lt; 2.2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+</div>
+<ol start="2" style="list-style-type: decimal">
+<li>How do you interpret this output? Does the more complex random slope model provide a significantly better fit?</li>
+</ol>
+<div class="solution">
+<button class="solution-button">
+Check answer
+</button>
+<p>Yes - it does. The <em>p</em> value is very small, and may be showin in <a href="https://en.wikipedia.org/wiki/Scientific_notation">scientific notation</a> (e.g. <code>&lt;2e-16</code>).</p>
+<p>The likelihood ratio test is telling us that the random slopes model explains significantly more variation in the outcome.</p>
+<p>Remember though: Just because this is <em>statistically</em> significant it does not mean it’s of any <em>practical</em> importance. Whether that is very meaningful will depend on the context, the sample size and the size of the effect.</p>
+</div>
+</div>
+<div id="reporting-a-lr-test-in-prose" class="section level4">
+<h4>Reporting a LR test in prose</h4>
+<p>To report the test above you could write something like:</p>
+<blockquote>
+<p>The random intercept model was significantly improved by adding a random slope for weeks, χ2(2) = 291.93, p &lt; .001.</p>
+</blockquote>
+<p>Or, if you plan to share your models code in a data supplement, you migth like to focus more on the interpretation rather than emphasising how the test was calculated and say:</p>
+<blockquote>
+<p>There was substantial variation in growth rates between-piglets, χ2(2) = 291.93, p &lt; .001.</p>
+</blockquote>
+<p>At this point you would probably also want to use <span class="math inline">\(R^2\)</span> to quantify how much variation is being explained in each case (the conditional <span class="math inline">\(R^2\)</span>).</p>
+</div>
+<div id="a-shortcut-for-testing-random-effects" class="section level4">
+<h4>A shortcut for testing random effects</h4>
+<p>As mentioned in class, the <code>ranova</code> function is a shortcut for testing random effects in an <code>lmer</code> model. To test if the random intercepts explain additional variance run:</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="likelihood-ratio-tests.html#cb25-1"></a><span class="kw">ranova</span>(pigs.ri)</span></code></pre></div>
+<pre><code>## ANOVA-like table for random-effects: Single term deletions
+## 
+## Model:
+## weight ~ week + (1 | id)
+##          npar  logLik    AIC    LRT Df Pr(&gt;Chisq)    
+## &lt;none&gt;      4 -1016.9 2041.8                         
+## (1 | id)    3 -1253.5 2512.9 473.15  1  &lt; 2.2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<p>This shows the comparison of the random intercepts model against a simpler model which ignores clustering by-piglet. We can clearly see that piglets do differ from one another (the p value is very small).</p>
+<p>This is the same test for the random <em>slopes</em>:</p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="likelihood-ratio-tests.html#cb27-1"></a><span class="kw">ranova</span>(pigs.rs)</span></code></pre></div>
+<pre><code>## ANOVA-like table for random-effects: Single term deletions
+## 
+## Model:
+## weight ~ week + (week | id)
+##                     npar   logLik    AIC    LRT Df Pr(&gt;Chisq)    
+## &lt;none&gt;                 6  -870.44 1752.9                         
+## week in (week | id)    4 -1016.90 2041.8 292.93  2  &lt; 2.2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<p>You will see a column in the output called <code>LRT</code> and a corresponding <em>p</em> value for the <span class="math inline">\(\chi^2\)</span> test. You also see AIC values, which are an alternative way of comparing the models popular in some disciplines. See this stackoverflow post <span class="citation">((https://stats.stackexchange.com/users/72352/corey979), <a href="#ref-232494" role="doc-biblioref">n.d.</a>)</span> for a nice summary of <span class="citation">Burnham and Anderson (<a href="#ref-burnham2004multimodel" role="doc-biblioref">2004</a>)</span>. A difference in AIC values between models &gt; 3 or 4 is a good sign that the more complex model is justified.</p>
+</div>
+</div>
+<h3>References</h3>
+<div id="refs" class="references">
+<div id="ref-burnham2004multimodel">
+<p>Burnham, Kenneth P, and David R Anderson. 2004. “Multimodel Inference: Understanding Aic and Bic in Model Selection.” <em>Sociological Methods &amp; Research</em> 33 (2): 261–304.</p>
+</div>
+<div id="ref-232494">
+<p>(https://stats.stackexchange.com/users/72352/corey979). n.d. “How to Compare Models on the Basis of Aic?” Cross Validated. <a href="https://stats.stackexchange.com/q/232494">https://stats.stackexchange.com/q/232494</a>.</p>
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="random-slopes.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="school-leavers-longer-exercise.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": null,
+"toc": {
+"collapse": "section"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>
