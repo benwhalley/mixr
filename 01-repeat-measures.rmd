@@ -14,6 +14,8 @@
 > with repeat measures data with appropriate techniques.
 
 
+Slides for today are here: [repeated-measures.pptx](slides/repeated-measures.pptx).
+
 ```{r, echo=F, include=F}
 knitr::opts_chunk$set(echo = TRUE, collapse=TRUE, cache=TRUE, comment=">", message=FALSE)
 library(tidyverse)
@@ -28,6 +30,17 @@ theme_set(theme_minimal())
 
 
 
+<!-- A worked example
+To put some numbers to the claim above:
+
+Imagine we were studying a medium effect size (D=.5), in a situation where 15% of the variance in outcomes was explained by the school a child attended.
+
+We want to achieve power of 80% for alpha = .05.
+
+In this case, increasing the number of schools sampled from 20 to 21 would reduce the total N (total number of students) from 111 students to 105.
+
+That is, we sample fewer students, but gain statistical power.
+ -->
 
 ### Scottish School Leavers
 
@@ -38,7 +51,7 @@ These data form part of the Bristol CMM multilevel modelling course, which is fr
 
 ```{r readssldata}
 schools <- read_csv('data/cmm/5.1.txt')
-schools %>% skimr::skim() 
+schools %>% skimr::skim()
 ```
 
 
@@ -58,7 +71,7 @@ One option would be a boxplot where `schoolid` is the x axis. Another would be t
 
 - Use `group_by` and `summarize` to calculate the mean and variance of `score` within each of the schools, and the sample size in each school (you can use `n = length(score)` to count the number of observations within each school).
 
-- Plot the mean of each school (y axis) against the $1/var$ of the school (x axis). 
+- Plot the mean of each school (y axis) against the $1/var$ of the school (x axis).
 
 - Think about which observations you 'trust' most? Why?
 
@@ -84,9 +97,9 @@ If you make a plot as suggested (below) you can see that, looking at the high pr
 
 
 ```{r precisionplot}
-schools.agg <- schools %>% group_by(schoolid) %>% summarize(score.m=mean(score), var=var(score), n=length(score)) 
-schools.agg %>% 
-  ggplot(aes(1/var, score.m, size=n)) + 
+schools.agg <- schools %>% group_by(schoolid) %>% summarize(score.m=mean(score), var=var(score), n=length(score))
+schools.agg %>%
+  ggplot(aes(1/var, score.m, size=n)) +
   geom_point(alpha=.25) +
   geom_hline(yintercept=mean(schools$score), linetype="dashed")
 ```
@@ -104,7 +117,7 @@ Precision-weighting (and mixed models) work on the principle that we want to use
 
 #### Variance-weighting using mixed models
 
-Mixed models are another way to include information about variability when estimating the overall mean. 
+Mixed models are another way to include information about variability when estimating the overall mean.
 
 Before we do this, let's calculate the mean of `score` in the sample as a reference to compare against:
 
@@ -139,14 +152,14 @@ library(lmerTest)
 (m.lmer <- lmer( score ~ 1 + (1|schoolid), data = schools))
 ```
 
-The output here has extra information compared to `lm`. However like `lm` the coefficients from the model are listed, which `lmer` calls 'fixed effects'. 
+The output here has extra information compared to `lm`. However like `lm` the coefficients from the model are listed, which `lmer` calls 'fixed effects'.
 
 ```{r, include=F, echo=F}
 weightdiff <-  round((m.lm %>% coef) - (m.lmer %>% fixef), 2) %>% unname()
 ```
 
 
-In this case we only have an intercept, which we can compare with the lm output. 
+In this case we only have an intercept, which we can compare with the lm output.
 
 - What is the difference between the weighted and unweighted average for all schools to 2 d.p.? `r fitb(answer=weightdiff, num=T, tol=.05)`
 
@@ -172,19 +185,19 @@ We can make a plot which shows how much the weighted averages 'shrink' towards t
 
 
 ```{r shrinkageplot, echo=F}
-conmean <- m.lmer %>% fixef() 
-ranef(m.lmer) %>% as_tibble() %>% mutate(grp=as.numeric(as.character(grp))) %>% 
-  left_join(schools.agg, ., by=c(schoolid="grp")) %>% 
-  sample_n(100) %>% 
-  arrange(rnorm(100)) %>% 
-  mutate(sid = row_number()) %>% 
-  ggplot(aes(sid, score.m)) + 
+conmean <- m.lmer %>% fixef()
+ranef(m.lmer) %>% as_tibble() %>% mutate(grp=as.numeric(as.character(grp))) %>%
+  left_join(schools.agg, ., by=c(schoolid="grp")) %>%
+  sample_n(100) %>%
+  arrange(rnorm(100)) %>%
+  mutate(sid = row_number()) %>%
+  ggplot(aes(sid, score.m)) +
   geom_segment(aes(x=sid, xend=sid, y=score.m, yend=condval+conmean), color="grey",  arrow = arrow(length = unit(0.02, "npc")))  +
-  geom_point(aes(size=n), color="black", alpha=.3) + 
-  geom_point(aes(y=condval+conmean), color="blue", size=6, shape='-') + 
+  geom_point(aes(size=n), color="black", alpha=.3) +
+  geom_point(aes(y=condval+conmean), color="blue", size=6, shape='-') +
   ylab("Score") + xlab("School #") +
-  geom_hline(yintercept=conmean, colour="blue") + 
-  geom_hline(yintercept=mean(schools$score), color="red", linetype="dotted") 
+  geom_hline(yintercept=conmean, colour="blue") +
+  geom_hline(yintercept=mean(schools$score), color="red", linetype="dotted")
 ```
 
 
@@ -219,17 +232,17 @@ The red line might not seem that different, but remember that the range of the y
 In the model above, we told `lmer` that `schoolid` was a grouping variable in our data. The formula was:
 
     y ~ 1 + (1|grouping)
-    
+
 You can see from this formula there are actually two types of intercept in the model.
 
 - The first `1` indicates we should fit the intercept representing the mean of all schools
-- The second `1`, in the `(1|grouping)` part of the formula tells lmer to fit a *random intercept*. 
+- The second `1`, in the `(1|grouping)` part of the formula tells lmer to fit a *random intercept*.
 
 By random intercept, we actually mean *fit an intercept (mean) for each school* individually. This means the model is like the one shown in the lecture slides:
 
 ![](images/variance-components-3-sumssquareswithinandbetween.png)
 
-The coloured lines in this plot are the random intercepts, and the dotted line is the overall intercept (average of all schools). 
+The coloured lines in this plot are the random intercepts, and the dotted line is the overall intercept (average of all schools).
 
 
 
@@ -257,7 +270,7 @@ The grey squares relate to the `schoolid` term in the 'Random effects' section. 
 `r hide("Show answers")`
 
 ```{r, echo=F, warning=F, message=F}
-VarCorr(m.lmer) %>% as.tibble() %>% select(grp, vcov) %>% 
+VarCorr(m.lmer) %>% as.tibble() %>% select(grp, vcov) %>%
   mutate(squares=c("Grey", "Coloured")) %>% pander()
 ```
 
@@ -327,7 +340,7 @@ vs = VarCorr(m.lmer) %>% as.tibble() %>% pull(vcov) %>% round(., 1)
 
 If we add the `Variance` values together we get `r round(totalv, 0)`. This is, the total variance in the `score` outcome.
 
-However, because we have the variance split into two numbers we can calculate the *proportion* of total variance explained by differences between schools (what is left over is explained by variation between children). 
+However, because we have the variance split into two numbers we can calculate the *proportion* of total variance explained by differences between schools (what is left over is explained by variation between children).
 
 $var_{j} = \frac{between}{total}$
 
@@ -343,6 +356,3 @@ Run `summary` on the saved lmer model and calculate the proportion of variance w
 `r unhide()`
 
 :::
-
-
-

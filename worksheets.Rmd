@@ -17,6 +17,14 @@ schools <- read_csv('data/cmm/5.1.txt')
 ```
 
 ```{r}
+schools %>% 
+  filter(schoolid < 30) %>% 
+  ggplot(aes(factor(schoolid), score)) + geom_boxplot()
+```
+
+
+
+```{r}
 m1 <- lmer(score ~  (1|schoolid), data=schools) 
 summary(m1)
 ranova(m1)
@@ -50,9 +58,7 @@ ranef(m1) %>% as_tibble() %>%
 ```{r}
 grViz("
       digraph ab {
-      Smoking -> Unknown -> Stroke2
-      Unknown -> Stroke1
-      Stroke1 -> Stroke2 [style=invis]
+        'Student (i)' -> 'School (j)'
       }
       ", height=300)
 

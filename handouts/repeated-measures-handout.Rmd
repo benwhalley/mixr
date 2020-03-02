@@ -3,7 +3,20 @@ output: pdf_document
 ---
 
 ```{r setup, include=FALSE}
-source('_chunk_setup.R')
+library(tidyverse)
+library(pander)
+library(broom)
+library(webex)
+
+options(scipen=4, digits=4)
+knitr::opts_chunk$set(
+  echo = T,
+  include = T, 
+  cache=T,
+  comment=""
+)
+
+theme_set(theme_gray(base_size = 16))
 ```
 
 
@@ -18,7 +31,7 @@ source('_chunk_setup.R')
 
 10:   What is the point of repeated measures? What benefits do we gain?
 
-15:   Generate examples of repeated measures data.
+15:   Generate examples of repeated measures data and give examples myself
 
 20:   School exercise
 
@@ -85,13 +98,52 @@ If students within schools are similar then ***we might gain more information***
 
 
 
-# Schools 1
 
-Imagine you work for the UK Department for Education (DfE).
+## Schools notes
+
+
+- Applied perspective -> no single right answer
+- wouldn't pick one of the answers near the extremes because 
+- balancing different concerns:
+
+
+These:
+
+- Generalisability to all schools
+
+- Practical/cost/time (although strictly this wasn't part of the question)
+
+- Fair estimate for each school (because low scores could have consequences for teachers, if results were published)
+
+- See if schools *vary* in how effective they are?
+
+
+But this question was about estimating the **average effectiveness** across the whole of the UK. So it's really a question about how to maximise **power**.
+
+
+Highlight that POWER is not always highest with highest N.... also have to think about $k$ (groups)
+
+
+
+If students within schools are similar then ***might gain more information*** when we sample from a new school, even though that costs us more and the total N goes down.
+
+
+
+
+
+\clearpage
+
+
+
+
+# Schools
+
+
+Imagine you work for the UK Department for Education (DfE). 
 
 **Your task is to find out whether a new educational intervention is effective**. The new intervention has been rolled out in 1000 randomly-selected schools in the UK.
 
-- You have a budget of around £10,000.
+- You have a budget of around £10,000. 
 - The cost to visit a single school is £100
 - The cost to measure each pupil is £10
 - The average size of a school in the UK is roughly [250](https://www.theguardian.com/education/2013/may/17/primary-schools-supersize).
@@ -105,7 +157,7 @@ kidcost <- 10
 p  <- seq(.9,.1, -.1) # prop spent on schools
 schools = as.integer(p*budget / schoolcost)
 kids = as.integer((1-p)*budget / kidcost)
-expand.grid(schools=seq(3,200,10), kids=1:1000) %>%
+expand.grid(schools=seq(3,200,10), kids=1:1000) %>% 
   as.tibble() %>%
   mutate(
     cost = kids*kidcost+schools*schoolcost)%>%
@@ -114,7 +166,7 @@ expand.grid(schools=seq(3,200,10), kids=1:1000) %>%
   arrange(-cost)%>%
   slice(1:1)%>%
   mutate(
-    s = sprintf("%s children across %s schools",
+    s = sprintf("%s children across %s schools", 
       kids,
     schools
     )) %>%
@@ -127,13 +179,16 @@ Discuss the problem as a small group. Identify the different tradeoffs involved.
 
 
 
+
+
 \newpage
 
 
-## Schools task 2
+## Schools plot task
 
 
-![](images/repeated-measures-schools-plot.pdf)
+
+![](../images/repeated-measures-schools-plot.pdf)
 
 
 - Which schools would you most and least want to sample another child from? Why?
@@ -144,124 +199,5 @@ Discuss the problem as a small group. Identify the different tradeoffs involved.
 
 
 
-\newpage
 
 
-##  IID plots
-
-
-Q: Are residuals equally likely to fall outside 2xSE for all values of X?
-
-```{r, echo=F}
-set.seed(123)
-df <- tibble(x= rnorm(100))%>%rowwise() %>% mutate(y = rnorm(1,0,  2+.8*x))%>%ungroup()
-
-homogvar.plot <- lm(y~x, data=df)%>%broom::augment()%>%
-ggplot(aes(x, .resid)) +  geom_point() + geom_hline(yintercept =0) +
-geom_line(aes(y = +2*.se.fit), color="red", linetype=2) +
-geom_line(aes(y = -2*.se.fit), color="red", linetype=2)
-
-ggsave('images/iid-homogvar.pdf', homogvar.plot)
-homogvar.plot
-```
-
-
-
-Q: Are residuals equally spaced for different people?
-
-```{r, echo=F}
-set.seed(12345)
-K = 5
-n = 4
-df <-
- tibble(y = rnorm(K*n),
-  u = rep(rnorm(K, 0,.75), n),
-  person = factor(u, labels=1:K),
-  outcome = y+u)
-
-
-indep.plot <- lm(outcome~1, data=df)%>%
-broom::augment(., df) %>%
-ggplot(aes(person, .resid, color=person)) + geom_point()  +
-geom_hline(yintercept =0) + ylab("Residual") + xlab("Person")
-
-ggsave('images/iid-independent.pdf', indep.plot)
-indep.plot
-```
-
-
-
-
-\newpage
-
-
-
-# Label the plots exercise
-
-
-This plot shows 15 datapoints, for 3 individuals within a repeated measures study:
-
-
-![](images/variance-components-1-nolines.pdf)
-
-The x-axis could be anything; for this exercise it's not relevant, but is displayed to make the plot easier to read. If it helps, you can imagine it represents time of day.
-
-
-
-Your job is to label each of the following plots (which use the same data), and indicate which of these concepts they illustrate:
-
-- Total variance
-- Variation between individuals
-- Variation within individuals
-- The relative proportion of variance within and between individuals.
-
-
-
-![](images/variance-components-2-sumssquares.pdf)
-
-
-![](images/variance-components-3-sumssquaresbetween.pdf)
-
-
-![](images/variance-components-3-sumssquareswithin.pdf)
-
-
-![](images/variance-components-3-sumssquareswithinandbetween.pdf)
-
-
-
-
-
-\newpage
-
-
-
-# RCT Example
-
-
-Imagine these are data from a clinical trial for a treatment for depression.  We measured patients' depression in the year after they were treated.
-
-The plot below shows 5 measurements taken from each person, during this year:
-
-```{r echo=F}
-set.seed(1234)
-rctplot <- tibble(y = rnorm(100), u = rep(rnorm(20, 15, 3), 5),
-  person = factor(u, labels=1:20),
-  depression = y+u) %>%
-ggplot(aes(person, depression)) + geom_point() + geom_jitter(width=.1)+
-xlab("Patient (sorted by mean severity)") + ylab("Depression severity")
-ggsave('images/repeat-measures-rctplot.pdf', rctplot)
-rctplot
-```
-
-
-In the first study we only included women, and excluded patients with any medical or psychological comorbidities.
-
-Now imagine we re-run the study, but change the entry criteria to recruit a much wider group of patients.
-
-
-- How would this plot change?
-
-- Would the total amount of variation in depression increase or decrease?
-
-- Would there be more variation *within* or *between* patients, or both? Which would see the greater increase?
