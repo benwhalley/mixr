@@ -1,0 +1,2567 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Kicking | MixR: Mixed Models in R</title>
+  <meta name="description" content="Kicking | MixR: Mixed Models in R" />
+  <meta name="generator" content="bookdown 0.17 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Kicking | MixR: Mixed Models in R" />
+  <meta property="og:type" content="book" />
+  
+  
+  
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Kicking | MixR: Mixed Models in R" />
+  
+  
+  
+
+<meta name="author" content="Ben Whalley" />
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="random-effects.html"/>
+<link rel="next" href="politeness.html"/>
+<script src="libs/header-attrs-2.1/header-attrs.js"></script>
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<link href="media/webex.css" rel="stylesheet" />
+<link href="media/psystats.css" rel="stylesheet" />
+<script src="media/webex.js"></script>
+<script src="media/psystats.js"></script>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-118343766-4"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() {
+        dataLayer.push(arguments);
+    }
+    gtag('js', new Date());
+
+    gtag('config', 'UA-118343766-4');
+</script>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">MixR</a></li>
+
+<li class="divider"></li>
+<li><a href="index.html#section"></a></li>
+<li class="chapter" data-level="" data-path="repeated-measures.html"><a href="repeated-measures.html"><i class="fa fa-check"></i>Repeated measures</a>
+<ul>
+<li class="chapter" data-level="" data-path="exercises.html"><a href="exercises.html"><i class="fa fa-check"></i>Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="mixed-models.html"><a href="mixed-models.html"><i class="fa fa-check"></i>Mixed models</a>
+<ul>
+<li class="chapter" data-level="" data-path="piglets-random-slope.html"><a href="piglets-random-slope.html"><i class="fa fa-check"></i>Piglets (random intercepts)</a></li>
+<li><a href="r2-for-mixed-models.html#r2-for-mixed-models"><span class="math inline">\(R^2\)</span> for mixed models</a></li>
+<li class="chapter" data-level="" data-path="random-slopes.html"><a href="random-slopes.html"><i class="fa fa-check"></i>Random slopes</a></li>
+<li class="chapter" data-level="" data-path="likelihood-ratio-tests.html"><a href="likelihood-ratio-tests.html"><i class="fa fa-check"></i>Likelihood ratio tests</a></li>
+<li class="chapter" data-level="" data-path="school-leavers-longer-exercise.html"><a href="school-leavers-longer-exercise.html"><i class="fa fa-check"></i>Scottish school leavers data</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="random-effects.html"><a href="random-effects.html"><i class="fa fa-check"></i>Random effects</a>
+<ul>
+<li class="chapter" data-level="" data-path="kicking.html"><a href="kicking.html"><i class="fa fa-check"></i>Kicking</a></li>
+<li class="chapter" data-level="" data-path="politeness.html"><a href="politeness.html"><i class="fa fa-check"></i>Politeness</a></li>
+<li class="chapter" data-level="" data-path="further-reading.html"><a href="further-reading.html"><i class="fa fa-check"></i>Further reading</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="bayesian-estimation.html"><a href="bayesian-estimation.html"><i class="fa fa-check"></i>Bayesian estimation</a></li>
+<li class="chapter" data-level="" data-path="assessments.html"><a href="assessments.html"><i class="fa fa-check"></i>Assessments</a></li>
+<li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
+<li class="divider"></li>
+<li><a href="https://creativecommons.org/licenses/by-sa/4.0/" target="blank">Licence: CC BY-SA 4</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">MixR: Mixed Models in R</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="kicking" class="section level2">
+<h2>Kicking</h2>
+<div class="figure">
+<img src="images/mma.jpg" alt="" />
+<p class="caption">photo:<a href="https://pixabay.com/photos/mma-mixed-martial-arts-grachan-cage-2944759/">pixabay</a></p>
+</div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="kicking.html#cb1-1"></a>mma.wide.all &lt;-<span class="st"> </span><span class="kw">read_csv</span>(<span class="st">&#39;data/pone.0227675.s001.csv&#39;</span>) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb1-2"><a href="kicking.html#cb1-2"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">person =</span> <span class="kw">row_number</span>()) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb1-3"><a href="kicking.html#cb1-3"></a><span class="st">  </span><span class="kw">rename</span>(<span class="dt">FI =</span> <span class="st">`</span><span class="dt">Wingate_fatigue index [%]</span><span class="st">`</span>)</span>
+<span id="cb1-4"><a href="kicking.html#cb1-4"></a></span>
+<span id="cb1-5"><a href="kicking.html#cb1-5"></a><span class="co"># From the paper: Further, failed (n = 1 PRE, n = 2 POST) and incomplete (n = 4 PRE, n = 3 POST) responses were excluded. Thus the final sample consisted of 2150 individual responses.</span></span>
+<span id="cb1-6"><a href="kicking.html#cb1-6"></a></span>
+<span id="cb1-7"><a href="kicking.html#cb1-7"></a>mma.wide.all <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">select</span>(<span class="kw">starts_with</span>(<span class="st">&quot;RT_&quot;</span>)) <span class="op">%&gt;%</span><span class="st"> </span>mice<span class="op">::</span><span class="kw">md.pattern</span>()</span></code></pre></div>
+<p><img src="03-random-effects_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<pre><code>##    RT_before_1 RT_before_2 RT_before_3 RT_before_4 RT_before_5 RT_before_6
+## 42           1           1           1           1           1           1
+## 1            1           1           1           1           1           1
+## 1            1           1           1           1           1           1
+## 1            1           1           1           1           1           1
+##              0           0           0           0           0           0
+##    RT_before_7 RT_before_8 RT_before_9 RT_before_10 RT_before_11 RT_before_12
+## 42           1           1           1            1            1            1
+## 1            1           1           1            1            1            1
+## 1            1           1           1            1            1            1
+## 1            1           1           1            1            1            1
+##              0           0           0            0            0            0
+##    RT_before_13 RT_before_16 RT_before_17 RT_before_19 RT_before_20
+## 42            1            1            1            1            1
+## 1             1            1            1            1            1
+## 1             1            1            1            1            1
+## 1             1            1            1            1            1
+##               0            0            0            0            0
+##    RT_before_21 RT_before_22 RT_before_23 RT_before_24 RT_before_25
+## 42            1            1            1            1            1
+## 1             1            1            1            1            1
+## 1             1            1            1            1            1
+## 1             1            1            1            1            1
+##               0            0            0            0            0
+##    RT_before_26 RT_before_27 RT_before_28 RT_after_2 RT_after_3 RT_after_4
+## 42            1            1            1          1          1          1
+## 1             1            1            1          1          1          1
+## 1             1            1            1          1          1          1
+## 1             1            1            1          1          1          1
+##               0            0            0          0          0          0
+##    RT_after_5 RT_after_6 RT_after_7 RT_after_8 RT_after_9 RT_after_10
+## 42          1          1          1          1          1           1
+## 1           1          1          1          1          1           1
+## 1           1          1          1          1          1           1
+## 1           1          1          1          1          1           1
+##             0          0          0          0          0           0
+##    RT_after_11 RT_after_12 RT_after_13 RT_after_14 RT_after_15 RT_after_16
+## 42           1           1           1           1           1           1
+## 1            1           1           1           1           1           1
+## 1            1           1           1           1           1           1
+## 1            1           1           1           1           1           1
+##              0           0           0           0           0           0
+##    RT_after_17 RT_after_18 RT_after_19 RT_after_20 RT_after_21 RT_after_22
+## 42           1           1           1           1           1           1
+## 1            1           1           1           1           1           1
+## 1            1           1           1           1           1           1
+## 1            1           1           1           1           1           1
+##              0           0           0           0           0           0
+##    RT_after_23 RT_after_24 RT_after_25 RT_after_26 RT_after_27 RT_after_28
+## 42           1           1           1           1           1           1
+## 1            1           1           1           1           1           1
+## 1            1           1           1           1           1           1
+## 1            1           1           1           1           1           1
+##              0           0           0           0           0           0
+##    RT_before_14 RT_before_15 RT_before_18 RT_after_1  
+## 42            1            1            1          1 0
+## 1             1            1            1          0 1
+## 1             1            0            1          1 1
+## 1             0            1            0          1 2
+##               1            1            1          1 4</code></pre>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="kicking.html#cb3-1"></a><span class="co"># rowstokeep &lt;- mma.wide.all %&gt;% select(matches(&quot;RT_|MT_&quot;)) %&gt;% complete.cases()</span></span>
+<span id="cb3-2"><a href="kicking.html#cb3-2"></a>mma.wide &lt;-<span class="st"> </span>mma.wide.all <span class="co"># %&gt;% filter(rowstokeep)</span></span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="kicking.html#cb4-1"></a>mma.repeated &lt;-<span class="st"> </span>mma.wide <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb4-2"><a href="kicking.html#cb4-2"></a><span class="st">  </span><span class="kw">select</span>(person, <span class="kw">matches</span>(<span class="st">&#39;RT_|MT_&#39;</span>)) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb4-3"><a href="kicking.html#cb4-3"></a><span class="st">  </span><span class="kw">pivot_longer</span>(<span class="op">-</span>person, <span class="dt">names_to=</span><span class="kw">c</span>(<span class="st">&quot;outcome&quot;</span>, <span class="st">&quot;condition&quot;</span>, <span class="st">&quot;trial&quot;</span>), <span class="dt">names_sep=</span><span class="st">&quot;_&quot;</span>) </span>
+<span id="cb4-4"><a href="kicking.html#cb4-4"></a></span>
+<span id="cb4-5"><a href="kicking.html#cb4-5"></a></span>
+<span id="cb4-6"><a href="kicking.html#cb4-6"></a>mma &lt;-<span class="st"> </span>mma.repeated <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb4-7"><a href="kicking.html#cb4-7"></a><span class="st">  </span><span class="kw">pivot_wider</span>(<span class="dt">id_cols=</span><span class="kw">c</span>(<span class="st">&quot;person&quot;</span>, <span class="st">&quot;condition&quot;</span>, <span class="st">&quot;trial&quot;</span>), <span class="dt">names_from=</span>outcome, <span class="dt">values_from=</span>value) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb4-8"><a href="kicking.html#cb4-8"></a><span class="st">  </span><span class="kw">left_join</span>(., mma.wide <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">select</span>(person, FI)) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb4-9"><a href="kicking.html#cb4-9"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">trial =</span> <span class="kw">as.numeric</span>(trial)) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb4-10"><a href="kicking.html#cb4-10"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">condition=</span><span class="kw">fct_rev</span>(condition)) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb4-11"><a href="kicking.html#cb4-11"></a><span class="st">  </span><span class="kw">filter</span>(trial<span class="op">&gt;</span><span class="dv">4</span>) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb4-12"><a href="kicking.html#cb4-12"></a><span class="st">  </span><span class="co"># centering, see syntax file here: https://journals.plos.org/plosone/article/file?id=10.1371/journal.pone.0227675.s005&amp;type=supplementary</span></span>
+<span id="cb4-13"><a href="kicking.html#cb4-13"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">trial.c =</span> trial <span class="op">-</span><span class="st"> </span><span class="kw">mean</span>(trial), <span class="dt">FI.c =</span> FI <span class="op">-</span><span class="st"> </span><span class="kw">mean</span>(FI))</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="kicking.html#cb5-1"></a>m1 &lt;-<span class="st"> </span><span class="kw">lmer</span>(RT <span class="op">~</span><span class="st"> </span>FI.c <span class="op">+</span><span class="st"> </span>condition <span class="op">+</span><span class="st"> </span>trial.c <span class="op">+</span><span class="st"> </span>condition<span class="op">:</span>trial.c <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span><span class="op">|</span>person), <span class="dt">data=</span>mma)</span>
+<span id="cb5-2"><a href="kicking.html#cb5-2"></a><span class="kw">model.matrix</span>(m1)</span></code></pre></div>
+<pre><code>##      (Intercept)      FI.c conditionafter trial.c conditionafter:trial.c
+## 1              1 -75.28889              0   -11.5                    0.0
+## 2              1 -75.28889              0   -10.5                    0.0
+## 3              1 -75.28889              0    -9.5                    0.0
+## 4              1 -75.28889              0    -8.5                    0.0
+## 5              1 -75.28889              0    -7.5                    0.0
+## 6              1 -75.28889              0    -6.5                    0.0
+## 7              1 -75.28889              0    -5.5                    0.0
+## 8              1 -75.28889              0    -4.5                    0.0
+## 9              1 -75.28889              0    -3.5                    0.0
+## 11             1 -75.28889              0    -1.5                    0.0
+## 12             1 -75.28889              0    -0.5                    0.0
+## 13             1 -75.28889              0     0.5                    0.0
+## 15             1 -75.28889              0     2.5                    0.0
+## 16             1 -75.28889              0     3.5                    0.0
+## 17             1 -75.28889              0     4.5                    0.0
+## 18             1 -75.28889              0     5.5                    0.0
+## 19             1 -75.28889              0     6.5                    0.0
+## 20             1 -75.28889              0     7.5                    0.0
+## 21             1 -75.28889              0     8.5                    0.0
+## 22             1 -75.28889              0     9.5                    0.0
+## 23             1 -75.28889              0    10.5                    0.0
+## 24             1 -75.28889              0    11.5                    0.0
+## 25             1 -75.28889              1   -11.5                  -11.5
+## 26             1 -75.28889              1   -10.5                  -10.5
+## 27             1 -75.28889              1    -9.5                   -9.5
+## 28             1 -75.28889              1    -8.5                   -8.5
+## 29             1 -75.28889              1    -7.5                   -7.5
+## 30             1 -75.28889              1    -6.5                   -6.5
+## 31             1 -75.28889              1    -5.5                   -5.5
+## 32             1 -75.28889              1    -4.5                   -4.5
+## 33             1 -75.28889              1    -3.5                   -3.5
+## 34             1 -75.28889              1    -2.5                   -2.5
+## 35             1 -75.28889              1    -1.5                   -1.5
+## 36             1 -75.28889              1    -0.5                   -0.5
+## 37             1 -75.28889              1     0.5                    0.5
+## 38             1 -75.28889              1     1.5                    1.5
+## 39             1 -75.28889              1     2.5                    2.5
+## 40             1 -75.28889              1     3.5                    3.5
+## 41             1 -75.28889              1     4.5                    4.5
+## 42             1 -75.28889              1     5.5                    5.5
+## 43             1 -75.28889              1     6.5                    6.5
+## 44             1 -75.28889              1     7.5                    7.5
+## 45             1 -75.28889              1     8.5                    8.5
+## 46             1 -75.28889              1     9.5                    9.5
+## 47             1 -75.28889              1    10.5                   10.5
+## 48             1 -75.28889              1    11.5                   11.5
+## 49             1 -71.28889              0   -11.5                    0.0
+## 50             1 -71.28889              0   -10.5                    0.0
+## 51             1 -71.28889              0    -9.5                    0.0
+## 52             1 -71.28889              0    -8.5                    0.0
+## 53             1 -71.28889              0    -7.5                    0.0
+## 54             1 -71.28889              0    -6.5                    0.0
+## 55             1 -71.28889              0    -5.5                    0.0
+## 56             1 -71.28889              0    -4.5                    0.0
+## 57             1 -71.28889              0    -3.5                    0.0
+## 58             1 -71.28889              0    -2.5                    0.0
+## 59             1 -71.28889              0    -1.5                    0.0
+## 60             1 -71.28889              0    -0.5                    0.0
+## 61             1 -71.28889              0     0.5                    0.0
+## 62             1 -71.28889              0     1.5                    0.0
+## 63             1 -71.28889              0     2.5                    0.0
+## 64             1 -71.28889              0     3.5                    0.0
+## 65             1 -71.28889              0     4.5                    0.0
+## 66             1 -71.28889              0     5.5                    0.0
+## 67             1 -71.28889              0     6.5                    0.0
+## 68             1 -71.28889              0     7.5                    0.0
+## 69             1 -71.28889              0     8.5                    0.0
+## 70             1 -71.28889              0     9.5                    0.0
+## 71             1 -71.28889              0    10.5                    0.0
+## 72             1 -71.28889              0    11.5                    0.0
+## 73             1 -71.28889              1   -11.5                  -11.5
+## 74             1 -71.28889              1   -10.5                  -10.5
+## 75             1 -71.28889              1    -9.5                   -9.5
+## 76             1 -71.28889              1    -8.5                   -8.5
+## 77             1 -71.28889              1    -7.5                   -7.5
+## 78             1 -71.28889              1    -6.5                   -6.5
+## 79             1 -71.28889              1    -5.5                   -5.5
+## 80             1 -71.28889              1    -4.5                   -4.5
+## 81             1 -71.28889              1    -3.5                   -3.5
+## 82             1 -71.28889              1    -2.5                   -2.5
+## 83             1 -71.28889              1    -1.5                   -1.5
+## 84             1 -71.28889              1    -0.5                   -0.5
+## 85             1 -71.28889              1     0.5                    0.5
+## 86             1 -71.28889              1     1.5                    1.5
+## 87             1 -71.28889              1     2.5                    2.5
+## 88             1 -71.28889              1     3.5                    3.5
+## 89             1 -71.28889              1     4.5                    4.5
+## 90             1 -71.28889              1     5.5                    5.5
+## 91             1 -71.28889              1     6.5                    6.5
+## 92             1 -71.28889              1     7.5                    7.5
+## 93             1 -71.28889              1     8.5                    8.5
+## 94             1 -71.28889              1     9.5                    9.5
+## 95             1 -71.28889              1    10.5                   10.5
+## 96             1 -71.28889              1    11.5                   11.5
+## 97             1 -72.28889              0   -11.5                    0.0
+## 98             1 -72.28889              0   -10.5                    0.0
+## 99             1 -72.28889              0    -9.5                    0.0
+## 100            1 -72.28889              0    -8.5                    0.0
+## 101            1 -72.28889              0    -7.5                    0.0
+## 102            1 -72.28889              0    -6.5                    0.0
+## 103            1 -72.28889              0    -5.5                    0.0
+## 104            1 -72.28889              0    -4.5                    0.0
+## 105            1 -72.28889              0    -3.5                    0.0
+## 106            1 -72.28889              0    -2.5                    0.0
+## 107            1 -72.28889              0    -1.5                    0.0
+## 108            1 -72.28889              0    -0.5                    0.0
+## 109            1 -72.28889              0     0.5                    0.0
+## 110            1 -72.28889              0     1.5                    0.0
+## 111            1 -72.28889              0     2.5                    0.0
+## 112            1 -72.28889              0     3.5                    0.0
+## 113            1 -72.28889              0     4.5                    0.0
+## 114            1 -72.28889              0     5.5                    0.0
+## 115            1 -72.28889              0     6.5                    0.0
+## 116            1 -72.28889              0     7.5                    0.0
+## 117            1 -72.28889              0     8.5                    0.0
+## 118            1 -72.28889              0     9.5                    0.0
+## 119            1 -72.28889              0    10.5                    0.0
+## 120            1 -72.28889              0    11.5                    0.0
+## 121            1 -72.28889              1   -11.5                  -11.5
+## 122            1 -72.28889              1   -10.5                  -10.5
+## 123            1 -72.28889              1    -9.5                   -9.5
+## 124            1 -72.28889              1    -8.5                   -8.5
+## 125            1 -72.28889              1    -7.5                   -7.5
+## 126            1 -72.28889              1    -6.5                   -6.5
+## 127            1 -72.28889              1    -5.5                   -5.5
+## 128            1 -72.28889              1    -4.5                   -4.5
+## 129            1 -72.28889              1    -3.5                   -3.5
+## 130            1 -72.28889              1    -2.5                   -2.5
+## 131            1 -72.28889              1    -1.5                   -1.5
+## 132            1 -72.28889              1    -0.5                   -0.5
+## 133            1 -72.28889              1     0.5                    0.5
+## 134            1 -72.28889              1     1.5                    1.5
+## 135            1 -72.28889              1     2.5                    2.5
+## 136            1 -72.28889              1     3.5                    3.5
+## 137            1 -72.28889              1     4.5                    4.5
+## 138            1 -72.28889              1     5.5                    5.5
+## 139            1 -72.28889              1     6.5                    6.5
+## 140            1 -72.28889              1     7.5                    7.5
+## 141            1 -72.28889              1     8.5                    8.5
+## 142            1 -72.28889              1     9.5                    9.5
+## 143            1 -72.28889              1    10.5                   10.5
+## 144            1 -72.28889              1    11.5                   11.5
+## 145            1 -74.28889              0   -11.5                    0.0
+## 146            1 -74.28889              0   -10.5                    0.0
+## 147            1 -74.28889              0    -9.5                    0.0
+## 148            1 -74.28889              0    -8.5                    0.0
+## 149            1 -74.28889              0    -7.5                    0.0
+## 150            1 -74.28889              0    -6.5                    0.0
+## 151            1 -74.28889              0    -5.5                    0.0
+## 152            1 -74.28889              0    -4.5                    0.0
+## 153            1 -74.28889              0    -3.5                    0.0
+## 154            1 -74.28889              0    -2.5                    0.0
+## 155            1 -74.28889              0    -1.5                    0.0
+## 156            1 -74.28889              0    -0.5                    0.0
+## 157            1 -74.28889              0     0.5                    0.0
+## 158            1 -74.28889              0     1.5                    0.0
+## 159            1 -74.28889              0     2.5                    0.0
+## 160            1 -74.28889              0     3.5                    0.0
+## 161            1 -74.28889              0     4.5                    0.0
+## 162            1 -74.28889              0     5.5                    0.0
+## 163            1 -74.28889              0     6.5                    0.0
+## 164            1 -74.28889              0     7.5                    0.0
+## 165            1 -74.28889              0     8.5                    0.0
+## 166            1 -74.28889              0     9.5                    0.0
+## 167            1 -74.28889              0    10.5                    0.0
+## 168            1 -74.28889              0    11.5                    0.0
+## 169            1 -74.28889              1   -11.5                  -11.5
+## 170            1 -74.28889              1   -10.5                  -10.5
+## 171            1 -74.28889              1    -9.5                   -9.5
+## 172            1 -74.28889              1    -8.5                   -8.5
+## 173            1 -74.28889              1    -7.5                   -7.5
+## 174            1 -74.28889              1    -6.5                   -6.5
+## 175            1 -74.28889              1    -5.5                   -5.5
+## 176            1 -74.28889              1    -4.5                   -4.5
+## 177            1 -74.28889              1    -3.5                   -3.5
+## 178            1 -74.28889              1    -2.5                   -2.5
+## 179            1 -74.28889              1    -1.5                   -1.5
+## 180            1 -74.28889              1    -0.5                   -0.5
+## 181            1 -74.28889              1     0.5                    0.5
+## 182            1 -74.28889              1     1.5                    1.5
+## 183            1 -74.28889              1     2.5                    2.5
+## 184            1 -74.28889              1     3.5                    3.5
+## 185            1 -74.28889              1     4.5                    4.5
+## 186            1 -74.28889              1     5.5                    5.5
+## 187            1 -74.28889              1     6.5                    6.5
+## 188            1 -74.28889              1     7.5                    7.5
+## 189            1 -74.28889              1     8.5                    8.5
+## 190            1 -74.28889              1     9.5                    9.5
+## 191            1 -74.28889              1    10.5                   10.5
+## 192            1 -74.28889              1    11.5                   11.5
+## 193            1 -74.28889              0   -11.5                    0.0
+## 194            1 -74.28889              0   -10.5                    0.0
+## 195            1 -74.28889              0    -9.5                    0.0
+## 196            1 -74.28889              0    -8.5                    0.0
+## 197            1 -74.28889              0    -7.5                    0.0
+## 198            1 -74.28889              0    -6.5                    0.0
+## 199            1 -74.28889              0    -5.5                    0.0
+## 200            1 -74.28889              0    -4.5                    0.0
+## 201            1 -74.28889              0    -3.5                    0.0
+## 202            1 -74.28889              0    -2.5                    0.0
+## 203            1 -74.28889              0    -1.5                    0.0
+## 204            1 -74.28889              0    -0.5                    0.0
+## 205            1 -74.28889              0     0.5                    0.0
+## 206            1 -74.28889              0     1.5                    0.0
+## 207            1 -74.28889              0     2.5                    0.0
+## 208            1 -74.28889              0     3.5                    0.0
+## 209            1 -74.28889              0     4.5                    0.0
+## 210            1 -74.28889              0     5.5                    0.0
+## 211            1 -74.28889              0     6.5                    0.0
+## 212            1 -74.28889              0     7.5                    0.0
+## 213            1 -74.28889              0     8.5                    0.0
+## 214            1 -74.28889              0     9.5                    0.0
+## 215            1 -74.28889              0    10.5                    0.0
+## 216            1 -74.28889              0    11.5                    0.0
+## 217            1 -74.28889              1   -11.5                  -11.5
+## 218            1 -74.28889              1   -10.5                  -10.5
+## 219            1 -74.28889              1    -9.5                   -9.5
+## 220            1 -74.28889              1    -8.5                   -8.5
+## 221            1 -74.28889              1    -7.5                   -7.5
+## 222            1 -74.28889              1    -6.5                   -6.5
+## 223            1 -74.28889              1    -5.5                   -5.5
+## 224            1 -74.28889              1    -4.5                   -4.5
+## 225            1 -74.28889              1    -3.5                   -3.5
+## 226            1 -74.28889              1    -2.5                   -2.5
+## 227            1 -74.28889              1    -1.5                   -1.5
+## 228            1 -74.28889              1    -0.5                   -0.5
+## 229            1 -74.28889              1     0.5                    0.5
+## 230            1 -74.28889              1     1.5                    1.5
+## 231            1 -74.28889              1     2.5                    2.5
+## 232            1 -74.28889              1     3.5                    3.5
+## 233            1 -74.28889              1     4.5                    4.5
+## 234            1 -74.28889              1     5.5                    5.5
+## 235            1 -74.28889              1     6.5                    6.5
+## 236            1 -74.28889              1     7.5                    7.5
+## 237            1 -74.28889              1     8.5                    8.5
+## 238            1 -74.28889              1     9.5                    9.5
+## 239            1 -74.28889              1    10.5                   10.5
+## 240            1 -74.28889              1    11.5                   11.5
+## 241            1 -74.28889              0   -11.5                    0.0
+## 242            1 -74.28889              0   -10.5                    0.0
+## 243            1 -74.28889              0    -9.5                    0.0
+## 244            1 -74.28889              0    -8.5                    0.0
+## 245            1 -74.28889              0    -7.5                    0.0
+## 246            1 -74.28889              0    -6.5                    0.0
+## 247            1 -74.28889              0    -5.5                    0.0
+## 248            1 -74.28889              0    -4.5                    0.0
+## 249            1 -74.28889              0    -3.5                    0.0
+## 250            1 -74.28889              0    -2.5                    0.0
+## 251            1 -74.28889              0    -1.5                    0.0
+## 252            1 -74.28889              0    -0.5                    0.0
+## 253            1 -74.28889              0     0.5                    0.0
+## 254            1 -74.28889              0     1.5                    0.0
+## 255            1 -74.28889              0     2.5                    0.0
+## 256            1 -74.28889              0     3.5                    0.0
+## 257            1 -74.28889              0     4.5                    0.0
+## 258            1 -74.28889              0     5.5                    0.0
+## 259            1 -74.28889              0     6.5                    0.0
+## 260            1 -74.28889              0     7.5                    0.0
+## 261            1 -74.28889              0     8.5                    0.0
+## 262            1 -74.28889              0     9.5                    0.0
+## 263            1 -74.28889              0    10.5                    0.0
+## 264            1 -74.28889              0    11.5                    0.0
+## 265            1 -74.28889              1   -11.5                  -11.5
+## 266            1 -74.28889              1   -10.5                  -10.5
+## 267            1 -74.28889              1    -9.5                   -9.5
+## 268            1 -74.28889              1    -8.5                   -8.5
+## 269            1 -74.28889              1    -7.5                   -7.5
+## 270            1 -74.28889              1    -6.5                   -6.5
+## 271            1 -74.28889              1    -5.5                   -5.5
+## 272            1 -74.28889              1    -4.5                   -4.5
+## 273            1 -74.28889              1    -3.5                   -3.5
+## 274            1 -74.28889              1    -2.5                   -2.5
+## 275            1 -74.28889              1    -1.5                   -1.5
+## 276            1 -74.28889              1    -0.5                   -0.5
+## 277            1 -74.28889              1     0.5                    0.5
+## 278            1 -74.28889              1     1.5                    1.5
+## 279            1 -74.28889              1     2.5                    2.5
+## 280            1 -74.28889              1     3.5                    3.5
+## 281            1 -74.28889              1     4.5                    4.5
+## 282            1 -74.28889              1     5.5                    5.5
+## 283            1 -74.28889              1     6.5                    6.5
+## 284            1 -74.28889              1     7.5                    7.5
+## 285            1 -74.28889              1     8.5                    8.5
+## 286            1 -74.28889              1     9.5                    9.5
+## 287            1 -74.28889              1    10.5                   10.5
+## 288            1 -74.28889              1    11.5                   11.5
+## 289            1 -70.28889              0   -11.5                    0.0
+## 290            1 -70.28889              0   -10.5                    0.0
+## 291            1 -70.28889              0    -9.5                    0.0
+## 292            1 -70.28889              0    -8.5                    0.0
+## 293            1 -70.28889              0    -7.5                    0.0
+## 294            1 -70.28889              0    -6.5                    0.0
+## 295            1 -70.28889              0    -5.5                    0.0
+## 296            1 -70.28889              0    -4.5                    0.0
+## 297            1 -70.28889              0    -3.5                    0.0
+## 298            1 -70.28889              0    -2.5                    0.0
+## 299            1 -70.28889              0    -1.5                    0.0
+## 300            1 -70.28889              0    -0.5                    0.0
+## 301            1 -70.28889              0     0.5                    0.0
+## 302            1 -70.28889              0     1.5                    0.0
+## 303            1 -70.28889              0     2.5                    0.0
+## 304            1 -70.28889              0     3.5                    0.0
+## 305            1 -70.28889              0     4.5                    0.0
+## 306            1 -70.28889              0     5.5                    0.0
+## 307            1 -70.28889              0     6.5                    0.0
+## 308            1 -70.28889              0     7.5                    0.0
+## 309            1 -70.28889              0     8.5                    0.0
+## 310            1 -70.28889              0     9.5                    0.0
+## 311            1 -70.28889              0    10.5                    0.0
+## 312            1 -70.28889              0    11.5                    0.0
+## 313            1 -70.28889              1   -11.5                  -11.5
+## 314            1 -70.28889              1   -10.5                  -10.5
+## 315            1 -70.28889              1    -9.5                   -9.5
+## 316            1 -70.28889              1    -8.5                   -8.5
+## 317            1 -70.28889              1    -7.5                   -7.5
+## 318            1 -70.28889              1    -6.5                   -6.5
+## 319            1 -70.28889              1    -5.5                   -5.5
+## 320            1 -70.28889              1    -4.5                   -4.5
+## 321            1 -70.28889              1    -3.5                   -3.5
+## 322            1 -70.28889              1    -2.5                   -2.5
+## 323            1 -70.28889              1    -1.5                   -1.5
+## 324            1 -70.28889              1    -0.5                   -0.5
+## 325            1 -70.28889              1     0.5                    0.5
+## 326            1 -70.28889              1     1.5                    1.5
+## 327            1 -70.28889              1     2.5                    2.5
+## 328            1 -70.28889              1     3.5                    3.5
+## 329            1 -70.28889              1     4.5                    4.5
+## 330            1 -70.28889              1     5.5                    5.5
+## 331            1 -70.28889              1     6.5                    6.5
+## 332            1 -70.28889              1     7.5                    7.5
+## 333            1 -70.28889              1     8.5                    8.5
+## 334            1 -70.28889              1     9.5                    9.5
+## 335            1 -70.28889              1    10.5                   10.5
+## 336            1 -70.28889              1    11.5                   11.5
+## 337            1 -71.28889              0   -11.5                    0.0
+## 338            1 -71.28889              0   -10.5                    0.0
+## 339            1 -71.28889              0    -9.5                    0.0
+## 340            1 -71.28889              0    -8.5                    0.0
+## 341            1 -71.28889              0    -7.5                    0.0
+## 342            1 -71.28889              0    -6.5                    0.0
+## 343            1 -71.28889              0    -5.5                    0.0
+## 344            1 -71.28889              0    -4.5                    0.0
+## 345            1 -71.28889              0    -3.5                    0.0
+## 346            1 -71.28889              0    -2.5                    0.0
+## 347            1 -71.28889              0    -1.5                    0.0
+## 348            1 -71.28889              0    -0.5                    0.0
+## 349            1 -71.28889              0     0.5                    0.0
+## 350            1 -71.28889              0     1.5                    0.0
+## 351            1 -71.28889              0     2.5                    0.0
+## 352            1 -71.28889              0     3.5                    0.0
+## 353            1 -71.28889              0     4.5                    0.0
+## 354            1 -71.28889              0     5.5                    0.0
+## 355            1 -71.28889              0     6.5                    0.0
+## 356            1 -71.28889              0     7.5                    0.0
+## 357            1 -71.28889              0     8.5                    0.0
+## 358            1 -71.28889              0     9.5                    0.0
+## 359            1 -71.28889              0    10.5                    0.0
+## 360            1 -71.28889              0    11.5                    0.0
+## 361            1 -71.28889              1   -11.5                  -11.5
+## 362            1 -71.28889              1   -10.5                  -10.5
+## 363            1 -71.28889              1    -9.5                   -9.5
+## 364            1 -71.28889              1    -8.5                   -8.5
+## 365            1 -71.28889              1    -7.5                   -7.5
+## 366            1 -71.28889              1    -6.5                   -6.5
+## 367            1 -71.28889              1    -5.5                   -5.5
+## 368            1 -71.28889              1    -4.5                   -4.5
+## 369            1 -71.28889              1    -3.5                   -3.5
+## 370            1 -71.28889              1    -2.5                   -2.5
+## 371            1 -71.28889              1    -1.5                   -1.5
+## 372            1 -71.28889              1    -0.5                   -0.5
+## 373            1 -71.28889              1     0.5                    0.5
+## 374            1 -71.28889              1     1.5                    1.5
+## 375            1 -71.28889              1     2.5                    2.5
+## 376            1 -71.28889              1     3.5                    3.5
+## 377            1 -71.28889              1     4.5                    4.5
+## 378            1 -71.28889              1     5.5                    5.5
+## 379            1 -71.28889              1     6.5                    6.5
+## 380            1 -71.28889              1     7.5                    7.5
+## 381            1 -71.28889              1     8.5                    8.5
+## 382            1 -71.28889              1     9.5                    9.5
+## 383            1 -71.28889              1    10.5                   10.5
+## 384            1 -71.28889              1    11.5                   11.5
+## 385            1 -73.28889              0   -11.5                    0.0
+## 386            1 -73.28889              0   -10.5                    0.0
+## 387            1 -73.28889              0    -9.5                    0.0
+## 388            1 -73.28889              0    -8.5                    0.0
+## 389            1 -73.28889              0    -7.5                    0.0
+## 390            1 -73.28889              0    -6.5                    0.0
+## 391            1 -73.28889              0    -5.5                    0.0
+## 392            1 -73.28889              0    -4.5                    0.0
+## 393            1 -73.28889              0    -3.5                    0.0
+## 394            1 -73.28889              0    -2.5                    0.0
+## 395            1 -73.28889              0    -1.5                    0.0
+## 396            1 -73.28889              0    -0.5                    0.0
+## 397            1 -73.28889              0     0.5                    0.0
+## 398            1 -73.28889              0     1.5                    0.0
+## 399            1 -73.28889              0     2.5                    0.0
+## 400            1 -73.28889              0     3.5                    0.0
+## 401            1 -73.28889              0     4.5                    0.0
+## 402            1 -73.28889              0     5.5                    0.0
+## 403            1 -73.28889              0     6.5                    0.0
+## 404            1 -73.28889              0     7.5                    0.0
+## 405            1 -73.28889              0     8.5                    0.0
+## 406            1 -73.28889              0     9.5                    0.0
+## 407            1 -73.28889              0    10.5                    0.0
+## 408            1 -73.28889              0    11.5                    0.0
+## 409            1 -73.28889              1   -11.5                  -11.5
+## 410            1 -73.28889              1   -10.5                  -10.5
+## 411            1 -73.28889              1    -9.5                   -9.5
+## 412            1 -73.28889              1    -8.5                   -8.5
+## 413            1 -73.28889              1    -7.5                   -7.5
+## 414            1 -73.28889              1    -6.5                   -6.5
+## 415            1 -73.28889              1    -5.5                   -5.5
+## 416            1 -73.28889              1    -4.5                   -4.5
+## 417            1 -73.28889              1    -3.5                   -3.5
+## 418            1 -73.28889              1    -2.5                   -2.5
+## 419            1 -73.28889              1    -1.5                   -1.5
+## 420            1 -73.28889              1    -0.5                   -0.5
+## 421            1 -73.28889              1     0.5                    0.5
+## 422            1 -73.28889              1     1.5                    1.5
+## 423            1 -73.28889              1     2.5                    2.5
+## 424            1 -73.28889              1     3.5                    3.5
+## 425            1 -73.28889              1     4.5                    4.5
+## 426            1 -73.28889              1     5.5                    5.5
+## 427            1 -73.28889              1     6.5                    6.5
+## 428            1 -73.28889              1     7.5                    7.5
+## 429            1 -73.28889              1     8.5                    8.5
+## 430            1 -73.28889              1     9.5                    9.5
+## 431            1 -73.28889              1    10.5                   10.5
+## 432            1 -73.28889              1    11.5                   11.5
+## 433            1 -70.28889              0   -11.5                    0.0
+## 434            1 -70.28889              0   -10.5                    0.0
+## 435            1 -70.28889              0    -9.5                    0.0
+## 436            1 -70.28889              0    -8.5                    0.0
+## 437            1 -70.28889              0    -7.5                    0.0
+## 438            1 -70.28889              0    -6.5                    0.0
+## 439            1 -70.28889              0    -5.5                    0.0
+## 440            1 -70.28889              0    -4.5                    0.0
+## 441            1 -70.28889              0    -3.5                    0.0
+## 442            1 -70.28889              0    -2.5                    0.0
+## 443            1 -70.28889              0    -1.5                    0.0
+## 444            1 -70.28889              0    -0.5                    0.0
+## 445            1 -70.28889              0     0.5                    0.0
+## 446            1 -70.28889              0     1.5                    0.0
+## 447            1 -70.28889              0     2.5                    0.0
+## 448            1 -70.28889              0     3.5                    0.0
+## 449            1 -70.28889              0     4.5                    0.0
+## 450            1 -70.28889              0     5.5                    0.0
+## 451            1 -70.28889              0     6.5                    0.0
+## 452            1 -70.28889              0     7.5                    0.0
+## 453            1 -70.28889              0     8.5                    0.0
+## 454            1 -70.28889              0     9.5                    0.0
+## 455            1 -70.28889              0    10.5                    0.0
+## 456            1 -70.28889              0    11.5                    0.0
+## 457            1 -70.28889              1   -11.5                  -11.5
+## 458            1 -70.28889              1   -10.5                  -10.5
+## 459            1 -70.28889              1    -9.5                   -9.5
+## 460            1 -70.28889              1    -8.5                   -8.5
+## 461            1 -70.28889              1    -7.5                   -7.5
+## 462            1 -70.28889              1    -6.5                   -6.5
+## 463            1 -70.28889              1    -5.5                   -5.5
+## 464            1 -70.28889              1    -4.5                   -4.5
+## 465            1 -70.28889              1    -3.5                   -3.5
+## 466            1 -70.28889              1    -2.5                   -2.5
+## 467            1 -70.28889              1    -1.5                   -1.5
+## 468            1 -70.28889              1    -0.5                   -0.5
+## 469            1 -70.28889              1     0.5                    0.5
+## 470            1 -70.28889              1     1.5                    1.5
+## 471            1 -70.28889              1     2.5                    2.5
+## 472            1 -70.28889              1     3.5                    3.5
+## 473            1 -70.28889              1     4.5                    4.5
+## 474            1 -70.28889              1     5.5                    5.5
+## 475            1 -70.28889              1     6.5                    6.5
+## 476            1 -70.28889              1     7.5                    7.5
+## 477            1 -70.28889              1     8.5                    8.5
+## 478            1 -70.28889              1     9.5                    9.5
+## 479            1 -70.28889              1    10.5                   10.5
+## 480            1 -70.28889              1    11.5                   11.5
+## 481            1 -76.28889              0   -11.5                    0.0
+## 482            1 -76.28889              0   -10.5                    0.0
+## 483            1 -76.28889              0    -9.5                    0.0
+## 484            1 -76.28889              0    -8.5                    0.0
+## 485            1 -76.28889              0    -7.5                    0.0
+## 486            1 -76.28889              0    -6.5                    0.0
+## 487            1 -76.28889              0    -5.5                    0.0
+## 488            1 -76.28889              0    -4.5                    0.0
+## 489            1 -76.28889              0    -3.5                    0.0
+## 490            1 -76.28889              0    -2.5                    0.0
+## 491            1 -76.28889              0    -1.5                    0.0
+## 492            1 -76.28889              0    -0.5                    0.0
+## 493            1 -76.28889              0     0.5                    0.0
+## 494            1 -76.28889              0     1.5                    0.0
+## 495            1 -76.28889              0     2.5                    0.0
+## 496            1 -76.28889              0     3.5                    0.0
+## 497            1 -76.28889              0     4.5                    0.0
+## 498            1 -76.28889              0     5.5                    0.0
+## 499            1 -76.28889              0     6.5                    0.0
+## 500            1 -76.28889              0     7.5                    0.0
+## 501            1 -76.28889              0     8.5                    0.0
+## 502            1 -76.28889              0     9.5                    0.0
+## 503            1 -76.28889              0    10.5                    0.0
+## 504            1 -76.28889              0    11.5                    0.0
+## 505            1 -76.28889              1   -11.5                  -11.5
+## 506            1 -76.28889              1   -10.5                  -10.5
+## 507            1 -76.28889              1    -9.5                   -9.5
+## 508            1 -76.28889              1    -8.5                   -8.5
+## 509            1 -76.28889              1    -7.5                   -7.5
+## 510            1 -76.28889              1    -6.5                   -6.5
+## 511            1 -76.28889              1    -5.5                   -5.5
+## 512            1 -76.28889              1    -4.5                   -4.5
+## 513            1 -76.28889              1    -3.5                   -3.5
+## 514            1 -76.28889              1    -2.5                   -2.5
+## 515            1 -76.28889              1    -1.5                   -1.5
+## 516            1 -76.28889              1    -0.5                   -0.5
+## 517            1 -76.28889              1     0.5                    0.5
+## 518            1 -76.28889              1     1.5                    1.5
+## 519            1 -76.28889              1     2.5                    2.5
+## 520            1 -76.28889              1     3.5                    3.5
+## 521            1 -76.28889              1     4.5                    4.5
+## 522            1 -76.28889              1     5.5                    5.5
+## 523            1 -76.28889              1     6.5                    6.5
+## 524            1 -76.28889              1     7.5                    7.5
+## 525            1 -76.28889              1     8.5                    8.5
+## 526            1 -76.28889              1     9.5                    9.5
+## 527            1 -76.28889              1    10.5                   10.5
+## 528            1 -76.28889              1    11.5                   11.5
+## 529            1 -72.28889              0   -11.5                    0.0
+## 530            1 -72.28889              0   -10.5                    0.0
+## 531            1 -72.28889              0    -9.5                    0.0
+## 532            1 -72.28889              0    -8.5                    0.0
+## 533            1 -72.28889              0    -7.5                    0.0
+## 534            1 -72.28889              0    -6.5                    0.0
+## 535            1 -72.28889              0    -5.5                    0.0
+## 536            1 -72.28889              0    -4.5                    0.0
+## 537            1 -72.28889              0    -3.5                    0.0
+## 538            1 -72.28889              0    -2.5                    0.0
+## 539            1 -72.28889              0    -1.5                    0.0
+## 540            1 -72.28889              0    -0.5                    0.0
+## 541            1 -72.28889              0     0.5                    0.0
+## 542            1 -72.28889              0     1.5                    0.0
+## 543            1 -72.28889              0     2.5                    0.0
+## 544            1 -72.28889              0     3.5                    0.0
+## 545            1 -72.28889              0     4.5                    0.0
+## 546            1 -72.28889              0     5.5                    0.0
+## 547            1 -72.28889              0     6.5                    0.0
+## 548            1 -72.28889              0     7.5                    0.0
+## 549            1 -72.28889              0     8.5                    0.0
+## 550            1 -72.28889              0     9.5                    0.0
+## 551            1 -72.28889              0    10.5                    0.0
+## 552            1 -72.28889              0    11.5                    0.0
+## 553            1 -72.28889              1   -11.5                  -11.5
+## 554            1 -72.28889              1   -10.5                  -10.5
+## 555            1 -72.28889              1    -9.5                   -9.5
+## 556            1 -72.28889              1    -8.5                   -8.5
+## 557            1 -72.28889              1    -7.5                   -7.5
+## 558            1 -72.28889              1    -6.5                   -6.5
+## 559            1 -72.28889              1    -5.5                   -5.5
+## 560            1 -72.28889              1    -4.5                   -4.5
+## 561            1 -72.28889              1    -3.5                   -3.5
+## 562            1 -72.28889              1    -2.5                   -2.5
+## 563            1 -72.28889              1    -1.5                   -1.5
+## 564            1 -72.28889              1    -0.5                   -0.5
+## 565            1 -72.28889              1     0.5                    0.5
+## 566            1 -72.28889              1     1.5                    1.5
+## 567            1 -72.28889              1     2.5                    2.5
+## 568            1 -72.28889              1     3.5                    3.5
+## 569            1 -72.28889              1     4.5                    4.5
+## 570            1 -72.28889              1     5.5                    5.5
+## 571            1 -72.28889              1     6.5                    6.5
+## 572            1 -72.28889              1     7.5                    7.5
+## 573            1 -72.28889              1     8.5                    8.5
+## 574            1 -72.28889              1     9.5                    9.5
+## 575            1 -72.28889              1    10.5                   10.5
+## 576            1 -72.28889              1    11.5                   11.5
+## 577            1 -74.28889              0   -11.5                    0.0
+## 578            1 -74.28889              0   -10.5                    0.0
+## 579            1 -74.28889              0    -9.5                    0.0
+## 580            1 -74.28889              0    -8.5                    0.0
+## 581            1 -74.28889              0    -7.5                    0.0
+## 582            1 -74.28889              0    -6.5                    0.0
+## 583            1 -74.28889              0    -5.5                    0.0
+## 584            1 -74.28889              0    -4.5                    0.0
+## 585            1 -74.28889              0    -3.5                    0.0
+## 586            1 -74.28889              0    -2.5                    0.0
+## 587            1 -74.28889              0    -1.5                    0.0
+## 588            1 -74.28889              0    -0.5                    0.0
+## 589            1 -74.28889              0     0.5                    0.0
+## 590            1 -74.28889              0     1.5                    0.0
+## 591            1 -74.28889              0     2.5                    0.0
+## 592            1 -74.28889              0     3.5                    0.0
+## 593            1 -74.28889              0     4.5                    0.0
+## 594            1 -74.28889              0     5.5                    0.0
+## 595            1 -74.28889              0     6.5                    0.0
+## 596            1 -74.28889              0     7.5                    0.0
+## 597            1 -74.28889              0     8.5                    0.0
+## 598            1 -74.28889              0     9.5                    0.0
+## 599            1 -74.28889              0    10.5                    0.0
+## 600            1 -74.28889              0    11.5                    0.0
+## 601            1 -74.28889              1   -11.5                  -11.5
+## 602            1 -74.28889              1   -10.5                  -10.5
+## 603            1 -74.28889              1    -9.5                   -9.5
+## 604            1 -74.28889              1    -8.5                   -8.5
+## 605            1 -74.28889              1    -7.5                   -7.5
+## 606            1 -74.28889              1    -6.5                   -6.5
+## 607            1 -74.28889              1    -5.5                   -5.5
+## 608            1 -74.28889              1    -4.5                   -4.5
+## 609            1 -74.28889              1    -3.5                   -3.5
+## 610            1 -74.28889              1    -2.5                   -2.5
+## 611            1 -74.28889              1    -1.5                   -1.5
+## 612            1 -74.28889              1    -0.5                   -0.5
+## 613            1 -74.28889              1     0.5                    0.5
+## 614            1 -74.28889              1     1.5                    1.5
+## 615            1 -74.28889              1     2.5                    2.5
+## 616            1 -74.28889              1     3.5                    3.5
+## 617            1 -74.28889              1     4.5                    4.5
+## 618            1 -74.28889              1     5.5                    5.5
+## 619            1 -74.28889              1     6.5                    6.5
+## 620            1 -74.28889              1     7.5                    7.5
+## 621            1 -74.28889              1     8.5                    8.5
+## 622            1 -74.28889              1     9.5                    9.5
+## 623            1 -74.28889              1    10.5                   10.5
+## 624            1 -74.28889              1    11.5                   11.5
+## 625            1 -74.28889              0   -11.5                    0.0
+## 626            1 -74.28889              0   -10.5                    0.0
+## 627            1 -74.28889              0    -9.5                    0.0
+## 628            1 -74.28889              0    -8.5                    0.0
+## 629            1 -74.28889              0    -7.5                    0.0
+## 630            1 -74.28889              0    -6.5                    0.0
+## 631            1 -74.28889              0    -5.5                    0.0
+## 632            1 -74.28889              0    -4.5                    0.0
+## 633            1 -74.28889              0    -3.5                    0.0
+## 634            1 -74.28889              0    -2.5                    0.0
+## 635            1 -74.28889              0    -1.5                    0.0
+## 636            1 -74.28889              0    -0.5                    0.0
+## 637            1 -74.28889              0     0.5                    0.0
+## 638            1 -74.28889              0     1.5                    0.0
+## 639            1 -74.28889              0     2.5                    0.0
+## 640            1 -74.28889              0     3.5                    0.0
+## 641            1 -74.28889              0     4.5                    0.0
+## 642            1 -74.28889              0     5.5                    0.0
+## 643            1 -74.28889              0     6.5                    0.0
+## 644            1 -74.28889              0     7.5                    0.0
+## 645            1 -74.28889              0     8.5                    0.0
+## 646            1 -74.28889              0     9.5                    0.0
+## 647            1 -74.28889              0    10.5                    0.0
+## 648            1 -74.28889              0    11.5                    0.0
+## 649            1 -74.28889              1   -11.5                  -11.5
+## 650            1 -74.28889              1   -10.5                  -10.5
+## 651            1 -74.28889              1    -9.5                   -9.5
+## 652            1 -74.28889              1    -8.5                   -8.5
+## 653            1 -74.28889              1    -7.5                   -7.5
+## 654            1 -74.28889              1    -6.5                   -6.5
+## 655            1 -74.28889              1    -5.5                   -5.5
+## 656            1 -74.28889              1    -4.5                   -4.5
+## 657            1 -74.28889              1    -3.5                   -3.5
+## 658            1 -74.28889              1    -2.5                   -2.5
+## 659            1 -74.28889              1    -1.5                   -1.5
+## 660            1 -74.28889              1    -0.5                   -0.5
+## 661            1 -74.28889              1     0.5                    0.5
+## 662            1 -74.28889              1     1.5                    1.5
+## 663            1 -74.28889              1     2.5                    2.5
+## 664            1 -74.28889              1     3.5                    3.5
+## 665            1 -74.28889              1     4.5                    4.5
+## 666            1 -74.28889              1     5.5                    5.5
+## 667            1 -74.28889              1     6.5                    6.5
+## 668            1 -74.28889              1     7.5                    7.5
+## 669            1 -74.28889              1     8.5                    8.5
+## 670            1 -74.28889              1     9.5                    9.5
+## 671            1 -74.28889              1    10.5                   10.5
+## 672            1 -74.28889              1    11.5                   11.5
+## 673            1 -74.28889              0   -11.5                    0.0
+## 674            1 -74.28889              0   -10.5                    0.0
+## 675            1 -74.28889              0    -9.5                    0.0
+## 676            1 -74.28889              0    -8.5                    0.0
+## 677            1 -74.28889              0    -7.5                    0.0
+## 678            1 -74.28889              0    -6.5                    0.0
+## 679            1 -74.28889              0    -5.5                    0.0
+## 680            1 -74.28889              0    -4.5                    0.0
+## 681            1 -74.28889              0    -3.5                    0.0
+## 682            1 -74.28889              0    -2.5                    0.0
+## 683            1 -74.28889              0    -1.5                    0.0
+## 684            1 -74.28889              0    -0.5                    0.0
+## 685            1 -74.28889              0     0.5                    0.0
+## 686            1 -74.28889              0     1.5                    0.0
+## 687            1 -74.28889              0     2.5                    0.0
+## 688            1 -74.28889              0     3.5                    0.0
+## 689            1 -74.28889              0     4.5                    0.0
+## 690            1 -74.28889              0     5.5                    0.0
+## 691            1 -74.28889              0     6.5                    0.0
+## 692            1 -74.28889              0     7.5                    0.0
+## 693            1 -74.28889              0     8.5                    0.0
+## 694            1 -74.28889              0     9.5                    0.0
+## 695            1 -74.28889              0    10.5                    0.0
+## 696            1 -74.28889              0    11.5                    0.0
+## 697            1 -74.28889              1   -11.5                  -11.5
+## 698            1 -74.28889              1   -10.5                  -10.5
+## 699            1 -74.28889              1    -9.5                   -9.5
+## 700            1 -74.28889              1    -8.5                   -8.5
+## 701            1 -74.28889              1    -7.5                   -7.5
+## 702            1 -74.28889              1    -6.5                   -6.5
+## 703            1 -74.28889              1    -5.5                   -5.5
+## 704            1 -74.28889              1    -4.5                   -4.5
+## 705            1 -74.28889              1    -3.5                   -3.5
+## 706            1 -74.28889              1    -2.5                   -2.5
+## 707            1 -74.28889              1    -1.5                   -1.5
+## 708            1 -74.28889              1    -0.5                   -0.5
+## 709            1 -74.28889              1     0.5                    0.5
+## 710            1 -74.28889              1     1.5                    1.5
+## 711            1 -74.28889              1     2.5                    2.5
+## 712            1 -74.28889              1     3.5                    3.5
+## 713            1 -74.28889              1     4.5                    4.5
+## 714            1 -74.28889              1     5.5                    5.5
+## 715            1 -74.28889              1     6.5                    6.5
+## 716            1 -74.28889              1     7.5                    7.5
+## 717            1 -74.28889              1     8.5                    8.5
+## 718            1 -74.28889              1     9.5                    9.5
+## 719            1 -74.28889              1    10.5                   10.5
+## 720            1 -74.28889              1    11.5                   11.5
+## 721            1 -74.28889              0   -11.5                    0.0
+## 722            1 -74.28889              0   -10.5                    0.0
+## 723            1 -74.28889              0    -9.5                    0.0
+## 724            1 -74.28889              0    -8.5                    0.0
+## 725            1 -74.28889              0    -7.5                    0.0
+## 726            1 -74.28889              0    -6.5                    0.0
+## 727            1 -74.28889              0    -5.5                    0.0
+## 728            1 -74.28889              0    -4.5                    0.0
+## 729            1 -74.28889              0    -3.5                    0.0
+## 730            1 -74.28889              0    -2.5                    0.0
+## 731            1 -74.28889              0    -1.5                    0.0
+## 732            1 -74.28889              0    -0.5                    0.0
+## 733            1 -74.28889              0     0.5                    0.0
+## 734            1 -74.28889              0     1.5                    0.0
+## 735            1 -74.28889              0     2.5                    0.0
+## 736            1 -74.28889              0     3.5                    0.0
+## 737            1 -74.28889              0     4.5                    0.0
+## 738            1 -74.28889              0     5.5                    0.0
+## 739            1 -74.28889              0     6.5                    0.0
+## 740            1 -74.28889              0     7.5                    0.0
+## 741            1 -74.28889              0     8.5                    0.0
+## 742            1 -74.28889              0     9.5                    0.0
+## 743            1 -74.28889              0    10.5                    0.0
+## 744            1 -74.28889              0    11.5                    0.0
+## 745            1 -74.28889              1   -11.5                  -11.5
+## 746            1 -74.28889              1   -10.5                  -10.5
+## 747            1 -74.28889              1    -9.5                   -9.5
+## 748            1 -74.28889              1    -8.5                   -8.5
+## 749            1 -74.28889              1    -7.5                   -7.5
+## 750            1 -74.28889              1    -6.5                   -6.5
+## 751            1 -74.28889              1    -5.5                   -5.5
+## 752            1 -74.28889              1    -4.5                   -4.5
+## 753            1 -74.28889              1    -3.5                   -3.5
+## 754            1 -74.28889              1    -2.5                   -2.5
+## 755            1 -74.28889              1    -1.5                   -1.5
+## 756            1 -74.28889              1    -0.5                   -0.5
+## 757            1 -74.28889              1     0.5                    0.5
+## 758            1 -74.28889              1     1.5                    1.5
+## 759            1 -74.28889              1     2.5                    2.5
+## 760            1 -74.28889              1     3.5                    3.5
+## 761            1 -74.28889              1     4.5                    4.5
+## 762            1 -74.28889              1     5.5                    5.5
+## 763            1 -74.28889              1     6.5                    6.5
+## 764            1 -74.28889              1     7.5                    7.5
+## 765            1 -74.28889              1     8.5                    8.5
+## 766            1 -74.28889              1     9.5                    9.5
+## 767            1 -74.28889              1    10.5                   10.5
+## 768            1 -74.28889              1    11.5                   11.5
+## 769            1 -74.28889              0   -11.5                    0.0
+## 770            1 -74.28889              0   -10.5                    0.0
+## 771            1 -74.28889              0    -9.5                    0.0
+## 772            1 -74.28889              0    -8.5                    0.0
+## 773            1 -74.28889              0    -7.5                    0.0
+## 774            1 -74.28889              0    -6.5                    0.0
+## 775            1 -74.28889              0    -5.5                    0.0
+## 776            1 -74.28889              0    -4.5                    0.0
+## 777            1 -74.28889              0    -3.5                    0.0
+## 778            1 -74.28889              0    -2.5                    0.0
+## 779            1 -74.28889              0    -1.5                    0.0
+## 780            1 -74.28889              0    -0.5                    0.0
+## 781            1 -74.28889              0     0.5                    0.0
+## 782            1 -74.28889              0     1.5                    0.0
+## 783            1 -74.28889              0     2.5                    0.0
+## 784            1 -74.28889              0     3.5                    0.0
+## 785            1 -74.28889              0     4.5                    0.0
+## 786            1 -74.28889              0     5.5                    0.0
+## 787            1 -74.28889              0     6.5                    0.0
+## 788            1 -74.28889              0     7.5                    0.0
+## 789            1 -74.28889              0     8.5                    0.0
+## 790            1 -74.28889              0     9.5                    0.0
+## 791            1 -74.28889              0    10.5                    0.0
+## 792            1 -74.28889              0    11.5                    0.0
+## 793            1 -74.28889              1   -11.5                  -11.5
+## 794            1 -74.28889              1   -10.5                  -10.5
+## 795            1 -74.28889              1    -9.5                   -9.5
+## 796            1 -74.28889              1    -8.5                   -8.5
+## 797            1 -74.28889              1    -7.5                   -7.5
+## 798            1 -74.28889              1    -6.5                   -6.5
+## 799            1 -74.28889              1    -5.5                   -5.5
+## 800            1 -74.28889              1    -4.5                   -4.5
+## 801            1 -74.28889              1    -3.5                   -3.5
+## 802            1 -74.28889              1    -2.5                   -2.5
+## 803            1 -74.28889              1    -1.5                   -1.5
+## 804            1 -74.28889              1    -0.5                   -0.5
+## 805            1 -74.28889              1     0.5                    0.5
+## 806            1 -74.28889              1     1.5                    1.5
+## 807            1 -74.28889              1     2.5                    2.5
+## 808            1 -74.28889              1     3.5                    3.5
+## 809            1 -74.28889              1     4.5                    4.5
+## 810            1 -74.28889              1     5.5                    5.5
+## 811            1 -74.28889              1     6.5                    6.5
+## 812            1 -74.28889              1     7.5                    7.5
+## 813            1 -74.28889              1     8.5                    8.5
+## 814            1 -74.28889              1     9.5                    9.5
+## 815            1 -74.28889              1    10.5                   10.5
+## 816            1 -74.28889              1    11.5                   11.5
+## 817            1 -69.28889              0   -11.5                    0.0
+## 818            1 -69.28889              0   -10.5                    0.0
+## 819            1 -69.28889              0    -9.5                    0.0
+## 820            1 -69.28889              0    -8.5                    0.0
+## 821            1 -69.28889              0    -7.5                    0.0
+## 822            1 -69.28889              0    -6.5                    0.0
+## 823            1 -69.28889              0    -5.5                    0.0
+## 824            1 -69.28889              0    -4.5                    0.0
+## 825            1 -69.28889              0    -3.5                    0.0
+## 826            1 -69.28889              0    -2.5                    0.0
+## 827            1 -69.28889              0    -1.5                    0.0
+## 828            1 -69.28889              0    -0.5                    0.0
+## 829            1 -69.28889              0     0.5                    0.0
+## 830            1 -69.28889              0     1.5                    0.0
+## 831            1 -69.28889              0     2.5                    0.0
+## 832            1 -69.28889              0     3.5                    0.0
+## 833            1 -69.28889              0     4.5                    0.0
+## 834            1 -69.28889              0     5.5                    0.0
+## 835            1 -69.28889              0     6.5                    0.0
+## 836            1 -69.28889              0     7.5                    0.0
+## 837            1 -69.28889              0     8.5                    0.0
+## 838            1 -69.28889              0     9.5                    0.0
+## 839            1 -69.28889              0    10.5                    0.0
+## 840            1 -69.28889              0    11.5                    0.0
+## 841            1 -69.28889              1   -11.5                  -11.5
+## 842            1 -69.28889              1   -10.5                  -10.5
+## 843            1 -69.28889              1    -9.5                   -9.5
+## 844            1 -69.28889              1    -8.5                   -8.5
+## 845            1 -69.28889              1    -7.5                   -7.5
+## 846            1 -69.28889              1    -6.5                   -6.5
+## 847            1 -69.28889              1    -5.5                   -5.5
+## 848            1 -69.28889              1    -4.5                   -4.5
+## 849            1 -69.28889              1    -3.5                   -3.5
+## 850            1 -69.28889              1    -2.5                   -2.5
+## 851            1 -69.28889              1    -1.5                   -1.5
+## 852            1 -69.28889              1    -0.5                   -0.5
+## 853            1 -69.28889              1     0.5                    0.5
+## 854            1 -69.28889              1     1.5                    1.5
+## 855            1 -69.28889              1     2.5                    2.5
+## 856            1 -69.28889              1     3.5                    3.5
+## 857            1 -69.28889              1     4.5                    4.5
+## 858            1 -69.28889              1     5.5                    5.5
+## 859            1 -69.28889              1     6.5                    6.5
+## 860            1 -69.28889              1     7.5                    7.5
+## 861            1 -69.28889              1     8.5                    8.5
+## 862            1 -69.28889              1     9.5                    9.5
+## 863            1 -69.28889              1    10.5                   10.5
+## 864            1 -69.28889              1    11.5                   11.5
+## 865            1 -70.28889              0   -11.5                    0.0
+## 866            1 -70.28889              0   -10.5                    0.0
+## 867            1 -70.28889              0    -9.5                    0.0
+## 868            1 -70.28889              0    -8.5                    0.0
+## 869            1 -70.28889              0    -7.5                    0.0
+## 870            1 -70.28889              0    -6.5                    0.0
+## 871            1 -70.28889              0    -5.5                    0.0
+## 872            1 -70.28889              0    -4.5                    0.0
+## 873            1 -70.28889              0    -3.5                    0.0
+## 874            1 -70.28889              0    -2.5                    0.0
+## 875            1 -70.28889              0    -1.5                    0.0
+## 876            1 -70.28889              0    -0.5                    0.0
+## 877            1 -70.28889              0     0.5                    0.0
+## 878            1 -70.28889              0     1.5                    0.0
+## 879            1 -70.28889              0     2.5                    0.0
+## 880            1 -70.28889              0     3.5                    0.0
+## 881            1 -70.28889              0     4.5                    0.0
+## 882            1 -70.28889              0     5.5                    0.0
+## 883            1 -70.28889              0     6.5                    0.0
+## 884            1 -70.28889              0     7.5                    0.0
+## 885            1 -70.28889              0     8.5                    0.0
+## 886            1 -70.28889              0     9.5                    0.0
+## 887            1 -70.28889              0    10.5                    0.0
+## 888            1 -70.28889              0    11.5                    0.0
+## 889            1 -70.28889              1   -11.5                  -11.5
+## 890            1 -70.28889              1   -10.5                  -10.5
+## 891            1 -70.28889              1    -9.5                   -9.5
+## 892            1 -70.28889              1    -8.5                   -8.5
+## 893            1 -70.28889              1    -7.5                   -7.5
+## 894            1 -70.28889              1    -6.5                   -6.5
+## 895            1 -70.28889              1    -5.5                   -5.5
+## 896            1 -70.28889              1    -4.5                   -4.5
+## 897            1 -70.28889              1    -3.5                   -3.5
+## 898            1 -70.28889              1    -2.5                   -2.5
+## 899            1 -70.28889              1    -1.5                   -1.5
+## 900            1 -70.28889              1    -0.5                   -0.5
+## 901            1 -70.28889              1     0.5                    0.5
+## 902            1 -70.28889              1     1.5                    1.5
+## 903            1 -70.28889              1     2.5                    2.5
+## 904            1 -70.28889              1     3.5                    3.5
+## 905            1 -70.28889              1     4.5                    4.5
+## 906            1 -70.28889              1     5.5                    5.5
+## 907            1 -70.28889              1     6.5                    6.5
+## 908            1 -70.28889              1     7.5                    7.5
+## 909            1 -70.28889              1     8.5                    8.5
+## 910            1 -70.28889              1     9.5                    9.5
+## 911            1 -70.28889              1    10.5                   10.5
+## 912            1 -70.28889              1    11.5                   11.5
+## 913            1 547.71111              0   -11.5                    0.0
+## 914            1 547.71111              0   -10.5                    0.0
+## 915            1 547.71111              0    -9.5                    0.0
+## 916            1 547.71111              0    -8.5                    0.0
+## 917            1 547.71111              0    -7.5                    0.0
+## 918            1 547.71111              0    -6.5                    0.0
+## 919            1 547.71111              0    -5.5                    0.0
+## 920            1 547.71111              0    -4.5                    0.0
+## 921            1 547.71111              0    -3.5                    0.0
+## 922            1 547.71111              0    -2.5                    0.0
+## 923            1 547.71111              0    -1.5                    0.0
+## 924            1 547.71111              0    -0.5                    0.0
+## 925            1 547.71111              0     0.5                    0.0
+## 926            1 547.71111              0     1.5                    0.0
+## 927            1 547.71111              0     2.5                    0.0
+## 928            1 547.71111              0     3.5                    0.0
+## 929            1 547.71111              0     4.5                    0.0
+## 930            1 547.71111              0     5.5                    0.0
+## 931            1 547.71111              0     6.5                    0.0
+## 932            1 547.71111              0     7.5                    0.0
+## 933            1 547.71111              0     8.5                    0.0
+## 934            1 547.71111              0     9.5                    0.0
+## 935            1 547.71111              0    10.5                    0.0
+## 936            1 547.71111              0    11.5                    0.0
+## 937            1 547.71111              1   -11.5                  -11.5
+## 938            1 547.71111              1   -10.5                  -10.5
+## 939            1 547.71111              1    -9.5                   -9.5
+## 940            1 547.71111              1    -8.5                   -8.5
+## 941            1 547.71111              1    -7.5                   -7.5
+## 942            1 547.71111              1    -6.5                   -6.5
+## 943            1 547.71111              1    -5.5                   -5.5
+## 944            1 547.71111              1    -4.5                   -4.5
+## 945            1 547.71111              1    -3.5                   -3.5
+## 946            1 547.71111              1    -2.5                   -2.5
+## 947            1 547.71111              1    -1.5                   -1.5
+## 948            1 547.71111              1    -0.5                   -0.5
+## 949            1 547.71111              1     0.5                    0.5
+## 950            1 547.71111              1     1.5                    1.5
+## 951            1 547.71111              1     2.5                    2.5
+## 952            1 547.71111              1     3.5                    3.5
+## 953            1 547.71111              1     4.5                    4.5
+## 954            1 547.71111              1     5.5                    5.5
+## 955            1 547.71111              1     6.5                    6.5
+## 956            1 547.71111              1     7.5                    7.5
+## 957            1 547.71111              1     8.5                    8.5
+## 958            1 547.71111              1     9.5                    9.5
+## 959            1 547.71111              1    10.5                   10.5
+## 960            1 547.71111              1    11.5                   11.5
+## 961            1 324.71111              0   -11.5                    0.0
+## 962            1 324.71111              0   -10.5                    0.0
+## 963            1 324.71111              0    -9.5                    0.0
+## 964            1 324.71111              0    -8.5                    0.0
+## 965            1 324.71111              0    -7.5                    0.0
+## 966            1 324.71111              0    -6.5                    0.0
+## 967            1 324.71111              0    -5.5                    0.0
+## 968            1 324.71111              0    -4.5                    0.0
+## 969            1 324.71111              0    -3.5                    0.0
+## 970            1 324.71111              0    -2.5                    0.0
+## 971            1 324.71111              0    -1.5                    0.0
+## 972            1 324.71111              0    -0.5                    0.0
+## 973            1 324.71111              0     0.5                    0.0
+## 974            1 324.71111              0     1.5                    0.0
+## 975            1 324.71111              0     2.5                    0.0
+## 976            1 324.71111              0     3.5                    0.0
+## 977            1 324.71111              0     4.5                    0.0
+## 978            1 324.71111              0     5.5                    0.0
+## 979            1 324.71111              0     6.5                    0.0
+## 980            1 324.71111              0     7.5                    0.0
+## 981            1 324.71111              0     8.5                    0.0
+## 982            1 324.71111              0     9.5                    0.0
+## 983            1 324.71111              0    10.5                    0.0
+## 984            1 324.71111              0    11.5                    0.0
+## 985            1 324.71111              1   -11.5                  -11.5
+## 986            1 324.71111              1   -10.5                  -10.5
+## 987            1 324.71111              1    -9.5                   -9.5
+## 988            1 324.71111              1    -8.5                   -8.5
+## 989            1 324.71111              1    -7.5                   -7.5
+## 990            1 324.71111              1    -6.5                   -6.5
+## 991            1 324.71111              1    -5.5                   -5.5
+## 992            1 324.71111              1    -4.5                   -4.5
+## 993            1 324.71111              1    -3.5                   -3.5
+## 994            1 324.71111              1    -2.5                   -2.5
+## 995            1 324.71111              1    -1.5                   -1.5
+## 996            1 324.71111              1    -0.5                   -0.5
+## 997            1 324.71111              1     0.5                    0.5
+## 998            1 324.71111              1     1.5                    1.5
+## 999            1 324.71111              1     2.5                    2.5
+## 1000           1 324.71111              1     3.5                    3.5
+## 1001           1 324.71111              1     4.5                    4.5
+## 1002           1 324.71111              1     5.5                    5.5
+## 1003           1 324.71111              1     6.5                    6.5
+## 1004           1 324.71111              1     7.5                    7.5
+## 1005           1 324.71111              1     8.5                    8.5
+## 1006           1 324.71111              1     9.5                    9.5
+## 1007           1 324.71111              1    10.5                   10.5
+## 1008           1 324.71111              1    11.5                   11.5
+## 1009           1 -75.28889              0   -11.5                    0.0
+## 1010           1 -75.28889              0   -10.5                    0.0
+## 1011           1 -75.28889              0    -9.5                    0.0
+## 1012           1 -75.28889              0    -8.5                    0.0
+## 1013           1 -75.28889              0    -7.5                    0.0
+## 1014           1 -75.28889              0    -6.5                    0.0
+## 1015           1 -75.28889              0    -5.5                    0.0
+## 1016           1 -75.28889              0    -4.5                    0.0
+## 1017           1 -75.28889              0    -3.5                    0.0
+## 1018           1 -75.28889              0    -2.5                    0.0
+## 1019           1 -75.28889              0    -1.5                    0.0
+## 1020           1 -75.28889              0    -0.5                    0.0
+## 1021           1 -75.28889              0     0.5                    0.0
+## 1022           1 -75.28889              0     1.5                    0.0
+## 1023           1 -75.28889              0     2.5                    0.0
+## 1024           1 -75.28889              0     3.5                    0.0
+## 1025           1 -75.28889              0     4.5                    0.0
+## 1026           1 -75.28889              0     5.5                    0.0
+## 1027           1 -75.28889              0     6.5                    0.0
+## 1028           1 -75.28889              0     7.5                    0.0
+## 1029           1 -75.28889              0     8.5                    0.0
+## 1030           1 -75.28889              0     9.5                    0.0
+## 1031           1 -75.28889              0    10.5                    0.0
+## 1032           1 -75.28889              0    11.5                    0.0
+## 1033           1 -75.28889              1   -11.5                  -11.5
+## 1034           1 -75.28889              1   -10.5                  -10.5
+## 1035           1 -75.28889              1    -9.5                   -9.5
+## 1036           1 -75.28889              1    -8.5                   -8.5
+## 1037           1 -75.28889              1    -7.5                   -7.5
+## 1038           1 -75.28889              1    -6.5                   -6.5
+## 1039           1 -75.28889              1    -5.5                   -5.5
+## 1040           1 -75.28889              1    -4.5                   -4.5
+## 1041           1 -75.28889              1    -3.5                   -3.5
+## 1042           1 -75.28889              1    -2.5                   -2.5
+## 1043           1 -75.28889              1    -1.5                   -1.5
+## 1044           1 -75.28889              1    -0.5                   -0.5
+## 1045           1 -75.28889              1     0.5                    0.5
+## 1046           1 -75.28889              1     1.5                    1.5
+## 1047           1 -75.28889              1     2.5                    2.5
+## 1048           1 -75.28889              1     3.5                    3.5
+## 1049           1 -75.28889              1     4.5                    4.5
+## 1050           1 -75.28889              1     5.5                    5.5
+## 1051           1 -75.28889              1     6.5                    6.5
+## 1052           1 -75.28889              1     7.5                    7.5
+## 1053           1 -75.28889              1     8.5                    8.5
+## 1054           1 -75.28889              1     9.5                    9.5
+## 1055           1 -75.28889              1    10.5                   10.5
+## 1056           1 -75.28889              1    11.5                   11.5
+## 1057           1 392.71111              0   -11.5                    0.0
+## 1058           1 392.71111              0   -10.5                    0.0
+## 1059           1 392.71111              0    -9.5                    0.0
+## 1060           1 392.71111              0    -8.5                    0.0
+## 1061           1 392.71111              0    -7.5                    0.0
+## 1062           1 392.71111              0    -6.5                    0.0
+## 1063           1 392.71111              0    -5.5                    0.0
+## 1064           1 392.71111              0    -4.5                    0.0
+## 1065           1 392.71111              0    -3.5                    0.0
+## 1066           1 392.71111              0    -2.5                    0.0
+## 1067           1 392.71111              0    -1.5                    0.0
+## 1068           1 392.71111              0    -0.5                    0.0
+## 1069           1 392.71111              0     0.5                    0.0
+## 1070           1 392.71111              0     1.5                    0.0
+## 1071           1 392.71111              0     2.5                    0.0
+## 1072           1 392.71111              0     3.5                    0.0
+## 1073           1 392.71111              0     4.5                    0.0
+## 1074           1 392.71111              0     5.5                    0.0
+## 1075           1 392.71111              0     6.5                    0.0
+## 1076           1 392.71111              0     7.5                    0.0
+## 1077           1 392.71111              0     8.5                    0.0
+## 1078           1 392.71111              0     9.5                    0.0
+## 1079           1 392.71111              0    10.5                    0.0
+## 1080           1 392.71111              0    11.5                    0.0
+## 1081           1 392.71111              1   -11.5                  -11.5
+## 1082           1 392.71111              1   -10.5                  -10.5
+## 1083           1 392.71111              1    -9.5                   -9.5
+## 1084           1 392.71111              1    -8.5                   -8.5
+## 1085           1 392.71111              1    -7.5                   -7.5
+## 1086           1 392.71111              1    -6.5                   -6.5
+## 1087           1 392.71111              1    -5.5                   -5.5
+## 1088           1 392.71111              1    -4.5                   -4.5
+## 1089           1 392.71111              1    -3.5                   -3.5
+## 1090           1 392.71111              1    -2.5                   -2.5
+## 1091           1 392.71111              1    -1.5                   -1.5
+## 1092           1 392.71111              1    -0.5                   -0.5
+## 1093           1 392.71111              1     0.5                    0.5
+## 1094           1 392.71111              1     1.5                    1.5
+## 1095           1 392.71111              1     2.5                    2.5
+## 1096           1 392.71111              1     3.5                    3.5
+## 1097           1 392.71111              1     4.5                    4.5
+## 1098           1 392.71111              1     5.5                    5.5
+## 1099           1 392.71111              1     6.5                    6.5
+## 1100           1 392.71111              1     7.5                    7.5
+## 1101           1 392.71111              1     8.5                    8.5
+## 1102           1 392.71111              1     9.5                    9.5
+## 1103           1 392.71111              1    10.5                   10.5
+## 1104           1 392.71111              1    11.5                   11.5
+## 1105           1 384.71111              0   -11.5                    0.0
+## 1106           1 384.71111              0   -10.5                    0.0
+## 1107           1 384.71111              0    -9.5                    0.0
+## 1108           1 384.71111              0    -8.5                    0.0
+## 1109           1 384.71111              0    -7.5                    0.0
+## 1110           1 384.71111              0    -6.5                    0.0
+## 1111           1 384.71111              0    -5.5                    0.0
+## 1112           1 384.71111              0    -4.5                    0.0
+## 1113           1 384.71111              0    -3.5                    0.0
+## 1114           1 384.71111              0    -2.5                    0.0
+## 1115           1 384.71111              0    -1.5                    0.0
+## 1116           1 384.71111              0    -0.5                    0.0
+## 1117           1 384.71111              0     0.5                    0.0
+## 1118           1 384.71111              0     1.5                    0.0
+## 1119           1 384.71111              0     2.5                    0.0
+## 1120           1 384.71111              0     3.5                    0.0
+## 1121           1 384.71111              0     4.5                    0.0
+## 1122           1 384.71111              0     5.5                    0.0
+## 1123           1 384.71111              0     6.5                    0.0
+## 1124           1 384.71111              0     7.5                    0.0
+## 1125           1 384.71111              0     8.5                    0.0
+## 1126           1 384.71111              0     9.5                    0.0
+## 1127           1 384.71111              0    10.5                    0.0
+## 1128           1 384.71111              0    11.5                    0.0
+## 1129           1 384.71111              1   -11.5                  -11.5
+## 1130           1 384.71111              1   -10.5                  -10.5
+## 1131           1 384.71111              1    -9.5                   -9.5
+## 1132           1 384.71111              1    -8.5                   -8.5
+## 1133           1 384.71111              1    -7.5                   -7.5
+## 1134           1 384.71111              1    -6.5                   -6.5
+## 1135           1 384.71111              1    -5.5                   -5.5
+## 1136           1 384.71111              1    -4.5                   -4.5
+## 1137           1 384.71111              1    -3.5                   -3.5
+## 1138           1 384.71111              1    -2.5                   -2.5
+## 1139           1 384.71111              1    -1.5                   -1.5
+## 1140           1 384.71111              1    -0.5                   -0.5
+## 1141           1 384.71111              1     0.5                    0.5
+## 1142           1 384.71111              1     1.5                    1.5
+## 1143           1 384.71111              1     2.5                    2.5
+## 1144           1 384.71111              1     3.5                    3.5
+## 1145           1 384.71111              1     4.5                    4.5
+## 1146           1 384.71111              1     5.5                    5.5
+## 1147           1 384.71111              1     6.5                    6.5
+## 1148           1 384.71111              1     7.5                    7.5
+## 1149           1 384.71111              1     8.5                    8.5
+## 1150           1 384.71111              1     9.5                    9.5
+## 1151           1 384.71111              1    10.5                   10.5
+## 1152           1 384.71111              1    11.5                   11.5
+## 1153           1 -72.28889              0   -11.5                    0.0
+## 1154           1 -72.28889              0   -10.5                    0.0
+## 1155           1 -72.28889              0    -9.5                    0.0
+## 1156           1 -72.28889              0    -8.5                    0.0
+## 1157           1 -72.28889              0    -7.5                    0.0
+## 1158           1 -72.28889              0    -6.5                    0.0
+## 1159           1 -72.28889              0    -5.5                    0.0
+## 1160           1 -72.28889              0    -4.5                    0.0
+## 1161           1 -72.28889              0    -3.5                    0.0
+## 1162           1 -72.28889              0    -2.5                    0.0
+## 1163           1 -72.28889              0    -1.5                    0.0
+## 1164           1 -72.28889              0    -0.5                    0.0
+## 1165           1 -72.28889              0     0.5                    0.0
+## 1166           1 -72.28889              0     1.5                    0.0
+## 1167           1 -72.28889              0     2.5                    0.0
+## 1168           1 -72.28889              0     3.5                    0.0
+## 1169           1 -72.28889              0     4.5                    0.0
+## 1170           1 -72.28889              0     5.5                    0.0
+## 1171           1 -72.28889              0     6.5                    0.0
+## 1172           1 -72.28889              0     7.5                    0.0
+## 1173           1 -72.28889              0     8.5                    0.0
+## 1174           1 -72.28889              0     9.5                    0.0
+## 1175           1 -72.28889              0    10.5                    0.0
+## 1176           1 -72.28889              0    11.5                    0.0
+## 1177           1 -72.28889              1   -11.5                  -11.5
+## 1178           1 -72.28889              1   -10.5                  -10.5
+## 1179           1 -72.28889              1    -9.5                   -9.5
+## 1180           1 -72.28889              1    -8.5                   -8.5
+## 1181           1 -72.28889              1    -7.5                   -7.5
+## 1182           1 -72.28889              1    -6.5                   -6.5
+## 1183           1 -72.28889              1    -5.5                   -5.5
+## 1184           1 -72.28889              1    -4.5                   -4.5
+## 1185           1 -72.28889              1    -3.5                   -3.5
+## 1186           1 -72.28889              1    -2.5                   -2.5
+## 1187           1 -72.28889              1    -1.5                   -1.5
+## 1188           1 -72.28889              1    -0.5                   -0.5
+## 1189           1 -72.28889              1     0.5                    0.5
+## 1190           1 -72.28889              1     1.5                    1.5
+## 1191           1 -72.28889              1     2.5                    2.5
+## 1192           1 -72.28889              1     3.5                    3.5
+## 1193           1 -72.28889              1     4.5                    4.5
+## 1194           1 -72.28889              1     5.5                    5.5
+## 1195           1 -72.28889              1     6.5                    6.5
+## 1196           1 -72.28889              1     7.5                    7.5
+## 1197           1 -72.28889              1     8.5                    8.5
+## 1198           1 -72.28889              1     9.5                    9.5
+## 1199           1 -72.28889              1    10.5                   10.5
+## 1200           1 -72.28889              1    11.5                   11.5
+## 1201           1 -69.28889              0   -11.5                    0.0
+## 1202           1 -69.28889              0   -10.5                    0.0
+## 1203           1 -69.28889              0    -9.5                    0.0
+## 1204           1 -69.28889              0    -8.5                    0.0
+## 1205           1 -69.28889              0    -7.5                    0.0
+## 1206           1 -69.28889              0    -6.5                    0.0
+## 1207           1 -69.28889              0    -5.5                    0.0
+## 1208           1 -69.28889              0    -4.5                    0.0
+## 1209           1 -69.28889              0    -3.5                    0.0
+## 1210           1 -69.28889              0    -2.5                    0.0
+## 1211           1 -69.28889              0    -1.5                    0.0
+## 1212           1 -69.28889              0    -0.5                    0.0
+## 1213           1 -69.28889              0     0.5                    0.0
+## 1214           1 -69.28889              0     1.5                    0.0
+## 1215           1 -69.28889              0     2.5                    0.0
+## 1216           1 -69.28889              0     3.5                    0.0
+## 1217           1 -69.28889              0     4.5                    0.0
+## 1218           1 -69.28889              0     5.5                    0.0
+## 1219           1 -69.28889              0     6.5                    0.0
+## 1220           1 -69.28889              0     7.5                    0.0
+## 1221           1 -69.28889              0     8.5                    0.0
+## 1222           1 -69.28889              0     9.5                    0.0
+## 1223           1 -69.28889              0    10.5                    0.0
+## 1224           1 -69.28889              0    11.5                    0.0
+## 1225           1 -69.28889              1   -11.5                  -11.5
+## 1226           1 -69.28889              1   -10.5                  -10.5
+## 1227           1 -69.28889              1    -9.5                   -9.5
+## 1228           1 -69.28889              1    -8.5                   -8.5
+## 1229           1 -69.28889              1    -7.5                   -7.5
+## 1230           1 -69.28889              1    -6.5                   -6.5
+## 1231           1 -69.28889              1    -5.5                   -5.5
+## 1232           1 -69.28889              1    -4.5                   -4.5
+## 1233           1 -69.28889              1    -3.5                   -3.5
+## 1234           1 -69.28889              1    -2.5                   -2.5
+## 1235           1 -69.28889              1    -1.5                   -1.5
+## 1236           1 -69.28889              1    -0.5                   -0.5
+## 1237           1 -69.28889              1     0.5                    0.5
+## 1238           1 -69.28889              1     1.5                    1.5
+## 1239           1 -69.28889              1     2.5                    2.5
+## 1240           1 -69.28889              1     3.5                    3.5
+## 1241           1 -69.28889              1     4.5                    4.5
+## 1242           1 -69.28889              1     5.5                    5.5
+## 1243           1 -69.28889              1     6.5                    6.5
+## 1244           1 -69.28889              1     7.5                    7.5
+## 1245           1 -69.28889              1     8.5                    8.5
+## 1246           1 -69.28889              1     9.5                    9.5
+## 1247           1 -69.28889              1    10.5                   10.5
+## 1248           1 -69.28889              1    11.5                   11.5
+## 1249           1 -74.28889              0   -11.5                    0.0
+## 1250           1 -74.28889              0   -10.5                    0.0
+## 1251           1 -74.28889              0    -9.5                    0.0
+## 1252           1 -74.28889              0    -8.5                    0.0
+## 1253           1 -74.28889              0    -7.5                    0.0
+## 1254           1 -74.28889              0    -6.5                    0.0
+## 1255           1 -74.28889              0    -5.5                    0.0
+## 1256           1 -74.28889              0    -4.5                    0.0
+## 1257           1 -74.28889              0    -3.5                    0.0
+## 1258           1 -74.28889              0    -2.5                    0.0
+## 1260           1 -74.28889              0    -0.5                    0.0
+## 1261           1 -74.28889              0     0.5                    0.0
+## 1262           1 -74.28889              0     1.5                    0.0
+## 1263           1 -74.28889              0     2.5                    0.0
+## 1264           1 -74.28889              0     3.5                    0.0
+## 1265           1 -74.28889              0     4.5                    0.0
+## 1266           1 -74.28889              0     5.5                    0.0
+## 1267           1 -74.28889              0     6.5                    0.0
+## 1268           1 -74.28889              0     7.5                    0.0
+## 1269           1 -74.28889              0     8.5                    0.0
+## 1270           1 -74.28889              0     9.5                    0.0
+## 1271           1 -74.28889              0    10.5                    0.0
+## 1272           1 -74.28889              0    11.5                    0.0
+## 1273           1 -74.28889              1   -11.5                  -11.5
+## 1274           1 -74.28889              1   -10.5                  -10.5
+## 1275           1 -74.28889              1    -9.5                   -9.5
+## 1276           1 -74.28889              1    -8.5                   -8.5
+## 1277           1 -74.28889              1    -7.5                   -7.5
+## 1278           1 -74.28889              1    -6.5                   -6.5
+## 1279           1 -74.28889              1    -5.5                   -5.5
+## 1280           1 -74.28889              1    -4.5                   -4.5
+## 1281           1 -74.28889              1    -3.5                   -3.5
+## 1282           1 -74.28889              1    -2.5                   -2.5
+## 1283           1 -74.28889              1    -1.5                   -1.5
+## 1284           1 -74.28889              1    -0.5                   -0.5
+## 1285           1 -74.28889              1     0.5                    0.5
+## 1286           1 -74.28889              1     1.5                    1.5
+## 1287           1 -74.28889              1     2.5                    2.5
+## 1288           1 -74.28889              1     3.5                    3.5
+## 1289           1 -74.28889              1     4.5                    4.5
+## 1290           1 -74.28889              1     5.5                    5.5
+## 1291           1 -74.28889              1     6.5                    6.5
+## 1292           1 -74.28889              1     7.5                    7.5
+## 1293           1 -74.28889              1     8.5                    8.5
+## 1294           1 -74.28889              1     9.5                    9.5
+## 1295           1 -74.28889              1    10.5                   10.5
+## 1296           1 -74.28889              1    11.5                   11.5
+## 1297           1 -76.28889              0   -11.5                    0.0
+## 1298           1 -76.28889              0   -10.5                    0.0
+## 1299           1 -76.28889              0    -9.5                    0.0
+## 1300           1 -76.28889              0    -8.5                    0.0
+## 1301           1 -76.28889              0    -7.5                    0.0
+## 1302           1 -76.28889              0    -6.5                    0.0
+## 1303           1 -76.28889              0    -5.5                    0.0
+## 1304           1 -76.28889              0    -4.5                    0.0
+## 1305           1 -76.28889              0    -3.5                    0.0
+## 1306           1 -76.28889              0    -2.5                    0.0
+## 1307           1 -76.28889              0    -1.5                    0.0
+## 1308           1 -76.28889              0    -0.5                    0.0
+## 1309           1 -76.28889              0     0.5                    0.0
+## 1310           1 -76.28889              0     1.5                    0.0
+## 1311           1 -76.28889              0     2.5                    0.0
+## 1312           1 -76.28889              0     3.5                    0.0
+## 1313           1 -76.28889              0     4.5                    0.0
+## 1314           1 -76.28889              0     5.5                    0.0
+## 1315           1 -76.28889              0     6.5                    0.0
+## 1316           1 -76.28889              0     7.5                    0.0
+## 1317           1 -76.28889              0     8.5                    0.0
+## 1318           1 -76.28889              0     9.5                    0.0
+## 1319           1 -76.28889              0    10.5                    0.0
+## 1320           1 -76.28889              0    11.5                    0.0
+## 1321           1 -76.28889              1   -11.5                  -11.5
+## 1322           1 -76.28889              1   -10.5                  -10.5
+## 1323           1 -76.28889              1    -9.5                   -9.5
+## 1324           1 -76.28889              1    -8.5                   -8.5
+## 1325           1 -76.28889              1    -7.5                   -7.5
+## 1326           1 -76.28889              1    -6.5                   -6.5
+## 1327           1 -76.28889              1    -5.5                   -5.5
+## 1328           1 -76.28889              1    -4.5                   -4.5
+## 1329           1 -76.28889              1    -3.5                   -3.5
+## 1330           1 -76.28889              1    -2.5                   -2.5
+## 1331           1 -76.28889              1    -1.5                   -1.5
+## 1332           1 -76.28889              1    -0.5                   -0.5
+## 1333           1 -76.28889              1     0.5                    0.5
+## 1334           1 -76.28889              1     1.5                    1.5
+## 1335           1 -76.28889              1     2.5                    2.5
+## 1336           1 -76.28889              1     3.5                    3.5
+## 1337           1 -76.28889              1     4.5                    4.5
+## 1338           1 -76.28889              1     5.5                    5.5
+## 1339           1 -76.28889              1     6.5                    6.5
+## 1340           1 -76.28889              1     7.5                    7.5
+## 1341           1 -76.28889              1     8.5                    8.5
+## 1342           1 -76.28889              1     9.5                    9.5
+## 1343           1 -76.28889              1    10.5                   10.5
+## 1344           1 -76.28889              1    11.5                   11.5
+## 1345           1 -75.28889              0   -11.5                    0.0
+## 1346           1 -75.28889              0   -10.5                    0.0
+## 1347           1 -75.28889              0    -9.5                    0.0
+## 1348           1 -75.28889              0    -8.5                    0.0
+## 1349           1 -75.28889              0    -7.5                    0.0
+## 1350           1 -75.28889              0    -6.5                    0.0
+## 1351           1 -75.28889              0    -5.5                    0.0
+## 1352           1 -75.28889              0    -4.5                    0.0
+## 1353           1 -75.28889              0    -3.5                    0.0
+## 1354           1 -75.28889              0    -2.5                    0.0
+## 1355           1 -75.28889              0    -1.5                    0.0
+## 1356           1 -75.28889              0    -0.5                    0.0
+## 1357           1 -75.28889              0     0.5                    0.0
+## 1358           1 -75.28889              0     1.5                    0.0
+## 1359           1 -75.28889              0     2.5                    0.0
+## 1360           1 -75.28889              0     3.5                    0.0
+## 1361           1 -75.28889              0     4.5                    0.0
+## 1362           1 -75.28889              0     5.5                    0.0
+## 1363           1 -75.28889              0     6.5                    0.0
+## 1364           1 -75.28889              0     7.5                    0.0
+## 1365           1 -75.28889              0     8.5                    0.0
+## 1366           1 -75.28889              0     9.5                    0.0
+## 1367           1 -75.28889              0    10.5                    0.0
+## 1368           1 -75.28889              0    11.5                    0.0
+## 1369           1 -75.28889              1   -11.5                  -11.5
+## 1370           1 -75.28889              1   -10.5                  -10.5
+## 1371           1 -75.28889              1    -9.5                   -9.5
+## 1372           1 -75.28889              1    -8.5                   -8.5
+## 1373           1 -75.28889              1    -7.5                   -7.5
+## 1374           1 -75.28889              1    -6.5                   -6.5
+## 1375           1 -75.28889              1    -5.5                   -5.5
+## 1376           1 -75.28889              1    -4.5                   -4.5
+## 1377           1 -75.28889              1    -3.5                   -3.5
+## 1378           1 -75.28889              1    -2.5                   -2.5
+## 1379           1 -75.28889              1    -1.5                   -1.5
+## 1380           1 -75.28889              1    -0.5                   -0.5
+## 1381           1 -75.28889              1     0.5                    0.5
+## 1382           1 -75.28889              1     1.5                    1.5
+## 1383           1 -75.28889              1     2.5                    2.5
+## 1384           1 -75.28889              1     3.5                    3.5
+## 1385           1 -75.28889              1     4.5                    4.5
+## 1386           1 -75.28889              1     5.5                    5.5
+## 1387           1 -75.28889              1     6.5                    6.5
+## 1388           1 -75.28889              1     7.5                    7.5
+## 1389           1 -75.28889              1     8.5                    8.5
+## 1390           1 -75.28889              1     9.5                    9.5
+## 1391           1 -75.28889              1    10.5                   10.5
+## 1392           1 -75.28889              1    11.5                   11.5
+## 1393           1 -74.28889              0   -11.5                    0.0
+## 1394           1 -74.28889              0   -10.5                    0.0
+## 1395           1 -74.28889              0    -9.5                    0.0
+## 1396           1 -74.28889              0    -8.5                    0.0
+## 1397           1 -74.28889              0    -7.5                    0.0
+## 1398           1 -74.28889              0    -6.5                    0.0
+## 1399           1 -74.28889              0    -5.5                    0.0
+## 1400           1 -74.28889              0    -4.5                    0.0
+## 1401           1 -74.28889              0    -3.5                    0.0
+## 1402           1 -74.28889              0    -2.5                    0.0
+## 1403           1 -74.28889              0    -1.5                    0.0
+## 1404           1 -74.28889              0    -0.5                    0.0
+## 1405           1 -74.28889              0     0.5                    0.0
+## 1406           1 -74.28889              0     1.5                    0.0
+## 1407           1 -74.28889              0     2.5                    0.0
+## 1408           1 -74.28889              0     3.5                    0.0
+## 1409           1 -74.28889              0     4.5                    0.0
+## 1410           1 -74.28889              0     5.5                    0.0
+## 1411           1 -74.28889              0     6.5                    0.0
+## 1412           1 -74.28889              0     7.5                    0.0
+## 1413           1 -74.28889              0     8.5                    0.0
+## 1414           1 -74.28889              0     9.5                    0.0
+## 1415           1 -74.28889              0    10.5                    0.0
+## 1416           1 -74.28889              0    11.5                    0.0
+## 1417           1 -74.28889              1   -11.5                  -11.5
+## 1418           1 -74.28889              1   -10.5                  -10.5
+## 1419           1 -74.28889              1    -9.5                   -9.5
+## 1420           1 -74.28889              1    -8.5                   -8.5
+## 1421           1 -74.28889              1    -7.5                   -7.5
+## 1422           1 -74.28889              1    -6.5                   -6.5
+## 1423           1 -74.28889              1    -5.5                   -5.5
+## 1424           1 -74.28889              1    -4.5                   -4.5
+## 1425           1 -74.28889              1    -3.5                   -3.5
+## 1426           1 -74.28889              1    -2.5                   -2.5
+## 1427           1 -74.28889              1    -1.5                   -1.5
+## 1428           1 -74.28889              1    -0.5                   -0.5
+## 1429           1 -74.28889              1     0.5                    0.5
+## 1430           1 -74.28889              1     1.5                    1.5
+## 1431           1 -74.28889              1     2.5                    2.5
+## 1432           1 -74.28889              1     3.5                    3.5
+## 1433           1 -74.28889              1     4.5                    4.5
+## 1434           1 -74.28889              1     5.5                    5.5
+## 1435           1 -74.28889              1     6.5                    6.5
+## 1436           1 -74.28889              1     7.5                    7.5
+## 1437           1 -74.28889              1     8.5                    8.5
+## 1438           1 -74.28889              1     9.5                    9.5
+## 1439           1 -74.28889              1    10.5                   10.5
+## 1440           1 -74.28889              1    11.5                   11.5
+## 1441           1 -75.28889              0   -11.5                    0.0
+## 1442           1 -75.28889              0   -10.5                    0.0
+## 1443           1 -75.28889              0    -9.5                    0.0
+## 1444           1 -75.28889              0    -8.5                    0.0
+## 1445           1 -75.28889              0    -7.5                    0.0
+## 1446           1 -75.28889              0    -6.5                    0.0
+## 1447           1 -75.28889              0    -5.5                    0.0
+## 1448           1 -75.28889              0    -4.5                    0.0
+## 1449           1 -75.28889              0    -3.5                    0.0
+## 1450           1 -75.28889              0    -2.5                    0.0
+## 1451           1 -75.28889              0    -1.5                    0.0
+## 1452           1 -75.28889              0    -0.5                    0.0
+## 1453           1 -75.28889              0     0.5                    0.0
+## 1454           1 -75.28889              0     1.5                    0.0
+## 1455           1 -75.28889              0     2.5                    0.0
+## 1456           1 -75.28889              0     3.5                    0.0
+## 1457           1 -75.28889              0     4.5                    0.0
+## 1458           1 -75.28889              0     5.5                    0.0
+## 1459           1 -75.28889              0     6.5                    0.0
+## 1460           1 -75.28889              0     7.5                    0.0
+## 1461           1 -75.28889              0     8.5                    0.0
+## 1462           1 -75.28889              0     9.5                    0.0
+## 1463           1 -75.28889              0    10.5                    0.0
+## 1464           1 -75.28889              0    11.5                    0.0
+## 1465           1 -75.28889              1   -11.5                  -11.5
+## 1466           1 -75.28889              1   -10.5                  -10.5
+## 1467           1 -75.28889              1    -9.5                   -9.5
+## 1468           1 -75.28889              1    -8.5                   -8.5
+## 1469           1 -75.28889              1    -7.5                   -7.5
+## 1470           1 -75.28889              1    -6.5                   -6.5
+## 1471           1 -75.28889              1    -5.5                   -5.5
+## 1472           1 -75.28889              1    -4.5                   -4.5
+## 1473           1 -75.28889              1    -3.5                   -3.5
+## 1474           1 -75.28889              1    -2.5                   -2.5
+## 1475           1 -75.28889              1    -1.5                   -1.5
+## 1476           1 -75.28889              1    -0.5                   -0.5
+## 1477           1 -75.28889              1     0.5                    0.5
+## 1478           1 -75.28889              1     1.5                    1.5
+## 1479           1 -75.28889              1     2.5                    2.5
+## 1480           1 -75.28889              1     3.5                    3.5
+## 1481           1 -75.28889              1     4.5                    4.5
+## 1482           1 -75.28889              1     5.5                    5.5
+## 1483           1 -75.28889              1     6.5                    6.5
+## 1484           1 -75.28889              1     7.5                    7.5
+## 1485           1 -75.28889              1     8.5                    8.5
+## 1486           1 -75.28889              1     9.5                    9.5
+## 1487           1 -75.28889              1    10.5                   10.5
+## 1488           1 -75.28889              1    11.5                   11.5
+## 1489           1 -73.28889              0   -11.5                    0.0
+## 1490           1 -73.28889              0   -10.5                    0.0
+## 1491           1 -73.28889              0    -9.5                    0.0
+## 1492           1 -73.28889              0    -8.5                    0.0
+## 1493           1 -73.28889              0    -7.5                    0.0
+## 1494           1 -73.28889              0    -6.5                    0.0
+## 1495           1 -73.28889              0    -5.5                    0.0
+## 1496           1 -73.28889              0    -4.5                    0.0
+## 1497           1 -73.28889              0    -3.5                    0.0
+## 1498           1 -73.28889              0    -2.5                    0.0
+## 1499           1 -73.28889              0    -1.5                    0.0
+## 1500           1 -73.28889              0    -0.5                    0.0
+## 1501           1 -73.28889              0     0.5                    0.0
+## 1502           1 -73.28889              0     1.5                    0.0
+## 1503           1 -73.28889              0     2.5                    0.0
+## 1504           1 -73.28889              0     3.5                    0.0
+## 1505           1 -73.28889              0     4.5                    0.0
+## 1506           1 -73.28889              0     5.5                    0.0
+## 1507           1 -73.28889              0     6.5                    0.0
+## 1508           1 -73.28889              0     7.5                    0.0
+## 1509           1 -73.28889              0     8.5                    0.0
+## 1510           1 -73.28889              0     9.5                    0.0
+## 1511           1 -73.28889              0    10.5                    0.0
+## 1512           1 -73.28889              0    11.5                    0.0
+## 1513           1 -73.28889              1   -11.5                  -11.5
+## 1514           1 -73.28889              1   -10.5                  -10.5
+## 1515           1 -73.28889              1    -9.5                   -9.5
+## 1516           1 -73.28889              1    -8.5                   -8.5
+## 1517           1 -73.28889              1    -7.5                   -7.5
+## 1518           1 -73.28889              1    -6.5                   -6.5
+## 1519           1 -73.28889              1    -5.5                   -5.5
+## 1520           1 -73.28889              1    -4.5                   -4.5
+## 1521           1 -73.28889              1    -3.5                   -3.5
+## 1522           1 -73.28889              1    -2.5                   -2.5
+## 1523           1 -73.28889              1    -1.5                   -1.5
+## 1524           1 -73.28889              1    -0.5                   -0.5
+## 1525           1 -73.28889              1     0.5                    0.5
+## 1526           1 -73.28889              1     1.5                    1.5
+## 1527           1 -73.28889              1     2.5                    2.5
+## 1528           1 -73.28889              1     3.5                    3.5
+## 1529           1 -73.28889              1     4.5                    4.5
+## 1530           1 -73.28889              1     5.5                    5.5
+## 1531           1 -73.28889              1     6.5                    6.5
+## 1532           1 -73.28889              1     7.5                    7.5
+## 1533           1 -73.28889              1     8.5                    8.5
+## 1534           1 -73.28889              1     9.5                    9.5
+## 1535           1 -73.28889              1    10.5                   10.5
+## 1536           1 -73.28889              1    11.5                   11.5
+## 1537           1 -71.28889              0   -11.5                    0.0
+## 1538           1 -71.28889              0   -10.5                    0.0
+## 1539           1 -71.28889              0    -9.5                    0.0
+## 1540           1 -71.28889              0    -8.5                    0.0
+## 1541           1 -71.28889              0    -7.5                    0.0
+## 1542           1 -71.28889              0    -6.5                    0.0
+## 1543           1 -71.28889              0    -5.5                    0.0
+## 1544           1 -71.28889              0    -4.5                    0.0
+## 1545           1 -71.28889              0    -3.5                    0.0
+## 1546           1 -71.28889              0    -2.5                    0.0
+## 1547           1 -71.28889              0    -1.5                    0.0
+## 1548           1 -71.28889              0    -0.5                    0.0
+## 1549           1 -71.28889              0     0.5                    0.0
+## 1550           1 -71.28889              0     1.5                    0.0
+## 1551           1 -71.28889              0     2.5                    0.0
+## 1552           1 -71.28889              0     3.5                    0.0
+## 1553           1 -71.28889              0     4.5                    0.0
+## 1554           1 -71.28889              0     5.5                    0.0
+## 1555           1 -71.28889              0     6.5                    0.0
+## 1556           1 -71.28889              0     7.5                    0.0
+## 1557           1 -71.28889              0     8.5                    0.0
+## 1558           1 -71.28889              0     9.5                    0.0
+## 1559           1 -71.28889              0    10.5                    0.0
+## 1560           1 -71.28889              0    11.5                    0.0
+## 1561           1 -71.28889              1   -11.5                  -11.5
+## 1562           1 -71.28889              1   -10.5                  -10.5
+## 1563           1 -71.28889              1    -9.5                   -9.5
+## 1564           1 -71.28889              1    -8.5                   -8.5
+## 1565           1 -71.28889              1    -7.5                   -7.5
+## 1566           1 -71.28889              1    -6.5                   -6.5
+## 1567           1 -71.28889              1    -5.5                   -5.5
+## 1568           1 -71.28889              1    -4.5                   -4.5
+## 1569           1 -71.28889              1    -3.5                   -3.5
+## 1570           1 -71.28889              1    -2.5                   -2.5
+## 1571           1 -71.28889              1    -1.5                   -1.5
+## 1572           1 -71.28889              1    -0.5                   -0.5
+## 1573           1 -71.28889              1     0.5                    0.5
+## 1574           1 -71.28889              1     1.5                    1.5
+## 1575           1 -71.28889              1     2.5                    2.5
+## 1576           1 -71.28889              1     3.5                    3.5
+## 1577           1 -71.28889              1     4.5                    4.5
+## 1578           1 -71.28889              1     5.5                    5.5
+## 1579           1 -71.28889              1     6.5                    6.5
+## 1580           1 -71.28889              1     7.5                    7.5
+## 1581           1 -71.28889              1     8.5                    8.5
+## 1582           1 -71.28889              1     9.5                    9.5
+## 1583           1 -71.28889              1    10.5                   10.5
+## 1584           1 -71.28889              1    11.5                   11.5
+## 1585           1 -74.28889              0   -11.5                    0.0
+## 1586           1 -74.28889              0   -10.5                    0.0
+## 1587           1 -74.28889              0    -9.5                    0.0
+## 1588           1 -74.28889              0    -8.5                    0.0
+## 1589           1 -74.28889              0    -7.5                    0.0
+## 1590           1 -74.28889              0    -6.5                    0.0
+## 1591           1 -74.28889              0    -5.5                    0.0
+## 1592           1 -74.28889              0    -4.5                    0.0
+## 1593           1 -74.28889              0    -3.5                    0.0
+## 1594           1 -74.28889              0    -2.5                    0.0
+## 1595           1 -74.28889              0    -1.5                    0.0
+## 1596           1 -74.28889              0    -0.5                    0.0
+## 1597           1 -74.28889              0     0.5                    0.0
+## 1598           1 -74.28889              0     1.5                    0.0
+## 1599           1 -74.28889              0     2.5                    0.0
+## 1600           1 -74.28889              0     3.5                    0.0
+## 1601           1 -74.28889              0     4.5                    0.0
+## 1602           1 -74.28889              0     5.5                    0.0
+## 1603           1 -74.28889              0     6.5                    0.0
+## 1604           1 -74.28889              0     7.5                    0.0
+## 1605           1 -74.28889              0     8.5                    0.0
+## 1606           1 -74.28889              0     9.5                    0.0
+## 1607           1 -74.28889              0    10.5                    0.0
+## 1608           1 -74.28889              0    11.5                    0.0
+## 1609           1 -74.28889              1   -11.5                  -11.5
+## 1610           1 -74.28889              1   -10.5                  -10.5
+## 1611           1 -74.28889              1    -9.5                   -9.5
+## 1612           1 -74.28889              1    -8.5                   -8.5
+## 1613           1 -74.28889              1    -7.5                   -7.5
+## 1614           1 -74.28889              1    -6.5                   -6.5
+## 1615           1 -74.28889              1    -5.5                   -5.5
+## 1616           1 -74.28889              1    -4.5                   -4.5
+## 1617           1 -74.28889              1    -3.5                   -3.5
+## 1618           1 -74.28889              1    -2.5                   -2.5
+## 1619           1 -74.28889              1    -1.5                   -1.5
+## 1620           1 -74.28889              1    -0.5                   -0.5
+## 1621           1 -74.28889              1     0.5                    0.5
+## 1622           1 -74.28889              1     1.5                    1.5
+## 1623           1 -74.28889              1     2.5                    2.5
+## 1624           1 -74.28889              1     3.5                    3.5
+## 1625           1 -74.28889              1     4.5                    4.5
+## 1626           1 -74.28889              1     5.5                    5.5
+## 1627           1 -74.28889              1     6.5                    6.5
+## 1628           1 -74.28889              1     7.5                    7.5
+## 1629           1 -74.28889              1     8.5                    8.5
+## 1630           1 -74.28889              1     9.5                    9.5
+## 1631           1 -74.28889              1    10.5                   10.5
+## 1632           1 -74.28889              1    11.5                   11.5
+## 1633           1 -69.28889              0   -11.5                    0.0
+## 1634           1 -69.28889              0   -10.5                    0.0
+## 1635           1 -69.28889              0    -9.5                    0.0
+## 1636           1 -69.28889              0    -8.5                    0.0
+## 1637           1 -69.28889              0    -7.5                    0.0
+## 1638           1 -69.28889              0    -6.5                    0.0
+## 1639           1 -69.28889              0    -5.5                    0.0
+## 1640           1 -69.28889              0    -4.5                    0.0
+## 1641           1 -69.28889              0    -3.5                    0.0
+## 1642           1 -69.28889              0    -2.5                    0.0
+## 1643           1 -69.28889              0    -1.5                    0.0
+## 1644           1 -69.28889              0    -0.5                    0.0
+## 1645           1 -69.28889              0     0.5                    0.0
+## 1646           1 -69.28889              0     1.5                    0.0
+## 1647           1 -69.28889              0     2.5                    0.0
+## 1648           1 -69.28889              0     3.5                    0.0
+## 1649           1 -69.28889              0     4.5                    0.0
+## 1650           1 -69.28889              0     5.5                    0.0
+## 1651           1 -69.28889              0     6.5                    0.0
+## 1652           1 -69.28889              0     7.5                    0.0
+## 1653           1 -69.28889              0     8.5                    0.0
+## 1654           1 -69.28889              0     9.5                    0.0
+## 1655           1 -69.28889              0    10.5                    0.0
+## 1656           1 -69.28889              0    11.5                    0.0
+## 1657           1 -69.28889              1   -11.5                  -11.5
+## 1658           1 -69.28889              1   -10.5                  -10.5
+## 1659           1 -69.28889              1    -9.5                   -9.5
+## 1660           1 -69.28889              1    -8.5                   -8.5
+## 1661           1 -69.28889              1    -7.5                   -7.5
+## 1662           1 -69.28889              1    -6.5                   -6.5
+## 1663           1 -69.28889              1    -5.5                   -5.5
+## 1664           1 -69.28889              1    -4.5                   -4.5
+## 1665           1 -69.28889              1    -3.5                   -3.5
+## 1666           1 -69.28889              1    -2.5                   -2.5
+## 1667           1 -69.28889              1    -1.5                   -1.5
+## 1668           1 -69.28889              1    -0.5                   -0.5
+## 1669           1 -69.28889              1     0.5                    0.5
+## 1670           1 -69.28889              1     1.5                    1.5
+## 1671           1 -69.28889              1     2.5                    2.5
+## 1672           1 -69.28889              1     3.5                    3.5
+## 1673           1 -69.28889              1     4.5                    4.5
+## 1674           1 -69.28889              1     5.5                    5.5
+## 1675           1 -69.28889              1     6.5                    6.5
+## 1676           1 -69.28889              1     7.5                    7.5
+## 1677           1 -69.28889              1     8.5                    8.5
+## 1678           1 -69.28889              1     9.5                    9.5
+## 1679           1 -69.28889              1    10.5                   10.5
+## 1680           1 -69.28889              1    11.5                   11.5
+## 1681           1 -74.28889              0   -11.5                    0.0
+## 1682           1 -74.28889              0   -10.5                    0.0
+## 1683           1 -74.28889              0    -9.5                    0.0
+## 1684           1 -74.28889              0    -8.5                    0.0
+## 1685           1 -74.28889              0    -7.5                    0.0
+## 1686           1 -74.28889              0    -6.5                    0.0
+## 1687           1 -74.28889              0    -5.5                    0.0
+## 1688           1 -74.28889              0    -4.5                    0.0
+## 1689           1 -74.28889              0    -3.5                    0.0
+## 1690           1 -74.28889              0    -2.5                    0.0
+## 1691           1 -74.28889              0    -1.5                    0.0
+## 1692           1 -74.28889              0    -0.5                    0.0
+## 1693           1 -74.28889              0     0.5                    0.0
+## 1694           1 -74.28889              0     1.5                    0.0
+## 1695           1 -74.28889              0     2.5                    0.0
+## 1696           1 -74.28889              0     3.5                    0.0
+## 1697           1 -74.28889              0     4.5                    0.0
+## 1698           1 -74.28889              0     5.5                    0.0
+## 1699           1 -74.28889              0     6.5                    0.0
+## 1700           1 -74.28889              0     7.5                    0.0
+## 1701           1 -74.28889              0     8.5                    0.0
+## 1702           1 -74.28889              0     9.5                    0.0
+## 1703           1 -74.28889              0    10.5                    0.0
+## 1704           1 -74.28889              0    11.5                    0.0
+## 1705           1 -74.28889              1   -11.5                  -11.5
+## 1706           1 -74.28889              1   -10.5                  -10.5
+## 1707           1 -74.28889              1    -9.5                   -9.5
+## 1708           1 -74.28889              1    -8.5                   -8.5
+## 1709           1 -74.28889              1    -7.5                   -7.5
+## 1710           1 -74.28889              1    -6.5                   -6.5
+## 1711           1 -74.28889              1    -5.5                   -5.5
+## 1712           1 -74.28889              1    -4.5                   -4.5
+## 1713           1 -74.28889              1    -3.5                   -3.5
+## 1714           1 -74.28889              1    -2.5                   -2.5
+## 1715           1 -74.28889              1    -1.5                   -1.5
+## 1716           1 -74.28889              1    -0.5                   -0.5
+## 1717           1 -74.28889              1     0.5                    0.5
+## 1718           1 -74.28889              1     1.5                    1.5
+## 1719           1 -74.28889              1     2.5                    2.5
+## 1720           1 -74.28889              1     3.5                    3.5
+## 1721           1 -74.28889              1     4.5                    4.5
+## 1722           1 -74.28889              1     5.5                    5.5
+## 1723           1 -74.28889              1     6.5                    6.5
+## 1724           1 -74.28889              1     7.5                    7.5
+## 1725           1 -74.28889              1     8.5                    8.5
+## 1726           1 -74.28889              1     9.5                    9.5
+## 1727           1 -74.28889              1    10.5                   10.5
+## 1728           1 -74.28889              1    11.5                   11.5
+## 1729           1 -74.28889              0   -11.5                    0.0
+## 1730           1 -74.28889              0   -10.5                    0.0
+## 1731           1 -74.28889              0    -9.5                    0.0
+## 1732           1 -74.28889              0    -8.5                    0.0
+## 1733           1 -74.28889              0    -7.5                    0.0
+## 1734           1 -74.28889              0    -6.5                    0.0
+## 1735           1 -74.28889              0    -5.5                    0.0
+## 1736           1 -74.28889              0    -4.5                    0.0
+## 1737           1 -74.28889              0    -3.5                    0.0
+## 1738           1 -74.28889              0    -2.5                    0.0
+## 1739           1 -74.28889              0    -1.5                    0.0
+## 1740           1 -74.28889              0    -0.5                    0.0
+## 1741           1 -74.28889              0     0.5                    0.0
+## 1742           1 -74.28889              0     1.5                    0.0
+## 1743           1 -74.28889              0     2.5                    0.0
+## 1744           1 -74.28889              0     3.5                    0.0
+## 1745           1 -74.28889              0     4.5                    0.0
+## 1746           1 -74.28889              0     5.5                    0.0
+## 1747           1 -74.28889              0     6.5                    0.0
+## 1748           1 -74.28889              0     7.5                    0.0
+## 1749           1 -74.28889              0     8.5                    0.0
+## 1750           1 -74.28889              0     9.5                    0.0
+## 1751           1 -74.28889              0    10.5                    0.0
+## 1752           1 -74.28889              0    11.5                    0.0
+## 1753           1 -74.28889              1   -11.5                  -11.5
+## 1754           1 -74.28889              1   -10.5                  -10.5
+## 1755           1 -74.28889              1    -9.5                   -9.5
+## 1756           1 -74.28889              1    -8.5                   -8.5
+## 1757           1 -74.28889              1    -7.5                   -7.5
+## 1758           1 -74.28889              1    -6.5                   -6.5
+## 1759           1 -74.28889              1    -5.5                   -5.5
+## 1760           1 -74.28889              1    -4.5                   -4.5
+## 1761           1 -74.28889              1    -3.5                   -3.5
+## 1762           1 -74.28889              1    -2.5                   -2.5
+## 1763           1 -74.28889              1    -1.5                   -1.5
+## 1764           1 -74.28889              1    -0.5                   -0.5
+## 1765           1 -74.28889              1     0.5                    0.5
+## 1766           1 -74.28889              1     1.5                    1.5
+## 1767           1 -74.28889              1     2.5                    2.5
+## 1768           1 -74.28889              1     3.5                    3.5
+## 1769           1 -74.28889              1     4.5                    4.5
+## 1770           1 -74.28889              1     5.5                    5.5
+## 1771           1 -74.28889              1     6.5                    6.5
+## 1772           1 -74.28889              1     7.5                    7.5
+## 1773           1 -74.28889              1     8.5                    8.5
+## 1774           1 -74.28889              1     9.5                    9.5
+## 1775           1 -74.28889              1    10.5                   10.5
+## 1776           1 -74.28889              1    11.5                   11.5
+## 1777           1 380.71111              0   -11.5                    0.0
+## 1778           1 380.71111              0   -10.5                    0.0
+## 1779           1 380.71111              0    -9.5                    0.0
+## 1780           1 380.71111              0    -8.5                    0.0
+## 1781           1 380.71111              0    -7.5                    0.0
+## 1782           1 380.71111              0    -6.5                    0.0
+## 1783           1 380.71111              0    -5.5                    0.0
+## 1784           1 380.71111              0    -4.5                    0.0
+## 1785           1 380.71111              0    -3.5                    0.0
+## 1786           1 380.71111              0    -2.5                    0.0
+## 1787           1 380.71111              0    -1.5                    0.0
+## 1788           1 380.71111              0    -0.5                    0.0
+## 1789           1 380.71111              0     0.5                    0.0
+## 1790           1 380.71111              0     1.5                    0.0
+## 1791           1 380.71111              0     2.5                    0.0
+## 1792           1 380.71111              0     3.5                    0.0
+## 1793           1 380.71111              0     4.5                    0.0
+## 1794           1 380.71111              0     5.5                    0.0
+## 1795           1 380.71111              0     6.5                    0.0
+## 1796           1 380.71111              0     7.5                    0.0
+## 1797           1 380.71111              0     8.5                    0.0
+## 1798           1 380.71111              0     9.5                    0.0
+## 1799           1 380.71111              0    10.5                    0.0
+## 1800           1 380.71111              0    11.5                    0.0
+## 1801           1 380.71111              1   -11.5                  -11.5
+## 1802           1 380.71111              1   -10.5                  -10.5
+## 1803           1 380.71111              1    -9.5                   -9.5
+## 1804           1 380.71111              1    -8.5                   -8.5
+## 1805           1 380.71111              1    -7.5                   -7.5
+## 1806           1 380.71111              1    -6.5                   -6.5
+## 1807           1 380.71111              1    -5.5                   -5.5
+## 1808           1 380.71111              1    -4.5                   -4.5
+## 1809           1 380.71111              1    -3.5                   -3.5
+## 1810           1 380.71111              1    -2.5                   -2.5
+## 1811           1 380.71111              1    -1.5                   -1.5
+## 1812           1 380.71111              1    -0.5                   -0.5
+## 1813           1 380.71111              1     0.5                    0.5
+## 1814           1 380.71111              1     1.5                    1.5
+## 1815           1 380.71111              1     2.5                    2.5
+## 1816           1 380.71111              1     3.5                    3.5
+## 1817           1 380.71111              1     4.5                    4.5
+## 1818           1 380.71111              1     5.5                    5.5
+## 1819           1 380.71111              1     6.5                    6.5
+## 1820           1 380.71111              1     7.5                    7.5
+## 1821           1 380.71111              1     8.5                    8.5
+## 1822           1 380.71111              1     9.5                    9.5
+## 1823           1 380.71111              1    10.5                   10.5
+## 1824           1 380.71111              1    11.5                   11.5
+## 1825           1 -77.28889              0   -11.5                    0.0
+## 1826           1 -77.28889              0   -10.5                    0.0
+## 1827           1 -77.28889              0    -9.5                    0.0
+## 1828           1 -77.28889              0    -8.5                    0.0
+## 1829           1 -77.28889              0    -7.5                    0.0
+## 1830           1 -77.28889              0    -6.5                    0.0
+## 1831           1 -77.28889              0    -5.5                    0.0
+## 1832           1 -77.28889              0    -4.5                    0.0
+## 1833           1 -77.28889              0    -3.5                    0.0
+## 1834           1 -77.28889              0    -2.5                    0.0
+## 1835           1 -77.28889              0    -1.5                    0.0
+## 1836           1 -77.28889              0    -0.5                    0.0
+## 1837           1 -77.28889              0     0.5                    0.0
+## 1838           1 -77.28889              0     1.5                    0.0
+## 1839           1 -77.28889              0     2.5                    0.0
+## 1840           1 -77.28889              0     3.5                    0.0
+## 1841           1 -77.28889              0     4.5                    0.0
+## 1842           1 -77.28889              0     5.5                    0.0
+## 1843           1 -77.28889              0     6.5                    0.0
+## 1844           1 -77.28889              0     7.5                    0.0
+## 1845           1 -77.28889              0     8.5                    0.0
+## 1846           1 -77.28889              0     9.5                    0.0
+## 1847           1 -77.28889              0    10.5                    0.0
+## 1848           1 -77.28889              0    11.5                    0.0
+## 1849           1 -77.28889              1   -11.5                  -11.5
+## 1850           1 -77.28889              1   -10.5                  -10.5
+## 1851           1 -77.28889              1    -9.5                   -9.5
+## 1852           1 -77.28889              1    -8.5                   -8.5
+## 1853           1 -77.28889              1    -7.5                   -7.5
+## 1854           1 -77.28889              1    -6.5                   -6.5
+## 1855           1 -77.28889              1    -5.5                   -5.5
+## 1856           1 -77.28889              1    -4.5                   -4.5
+## 1857           1 -77.28889              1    -3.5                   -3.5
+## 1858           1 -77.28889              1    -2.5                   -2.5
+## 1859           1 -77.28889              1    -1.5                   -1.5
+## 1860           1 -77.28889              1    -0.5                   -0.5
+## 1861           1 -77.28889              1     0.5                    0.5
+## 1862           1 -77.28889              1     1.5                    1.5
+## 1863           1 -77.28889              1     2.5                    2.5
+## 1864           1 -77.28889              1     3.5                    3.5
+## 1865           1 -77.28889              1     4.5                    4.5
+## 1866           1 -77.28889              1     5.5                    5.5
+## 1867           1 -77.28889              1     6.5                    6.5
+## 1868           1 -77.28889              1     7.5                    7.5
+## 1869           1 -77.28889              1     8.5                    8.5
+## 1870           1 -77.28889              1     9.5                    9.5
+## 1871           1 -77.28889              1    10.5                   10.5
+## 1872           1 -77.28889              1    11.5                   11.5
+## 1873           1 -74.28889              0   -11.5                    0.0
+## 1874           1 -74.28889              0   -10.5                    0.0
+## 1875           1 -74.28889              0    -9.5                    0.0
+## 1876           1 -74.28889              0    -8.5                    0.0
+## 1877           1 -74.28889              0    -7.5                    0.0
+## 1878           1 -74.28889              0    -6.5                    0.0
+## 1879           1 -74.28889              0    -5.5                    0.0
+## 1880           1 -74.28889              0    -4.5                    0.0
+## 1881           1 -74.28889              0    -3.5                    0.0
+## 1882           1 -74.28889              0    -2.5                    0.0
+## 1883           1 -74.28889              0    -1.5                    0.0
+## 1884           1 -74.28889              0    -0.5                    0.0
+## 1885           1 -74.28889              0     0.5                    0.0
+## 1886           1 -74.28889              0     1.5                    0.0
+## 1887           1 -74.28889              0     2.5                    0.0
+## 1888           1 -74.28889              0     3.5                    0.0
+## 1889           1 -74.28889              0     4.5                    0.0
+## 1890           1 -74.28889              0     5.5                    0.0
+## 1891           1 -74.28889              0     6.5                    0.0
+## 1892           1 -74.28889              0     7.5                    0.0
+## 1893           1 -74.28889              0     8.5                    0.0
+## 1894           1 -74.28889              0     9.5                    0.0
+## 1895           1 -74.28889              0    10.5                    0.0
+## 1896           1 -74.28889              0    11.5                    0.0
+## 1897           1 -74.28889              1   -11.5                  -11.5
+## 1898           1 -74.28889              1   -10.5                  -10.5
+## 1899           1 -74.28889              1    -9.5                   -9.5
+## 1900           1 -74.28889              1    -8.5                   -8.5
+## 1901           1 -74.28889              1    -7.5                   -7.5
+## 1902           1 -74.28889              1    -6.5                   -6.5
+## 1903           1 -74.28889              1    -5.5                   -5.5
+## 1904           1 -74.28889              1    -4.5                   -4.5
+## 1905           1 -74.28889              1    -3.5                   -3.5
+## 1906           1 -74.28889              1    -2.5                   -2.5
+## 1907           1 -74.28889              1    -1.5                   -1.5
+## 1908           1 -74.28889              1    -0.5                   -0.5
+## 1909           1 -74.28889              1     0.5                    0.5
+## 1910           1 -74.28889              1     1.5                    1.5
+## 1911           1 -74.28889              1     2.5                    2.5
+## 1912           1 -74.28889              1     3.5                    3.5
+## 1913           1 -74.28889              1     4.5                    4.5
+## 1914           1 -74.28889              1     5.5                    5.5
+## 1915           1 -74.28889              1     6.5                    6.5
+## 1916           1 -74.28889              1     7.5                    7.5
+## 1917           1 -74.28889              1     8.5                    8.5
+## 1918           1 -74.28889              1     9.5                    9.5
+## 1919           1 -74.28889              1    10.5                   10.5
+## 1920           1 -74.28889              1    11.5                   11.5
+## 1921           1 -69.28889              0   -11.5                    0.0
+## 1922           1 -69.28889              0   -10.5                    0.0
+## 1923           1 -69.28889              0    -9.5                    0.0
+## 1924           1 -69.28889              0    -8.5                    0.0
+## 1925           1 -69.28889              0    -7.5                    0.0
+## 1926           1 -69.28889              0    -6.5                    0.0
+## 1927           1 -69.28889              0    -5.5                    0.0
+## 1928           1 -69.28889              0    -4.5                    0.0
+## 1929           1 -69.28889              0    -3.5                    0.0
+## 1930           1 -69.28889              0    -2.5                    0.0
+## 1931           1 -69.28889              0    -1.5                    0.0
+## 1932           1 -69.28889              0    -0.5                    0.0
+## 1933           1 -69.28889              0     0.5                    0.0
+## 1934           1 -69.28889              0     1.5                    0.0
+## 1935           1 -69.28889              0     2.5                    0.0
+## 1936           1 -69.28889              0     3.5                    0.0
+## 1937           1 -69.28889              0     4.5                    0.0
+## 1938           1 -69.28889              0     5.5                    0.0
+## 1939           1 -69.28889              0     6.5                    0.0
+## 1940           1 -69.28889              0     7.5                    0.0
+## 1941           1 -69.28889              0     8.5                    0.0
+## 1942           1 -69.28889              0     9.5                    0.0
+## 1943           1 -69.28889              0    10.5                    0.0
+## 1944           1 -69.28889              0    11.5                    0.0
+## 1945           1 -69.28889              1   -11.5                  -11.5
+## 1946           1 -69.28889              1   -10.5                  -10.5
+## 1947           1 -69.28889              1    -9.5                   -9.5
+## 1948           1 -69.28889              1    -8.5                   -8.5
+## 1949           1 -69.28889              1    -7.5                   -7.5
+## 1950           1 -69.28889              1    -6.5                   -6.5
+## 1951           1 -69.28889              1    -5.5                   -5.5
+## 1952           1 -69.28889              1    -4.5                   -4.5
+## 1953           1 -69.28889              1    -3.5                   -3.5
+## 1954           1 -69.28889              1    -2.5                   -2.5
+## 1955           1 -69.28889              1    -1.5                   -1.5
+## 1956           1 -69.28889              1    -0.5                   -0.5
+## 1957           1 -69.28889              1     0.5                    0.5
+## 1958           1 -69.28889              1     1.5                    1.5
+## 1959           1 -69.28889              1     2.5                    2.5
+## 1960           1 -69.28889              1     3.5                    3.5
+## 1961           1 -69.28889              1     4.5                    4.5
+## 1962           1 -69.28889              1     5.5                    5.5
+## 1963           1 -69.28889              1     6.5                    6.5
+## 1964           1 -69.28889              1     7.5                    7.5
+## 1965           1 -69.28889              1     8.5                    8.5
+## 1966           1 -69.28889              1     9.5                    9.5
+## 1967           1 -69.28889              1    10.5                   10.5
+## 1968           1 -69.28889              1    11.5                   11.5
+## 1969           1 314.71111              0   -11.5                    0.0
+## 1970           1 314.71111              0   -10.5                    0.0
+## 1971           1 314.71111              0    -9.5                    0.0
+## 1972           1 314.71111              0    -8.5                    0.0
+## 1973           1 314.71111              0    -7.5                    0.0
+## 1974           1 314.71111              0    -6.5                    0.0
+## 1975           1 314.71111              0    -5.5                    0.0
+## 1976           1 314.71111              0    -4.5                    0.0
+## 1977           1 314.71111              0    -3.5                    0.0
+## 1978           1 314.71111              0    -2.5                    0.0
+## 1979           1 314.71111              0    -1.5                    0.0
+## 1980           1 314.71111              0    -0.5                    0.0
+## 1981           1 314.71111              0     0.5                    0.0
+## 1982           1 314.71111              0     1.5                    0.0
+## 1983           1 314.71111              0     2.5                    0.0
+## 1984           1 314.71111              0     3.5                    0.0
+## 1985           1 314.71111              0     4.5                    0.0
+## 1986           1 314.71111              0     5.5                    0.0
+## 1987           1 314.71111              0     6.5                    0.0
+## 1988           1 314.71111              0     7.5                    0.0
+## 1989           1 314.71111              0     8.5                    0.0
+## 1990           1 314.71111              0     9.5                    0.0
+## 1991           1 314.71111              0    10.5                    0.0
+## 1992           1 314.71111              0    11.5                    0.0
+## 1993           1 314.71111              1   -11.5                  -11.5
+## 1994           1 314.71111              1   -10.5                  -10.5
+## 1995           1 314.71111              1    -9.5                   -9.5
+## 1996           1 314.71111              1    -8.5                   -8.5
+## 1997           1 314.71111              1    -7.5                   -7.5
+## 1998           1 314.71111              1    -6.5                   -6.5
+## 1999           1 314.71111              1    -5.5                   -5.5
+## 2000           1 314.71111              1    -4.5                   -4.5
+## 2001           1 314.71111              1    -3.5                   -3.5
+## 2002           1 314.71111              1    -2.5                   -2.5
+## 2003           1 314.71111              1    -1.5                   -1.5
+## 2004           1 314.71111              1    -0.5                   -0.5
+## 2005           1 314.71111              1     0.5                    0.5
+## 2006           1 314.71111              1     1.5                    1.5
+## 2007           1 314.71111              1     2.5                    2.5
+## 2008           1 314.71111              1     3.5                    3.5
+## 2009           1 314.71111              1     4.5                    4.5
+## 2010           1 314.71111              1     5.5                    5.5
+## 2011           1 314.71111              1     6.5                    6.5
+## 2012           1 314.71111              1     7.5                    7.5
+## 2013           1 314.71111              1     8.5                    8.5
+## 2014           1 314.71111              1     9.5                    9.5
+## 2015           1 314.71111              1    10.5                   10.5
+## 2016           1 314.71111              1    11.5                   11.5
+## 2017           1 430.71111              0   -11.5                    0.0
+## 2018           1 430.71111              0   -10.5                    0.0
+## 2019           1 430.71111              0    -9.5                    0.0
+## 2020           1 430.71111              0    -8.5                    0.0
+## 2021           1 430.71111              0    -7.5                    0.0
+## 2022           1 430.71111              0    -6.5                    0.0
+## 2023           1 430.71111              0    -5.5                    0.0
+## 2024           1 430.71111              0    -4.5                    0.0
+## 2025           1 430.71111              0    -3.5                    0.0
+## 2026           1 430.71111              0    -2.5                    0.0
+## 2027           1 430.71111              0    -1.5                    0.0
+## 2028           1 430.71111              0    -0.5                    0.0
+## 2029           1 430.71111              0     0.5                    0.0
+## 2030           1 430.71111              0     1.5                    0.0
+## 2031           1 430.71111              0     2.5                    0.0
+## 2032           1 430.71111              0     3.5                    0.0
+## 2033           1 430.71111              0     4.5                    0.0
+## 2034           1 430.71111              0     5.5                    0.0
+## 2035           1 430.71111              0     6.5                    0.0
+## 2036           1 430.71111              0     7.5                    0.0
+## 2037           1 430.71111              0     8.5                    0.0
+## 2038           1 430.71111              0     9.5                    0.0
+## 2039           1 430.71111              0    10.5                    0.0
+## 2040           1 430.71111              0    11.5                    0.0
+## 2041           1 430.71111              1   -11.5                  -11.5
+## 2042           1 430.71111              1   -10.5                  -10.5
+## 2043           1 430.71111              1    -9.5                   -9.5
+## 2044           1 430.71111              1    -8.5                   -8.5
+## 2045           1 430.71111              1    -7.5                   -7.5
+## 2046           1 430.71111              1    -6.5                   -6.5
+## 2047           1 430.71111              1    -5.5                   -5.5
+## 2048           1 430.71111              1    -4.5                   -4.5
+## 2049           1 430.71111              1    -3.5                   -3.5
+## 2050           1 430.71111              1    -2.5                   -2.5
+## 2051           1 430.71111              1    -1.5                   -1.5
+## 2052           1 430.71111              1    -0.5                   -0.5
+## 2053           1 430.71111              1     0.5                    0.5
+## 2054           1 430.71111              1     1.5                    1.5
+## 2055           1 430.71111              1     2.5                    2.5
+## 2056           1 430.71111              1     3.5                    3.5
+## 2057           1 430.71111              1     4.5                    4.5
+## 2058           1 430.71111              1     5.5                    5.5
+## 2059           1 430.71111              1     6.5                    6.5
+## 2060           1 430.71111              1     7.5                    7.5
+## 2061           1 430.71111              1     8.5                    8.5
+## 2062           1 430.71111              1     9.5                    9.5
+## 2063           1 430.71111              1    10.5                   10.5
+## 2064           1 430.71111              1    11.5                   11.5
+## 2065           1 -74.28889              0   -11.5                    0.0
+## 2066           1 -74.28889              0   -10.5                    0.0
+## 2067           1 -74.28889              0    -9.5                    0.0
+## 2068           1 -74.28889              0    -8.5                    0.0
+## 2069           1 -74.28889              0    -7.5                    0.0
+## 2070           1 -74.28889              0    -6.5                    0.0
+## 2071           1 -74.28889              0    -5.5                    0.0
+## 2072           1 -74.28889              0    -4.5                    0.0
+## 2073           1 -74.28889              0    -3.5                    0.0
+## 2074           1 -74.28889              0    -2.5                    0.0
+## 2075           1 -74.28889              0    -1.5                    0.0
+## 2076           1 -74.28889              0    -0.5                    0.0
+## 2077           1 -74.28889              0     0.5                    0.0
+## 2078           1 -74.28889              0     1.5                    0.0
+## 2079           1 -74.28889              0     2.5                    0.0
+## 2080           1 -74.28889              0     3.5                    0.0
+## 2081           1 -74.28889              0     4.5                    0.0
+## 2082           1 -74.28889              0     5.5                    0.0
+## 2083           1 -74.28889              0     6.5                    0.0
+## 2084           1 -74.28889              0     7.5                    0.0
+## 2085           1 -74.28889              0     8.5                    0.0
+## 2086           1 -74.28889              0     9.5                    0.0
+## 2087           1 -74.28889              0    10.5                    0.0
+## 2088           1 -74.28889              0    11.5                    0.0
+## 2089           1 -74.28889              1   -11.5                  -11.5
+## 2090           1 -74.28889              1   -10.5                  -10.5
+## 2091           1 -74.28889              1    -9.5                   -9.5
+## 2092           1 -74.28889              1    -8.5                   -8.5
+## 2093           1 -74.28889              1    -7.5                   -7.5
+## 2094           1 -74.28889              1    -6.5                   -6.5
+## 2095           1 -74.28889              1    -5.5                   -5.5
+## 2096           1 -74.28889              1    -4.5                   -4.5
+## 2097           1 -74.28889              1    -3.5                   -3.5
+## 2098           1 -74.28889              1    -2.5                   -2.5
+## 2099           1 -74.28889              1    -1.5                   -1.5
+## 2100           1 -74.28889              1    -0.5                   -0.5
+## 2101           1 -74.28889              1     0.5                    0.5
+## 2102           1 -74.28889              1     1.5                    1.5
+## 2103           1 -74.28889              1     2.5                    2.5
+## 2104           1 -74.28889              1     3.5                    3.5
+## 2105           1 -74.28889              1     4.5                    4.5
+## 2106           1 -74.28889              1     5.5                    5.5
+## 2107           1 -74.28889              1     6.5                    6.5
+## 2108           1 -74.28889              1     7.5                    7.5
+## 2109           1 -74.28889              1     8.5                    8.5
+## 2110           1 -74.28889              1     9.5                    9.5
+## 2111           1 -74.28889              1    10.5                   10.5
+## 2112           1 -74.28889              1    11.5                   11.5
+## 2113           1 -65.28889              0   -11.5                    0.0
+## 2114           1 -65.28889              0   -10.5                    0.0
+## 2115           1 -65.28889              0    -9.5                    0.0
+## 2116           1 -65.28889              0    -8.5                    0.0
+## 2117           1 -65.28889              0    -7.5                    0.0
+## 2118           1 -65.28889              0    -6.5                    0.0
+## 2119           1 -65.28889              0    -5.5                    0.0
+## 2120           1 -65.28889              0    -4.5                    0.0
+## 2121           1 -65.28889              0    -3.5                    0.0
+## 2122           1 -65.28889              0    -2.5                    0.0
+## 2123           1 -65.28889              0    -1.5                    0.0
+## 2124           1 -65.28889              0    -0.5                    0.0
+## 2125           1 -65.28889              0     0.5                    0.0
+## 2126           1 -65.28889              0     1.5                    0.0
+## 2127           1 -65.28889              0     2.5                    0.0
+## 2128           1 -65.28889              0     3.5                    0.0
+## 2129           1 -65.28889              0     4.5                    0.0
+## 2130           1 -65.28889              0     5.5                    0.0
+## 2131           1 -65.28889              0     6.5                    0.0
+## 2132           1 -65.28889              0     7.5                    0.0
+## 2133           1 -65.28889              0     8.5                    0.0
+## 2134           1 -65.28889              0     9.5                    0.0
+## 2135           1 -65.28889              0    10.5                    0.0
+## 2136           1 -65.28889              0    11.5                    0.0
+## 2137           1 -65.28889              1   -11.5                  -11.5
+## 2138           1 -65.28889              1   -10.5                  -10.5
+## 2139           1 -65.28889              1    -9.5                   -9.5
+## 2140           1 -65.28889              1    -8.5                   -8.5
+## 2141           1 -65.28889              1    -7.5                   -7.5
+## 2142           1 -65.28889              1    -6.5                   -6.5
+## 2143           1 -65.28889              1    -5.5                   -5.5
+## 2144           1 -65.28889              1    -4.5                   -4.5
+## 2145           1 -65.28889              1    -3.5                   -3.5
+## 2146           1 -65.28889              1    -2.5                   -2.5
+## 2147           1 -65.28889              1    -1.5                   -1.5
+## 2148           1 -65.28889              1    -0.5                   -0.5
+## 2149           1 -65.28889              1     0.5                    0.5
+## 2150           1 -65.28889              1     1.5                    1.5
+## 2151           1 -65.28889              1     2.5                    2.5
+## 2152           1 -65.28889              1     3.5                    3.5
+## 2153           1 -65.28889              1     4.5                    4.5
+## 2154           1 -65.28889              1     5.5                    5.5
+## 2155           1 -65.28889              1     6.5                    6.5
+## 2156           1 -65.28889              1     7.5                    7.5
+## 2157           1 -65.28889              1     8.5                    8.5
+## 2158           1 -65.28889              1     9.5                    9.5
+## 2159           1 -65.28889              1    10.5                   10.5
+## 2160           1 -65.28889              1    11.5                   11.5
+## attr(,&quot;assign&quot;)
+## [1] 0 1 2 3 4
+## attr(,&quot;contrasts&quot;)
+## attr(,&quot;contrasts&quot;)$condition
+## [1] &quot;contr.treatment&quot;
+## 
+## attr(,&quot;msgScaleX&quot;)
+## character(0)</code></pre>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="kicking.html#cb7-1"></a><span class="kw">anova</span>(m1)</span></code></pre></div>
+<pre><code>## Type III Analysis of Variance Table with Satterthwaite&#39;s method
+##                    Sum Sq Mean Sq NumDF   DenDF  F value  Pr(&gt;F)    
+## FI.c                49223   49223     1   42.72   3.0562 0.08761 .  
+## condition           47871   47871     1 2108.82   2.9722 0.08485 .  
+## trial.c           9660363 9660363     1 2108.76 599.7927 &lt; 2e-16 ***
+## condition:trial.c   51385   51385     1 2108.76   3.1904 0.07422 .  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="kicking.html#cb9-1"></a><span class="kw">summary</span>(m1)</span></code></pre></div>
+<pre><code>## Linear mixed model fit by REML. t-tests use Satterthwaite&#39;s method [
+## lmerModLmerTest]
+## Formula: RT ~ FI.c + condition + trial.c + condition:trial.c + (1 | person)
+##    Data: mma
+## 
+## REML criterion at convergence: 27057
+## 
+## Scaled residuals: 
+##     Min      1Q  Median      3Q     Max 
+## -1.8360 -0.4857 -0.1057  0.3817 29.5032 
+## 
+## Random effects:
+##  Groups   Name        Variance Std.Dev.
+##  person   (Intercept)   736.4   27.14  
+##  Residual             16106.2  126.91  
+## Number of obs: 2157, groups:  person, 45
+## 
+## Fixed effects:
+##                          Estimate Std. Error         df t value Pr(&gt;|t|)    
+## (Intercept)             206.71585    5.59651   73.70002  36.937   &lt;2e-16 ***
+## FI.c                      0.04945    0.02828   42.72432   1.748   0.0876 .  
+## conditionafter            9.42211    5.46523 2108.81912   1.724   0.0849 .  
+## trial.c                  10.36625    0.55794 2108.75640  18.580   &lt;2e-16 ***
+## conditionafter:trial.c   -1.40929    0.78900 2108.75554  -1.786   0.0742 .  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Correlation of Fixed Effects:
+##             (Intr) FI.c   cndtnf tril.c
+## FI.c         0.000                     
+## conditinftr -0.489  0.000              
+## trial.c      0.000  0.000  0.000       
+## cndtnftr:t.  0.000  0.000  0.000 -0.707</code></pre>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="kicking.html#cb11-1"></a>MuMIn<span class="op">::</span><span class="kw">r.squaredGLMM</span>(m1)</span></code></pre></div>
+<pre><code>##            R2m       R2c
+## [1,] 0.2145018 0.2488475</code></pre>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="random-effects.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="politeness.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": null,
+"toc": {
+"collapse": "section"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

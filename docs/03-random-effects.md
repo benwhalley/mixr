@@ -11,25 +11,583 @@
 > to explore the concept of 'shrinkage'.
 
 
+Find the [slides from the session here](slides/random-effects.pptx)
 
-## Politeness 
 
-Winter & Grawunder, 2012 describe a study of the pitch (frequency) of individuals' speech when they recorded different phrases (scenarios). The scenarios differed in whether they required 'politeness' or were more informal in nature. A reduced version of this dataset is also described and analysed in a mixed-models tutorial (see http://www.bodowinter.com/tutorial/bw_LME_tutorial2.pdf).
+
+## Sleep (centering)
+
+In the previous session we saw how random intercepts can be used to fit different slopes for different individuals (or groupings) in the data.
+
+The following data show the increased in reaction times over the course of a 10 days experiment in which participants suffered sleep deprivation:
+
+
+##### {#sleepplot}
+
+<img src="03-random-effects_files/figure-html/unnamed-chunk-2-1.png" width="672" />
+
+
+:::{.exercise}
+
+- Is there substantial variation between subjects in reaction times on average?
+- Is there substantial variation in the effect of sleep deprivation?
+
+
+<div class='solution'><button class='solution-button'>Solution</button>
+
+
+There's certainly variation in the slopes between individuals, and the effect of sleep deprivation does seem to differ markedly between individuals.
+
+However, deciding whether there is variation between people on average is less clear-cut. We need to decide on which day we want to compare the variation. For example, at day 0 there doesn't seem to be much variation. But by day 5 there does, and by day 10 there is a lot.
+
+
+As we'll see, to estimate this variation from a model we need to be careful about how we include our covariates (e.g. days in this case).
+
+
+
+</div>
+
+
+:::
+
+
+
+#### Centering coefficients
+
+The plot above was based on the following random slopes model:
+
+
+
+```r
+(sleep.m1 <- lmer(Reaction ~ Days + (Days | Subject), ss))
+```
+
+```
+Linear mixed model fit by REML ['lmerModLmerTest']
+Formula: Reaction ~ Days + (Days | Subject)
+   Data: ss
+REML criterion at convergence: 1743.628
+Random effects:
+ Groups   Name        Std.Dev. Corr
+ Subject  (Intercept) 24.737       
+          Days         5.923   0.07
+ Residual             25.592       
+Number of obs: 180, groups:  Subject, 18
+Fixed Effects:
+(Intercept)         Days  
+     251.41        10.47  
+```
+
+
+If we look at the dataset, we can see that there are 10 rows for each `Subject`, with days indexed from 0 to 9.
+
+
+```r
+sleepstudy %>% head(15) %>% pander()
+```
+
+
+---------------------------
+ Reaction   Days   Subject 
+---------- ------ ---------
+  249.6      0       308   
+
+  258.7      1       308   
+
+  250.8      2       308   
+
+  321.4      3       308   
+
+  356.9      4       308   
+
+  414.7      5       308   
+
+  382.2      6       308   
+
+  290.1      7       308   
+
+  430.6      8       308   
+
+  466.4      9       308   
+
+  222.7      0       309   
+
+  205.3      1       309   
+
+   203       2       309   
+
+  204.7      3       309   
+
+  207.7      4       309   
+---------------------------
+
+
+As we know from linear regression, when we include parameters thet estimated in such a way that when we look at them individually they are the estimate for an individual row ***if all the other predictors were set to zero***.
+
+In multiple regression this is important because it affects how we interpret the paramaters. When we include multiple predictors it can be hard to read the table of model parameters because we need to add together multiple paramaters to make a prediction. We can get around this using the `predict` function, but the key is that the scale of the
+
+For example, if we use the mtcars data we can see that to estimate a heavy automatic car (high `wt` and `am`=1), we would have to do some arithmetic:
+
+
+```r
+lm(mpg~wt*am, data=mtcars)
+```
+
+```
+
+Call:
+lm(formula = mpg ~ wt * am, data = mtcars)
+
+Coefficients:
+(Intercept)           wt           am        wt:am  
+     31.416       -3.786       14.878       -5.298  
+```
+
+Because weight in this sample ranges from 1.513 to 5.424, simply adding the intercpt, `wt` and `am` paramaters would not be an estimate for any car in the sample, because none of them had zero weight.
+
+
+If, on the other hand, we had ***mean-centered*** `wt` --- that is, subtracted the mean from each value --- then we could interpret the other coefficients as being the prediction when *`wt` was at the average value in the sample*.
+
+
+```r
+mt2 <- mtcars %>% mutate(wt = wt - mean(wt))
+lm(mpg~wt*am, data=mt2)
+```
+
+```
+
+Call:
+lm(formula = mpg ~ wt * am, data = mt2)
+
+Coefficients:
+(Intercept)           wt           am        wt:am  
+     19.236       -3.786       -2.168       -5.298  
+```
+
+
+
+
+
+By centering the `wt` predictor the other coefficients change (although the model itself is really the same---the amount of variance explained is identical, for instance):
+
+
+
+<div class='solution'><button class='solution-button'>Show R squared figures</button>
+
+
+
+```r
+# original
+broom::glance(lm(mpg~wt*am, data=mtcars)) %>% pull(r.squared)
+```
+
+```
+[1] 0.8330375
+```
+
+```r
+# centered
+broom::glance(lm(mpg~wt*am, data=mt2)) %>% pull(r.squared)
+```
+
+```
+[1] 0.8330375
+```
+
+
+
+</div>
+
+
+
+#### Why centering matters especially for mixed models
+
+
+In multiple regression centering predictors can be a convenience, but doesn't affect the model fit[^collinfit]. We can always do arithmetic on our coefficients to convert from one configuration to the another when making predictions.
+
+[^collinfit]: This is mostly true. The only exception is when parameters are collinear (see PSYC753 materials); in this case numerical issues when fitting models can lead to small differences, but this is mostly not the case.
+
+
+***This is not true for mixed models***. How we include predictors changes estimates for our variance paramaters. To see why, consider the example we began with, from the `sleepstudy` data:
+
+![](images/sleeprandomslopes.png)
+
+
+If we centered the Days coefficient, the  plot would look like this:
+
+
+```
+Linear mixed model fit by REML ['lmerModLmerTest']
+Formula: Reaction ~ Days + (Days | Subject)
+   Data: ss
+REML criterion at convergence: 1743.628
+Random effects:
+ Groups   Name        Std.Dev. Corr
+ Subject  (Intercept) 24.737       
+          Days         5.923   0.07
+ Residual             25.592       
+Number of obs: 180, groups:  Subject, 18
+Fixed Effects:
+(Intercept)         Days  
+     251.41        10.47  
+```
+
+```
+Linear mixed model fit by REML ['lmerModLmerTest']
+Formula: Reaction ~ Days.c + (Days.c | Subject)
+   Data: ss
+REML criterion at convergence: 1743.628
+Random effects:
+ Groups   Name        Std.Dev. Corr
+ Subject  (Intercept) 37.522       
+          Days.c       5.921   0.75
+ Residual             25.593       
+Number of obs: 180, groups:  Subject, 18
+Fixed Effects:
+(Intercept)       Days.c  
+     298.51        10.47  
+```
+
+<img src="03-random-effects_files/figure-html/unnamed-chunk-9-1.png" width="672" />
+
+
+
+
+
+
+Nothing has changed, *except the scale of the x axis*. The x axis is now `Days.c` which ranges from -5 to 5, and 0 is in the middle; previously `Days` ranged from 0 to 9, with 5 as the midpoint.
+
+BUT this small change is important because our paramaters are estimates when all the *other* predictors = zero.
+
+This means that when we use the centered predictor our random intercept variance --- the variation between people --- is estimated for the midpoint of the study, because day 5 is coded as zero in `Days.c`.
+
+We can see the effect on the variance paramaters if we compare the output of VarCorr. First uncentered:
+
+
+```r
+VarCorr(sleep.m1)
+```
+
+```
+ Groups   Name        Std.Dev. Corr 
+ Subject  (Intercept) 24.7366       
+          Days         5.9229  0.066
+ Residual             25.5918       
+```
+
+And then centered:
+
+
+```r
+VarCorr(sleep.m1.c)
+```
+
+```
+ Groups   Name        Std.Dev. Corr 
+ Subject  (Intercept) 37.5221       
+          Days.c       5.9212  0.753
+ Residual             25.5930       
+```
+
+When we centre `Days` then the proportion of variance attributed to subjects changes from about 80% to over 86%.
+
+
+-----------------------------
+
+
+This plot simplifies and shows the difference between models with centered and uncentered predictors. The vertical dashed lines show where the variance for the random intercept would be taken from in each case:
+
+<img src="03-random-effects_files/figure-html/unnamed-chunk-13-1.png" width="672" />
+
+
+
+#### What's the right thing to do?
+
+It depends on what your question is!
+
+In the `sleepstudy` example we might argue that the first (uncentered) model makes more sense because there is a definite start to the experiment: At Day 0 we have people in their 'natural' state, before we deprive them of sleep. So in this model the `(Intercept)` term describes the varation between people in the normal state.
+
+However in other cases this wouldn't be true. For example, let's say we used the Scottish schools data and included the `year` each cohort was taken in as a predictor:
+
+
+
+
+
+```r
+schools.1 <- lmer(score ~ year + (year|schoolid), data=schools)
+VarCorr(schools.1)                  
+```
+
+```
+ Groups   Name        Std.Dev.  Corr  
+ schoolid (Intercept) 14.770619       
+          year         0.011085 -1.000
+ Residual             14.796990       
+```
+
+Now, the between-school variance is estimated in the year 0 (i.e. >2000 years ago), which clearly doesn't make much sense. If we compare the ICC (or % variance-attributable) within and between schools it makes a huge difference:
+
+
+```r
+schools.2 <- lmer(score ~ cohort90 + (cohort90|schoolid), data=schools)
+
+bind_rows(
+  VarCorr(schools.1) %>% as.tibble() %>% mutate(Centered="No"),
+  VarCorr(schools.2) %>% as.tibble() %>% mutate(Centered="Yes")) %>%
+  filter(is.na(var2)) %>%
+  group_by(Centered) %>%
+  mutate(icc=round(vcov / sum(vcov) * 100, 2)) %>%
+  select(grp, var1, icc) %>%
+  rename(Grouping=grp, Parameter=var1, `%`=icc) %>%
+  pander()
+```
+
+
+-------------------------------------------
+ Centered   Grouping    Parameter      %   
+---------- ---------- ------------- -------
+    No      schoolid   (Intercept)   49.91 
+
+    No      schoolid      year         0   
+
+    No      Residual       NA        50.09 
+
+   Yes      schoolid   (Intercept)   16.6  
+
+   Yes      schoolid    cohort90     0.06  
+
+   Yes      Residual       NA        83.34 
+-------------------------------------------
+
+In this case it makes no sense to estimate the variance when `year` = 0 and we should definitely center the variables.
+
+
+**If you're not sure, however, it's probably safer to center predictors in mixed models.**
+
+
+:::{.exercise}
+
+Return to the piglets example from sessions 1 and 2.
+
+- Refit the model with centered predictors
+- Calculate the variance partition by differences between piglets using centered and uncentered models. What differences do you spot?
+- Which parameterisation most sense in this case? Are we more interested in variation between pigs at the start or the middle of the study?
+
+:::
+
+
+
+## MMA
+
+![photo:[pixabay](https://pixabay.com/photos/mma-mixed-martial-arts-grachan-cage-2944759/)](images/mma.jpg)
+
+
+
+
+
+The following data are a tidied-up version of the data made available by the authors of the MMA paper we discussed in class [@pavelka2020acute]. The `included` column tells whether the row was included in the authors' analysis from the paper. By filtering out non-included rows we can make our results match exactly.
+
+
+```r
+mma  <- read_csv('data/mma_bw.csv') %>% filter(included==TRUE)
+```
+
+
+
+:::{.exercise}
+
+- Import the tidied the data (from [this file](data/mma_bw.csv))
+
+- Fit the model described in the paper (in their supplement the authors reveal that `stimulus` and `FI` were mean-centered).
+
+
+<div class='solution'><button class='solution-button'>How do I mean-centre things?</button>
+
+
+
+```r
+mma.c <- mma %>%
+  mutate(FI.c = FI - mean(FI), stimulus.c = stimulus - mean(stimulus))
+mma.c %>% head
+```
+
+```
+# A tibble: 6 x 8
+  person condition    RT    FI stimulus included  FI.c stimulus.c
+   <dbl> <chr>     <dbl> <dbl>    <dbl> <lgl>    <dbl>      <dbl>
+1      1 before      251  57.2        6 TRUE      13.5     -10.5 
+2      1 before      264  57.2        7 TRUE      13.5      -9.51
+3      1 before      221  57.2        8 TRUE      13.5      -8.51
+4      1 before      221  57.2        9 TRUE      13.5      -7.51
+5      1 before      256  57.2       10 TRUE      13.5      -6.51
+6      1 before      281  57.2       11 TRUE      13.5      -5.51
+```
+
+
+</div>
+
+
+
+
+<div class='solution'><button class='solution-button'>Show the model</button>
+
+
+
+```r
+(mma.m1 <- lmer(RT ~ 1 + condition + stimulus.c + FI.c + condition:stimulus.c + (1|person), data=mma.c))
+```
+
+```
+Linear mixed model fit by REML ['lmerModLmerTest']
+Formula: RT ~ 1 + condition + stimulus.c + FI.c + condition:stimulus.c +  
+    (1 | person)
+   Data: mma.c
+REML criterion at convergence: 22125.95
+Random effects:
+ Groups   Name        Std.Dev.
+ person   (Intercept) 38.46   
+ Residual             40.02   
+Number of obs: 2150, groups:  person, 45
+Fixed Effects:
+               (Intercept)             conditionbefore  
+                 270.18446                    -4.03080  
+                stimulus.c                        FI.c  
+                  -0.26609                    -0.25665  
+conditionbefore:stimulus.c  
+                  -0.05753  
+```
+
+
+</div>
+
+
+
+- Look at the effect of `condition` in your model. Does this match the authors' report that "POST RTs were found significantly higher than PRE (mean difference = 4.031 ms, SE = 1.726"?
+
+
+<div class='solution'><button class='solution-button'>Show answer</button>
+
+
+Yes: the `conditionbefore` coefficient from your model should have been -4.03 also. The direction is reversed because the authors' encoded their model slightly differently (their parameter would have been called `conditionafter`) but the meaning is the same.
+
+To see the SE, use `summary` and `coef` together:
+
+
+```r
+summary(mma.m1) %>% coef() %>% pander()
+```
+
+
+--------------------------------------------------------------------------------------
+             &nbsp;               Estimate   Std. Error    df     t value   Pr(>|t|)  
+-------------------------------- ---------- ------------ ------- --------- -----------
+        **(Intercept)**            270.2       5.861      44.93    46.1     1.777e-39 
+
+      **conditionbefore**          -4.031      1.726      2102    -2.335     0.01964  
+
+         **stimulus.c**           -0.2661      0.1766     2102    -1.507      0.132   
+
+            **FI.c**              -0.2566      0.6756      43     -0.3799    0.7059   
+
+ **conditionbefore:stimulus.c**   -0.05753     0.2495     2102    -0.2306    0.8176   
+--------------------------------------------------------------------------------------
+
+
+This is 0.17660, which is what the authors report.
+
+
+
+</div>
+
+
+
+
+- Are the reported findings robust to minor changes in the model fitting? For example, if parameters are removed or if the excluded data is incorporated?
+
+
+<div class='solution'><button class='solution-button'>Show details</button>
+
+
+
+This model, excluding fatigue (`FI`), predicts the same 4ms difference:
+
+
+```r
+mma.m2 <- lmer(RT ~ 1 + condition * stimulus.c + (stimulus.c|person), data=mma.c)
+summary(mma.m2) %>% coef() %>% pander()
+```
+
+
+-------------------------------------------------------------------------------------
+             &nbsp;               Estimate   Std. Error    df     t value   Pr(>|t|) 
+-------------------------------- ---------- ------------ ------- --------- ----------
+        **(Intercept)**            270.2       5.804      45.98    46.55    2.49e-40 
+
+      **conditionbefore**          -4.027      1.712      2058    -2.352    0.01876  
+
+         **stimulus.c**           -0.2673      0.2072     106.4    -1.29     0.1999  
+
+ **conditionbefore:stimulus.c**   -0.05712     0.2474     2059    -0.2309    0.8174  
+-------------------------------------------------------------------------------------
+
+However this model fit includes all the excluded data and predicts a 2ms difference in the other direction, and is not statistically significant:
+
+
+```r
+mma.all  <- read_csv('data/mma_bw.csv') %>%
+  mutate(stimulus.c = stimulus-mean(stimulus), FI.c = FI-mean(FI), )
+mma.m3 <- lmer(RT ~ 1 + condition + stimulus.c + FI.c + condition:stimulus.c +  (1 | person), data=mma.all)
+mma.m3 %>% summary() %>% coef() %>% pander()
+```
+
+
+--------------------------------------------------------------------------------------
+             &nbsp;               Estimate   Std. Error    df     t value   Pr(>|t|)  
+-------------------------------- ---------- ------------ ------- --------- -----------
+        **(Intercept)**             271        6.129      51.92    44.22    6.936e-43 
+
+      **conditionbefore**          2.198       3.685      2467    0.5964     0.5509   
+
+         **stimulus.c**           -0.3548      0.3225     2467     -1.1      0.2715   
+
+            **FI.c**               0.3986      0.6813     42.99    0.585     0.5616   
+
+ **conditionbefore:stimulus.c**    -1.169      0.4565     2467    -2.561     0.01051  
+--------------------------------------------------------------------------------------
+
+
+
+</div>
+
+
+
+- How should we interpret these findings, based on the replications you have made?
+
+
+:::
+
+
+
+
+
+## Politeness
+
+Winter & Grawunder, 2012 describe a study of the pitch (frequency) of individuals' speech when they recorded different phrases (scenarios). The scenarios differed in whether they required 'politeness' or were more informal in nature. A reduced version of this dataset is also described and analysed in a mixed-models tutorial (see http://www.bodowinter.com/uploads/1/2/9/3/129362560/bw_lme_tutorial2.pdf).
 
 The data are available online and can be read from this URL:
 
 
 
+
 ```r
-# this previously taken from http://www.bodowinter.com/tutorial/politeness_data.csv but that link now a 404
+# this previously taken from http://www.bodowinter.com/tutorial/politeness_data.csv but that link is now broken
 politeness <-  read_csv("https://raw.githubusercontent.com/opetchey/BIO144/master/3_datasets/politeness_data.csv")
 ```
 
 
 :::{.exercise}
 
-1. Make a plot showing how average levels of frequency differs between individuals.
-
+1. Make a plot showing how average levels of frequency differs *between individuals*.
 
 
 
@@ -42,16 +600,14 @@ politeness %>%
   ggplot(aes(subject, frequency)) + geom_boxplot()
 ```
 
-<img src="03-random-effects_files/figure-html/unnamed-chunk-3-1.png" width="672" />
-
-You could also use `stat_summary()` instead of `geom_boxplot()` to get a point range plot.
+<img src="03-random-effects_files/figure-html/unnamed-chunk-25-1.png" width="672" />
 
 
 </div>
 
 
 
-2. Make a plot showing how frequency differs between scenarios
+2. Make a plot showing how frequency differs *between scenarios*
 
 
 
@@ -64,7 +620,7 @@ politeness %>%
   ggplot(aes(factor(scenario), frequency)) + geom_boxplot()
 ```
 
-<img src="03-random-effects_files/figure-html/unnamed-chunk-4-1.png" width="672" />
+<img src="03-random-effects_files/figure-html/unnamed-chunk-26-1.png" width="672" />
 
 
 </div>
@@ -86,7 +642,7 @@ It looks like subjects vary more in frequency than do scenarios, but there appea
 
 
 
-4. Fit a random intercepts model to the data, allowing for variation between subjects.
+4. Fit a random intercepts model to the data, allowing for variation between subjects. Include fixed effects for `attitude` and `gender`:
 
 
 <div class='solution'><button class='solution-button'>Show me that model</button>
@@ -94,22 +650,22 @@ It looks like subjects vary more in frequency than do scenarios, but there appea
 
 
 ```r
-(polite.ri.subject <- lmer(frequency ~ attitude + (1|subject), data=politeness))
+(polite.ri.subject <- lmer(frequency ~ attitude + gender + (1|subject), data=politeness))
 ```
 
 ```
-## Linear mixed model fit by REML ['lmerModLmerTest']
-## Formula: frequency ~ attitude + (1 | subject)
-##    Data: politeness
-## REML criterion at convergence: 804.7023
-## Random effects:
-##  Groups   Name        Std.Dev.
-##  subject  (Intercept) 63.10   
-##  Residual             29.17   
-## Number of obs: 83, groups:  subject, 6
-## Fixed Effects:
-## (Intercept)  attitudepol  
-##      202.59       -19.38
+Linear mixed model fit by REML ['lmerModLmerTest']
+Formula: frequency ~ attitude + gender + (1 | subject)
+   Data: politeness
+REML criterion at convergence: 786.7439
+Random effects:
+ Groups   Name        Std.Dev.
+ subject  (Intercept) 24.57   
+ Residual             29.17   
+Number of obs: 83, groups:  subject, 6
+Fixed Effects:
+(Intercept)  attitudepol      genderM  
+     256.69       -19.41      -108.20  
 ```
 
 
@@ -119,51 +675,60 @@ It looks like subjects vary more in frequency than do scenarios, but there appea
 
 
 
-<div class='solution'><button class='solution-button'>What other commands should I run to interpret the model?</button>
+<div class='solution'><button class='solution-button'>What other commands should I run to interpret the model at this point?</button>
 
 You might then also want to look at the regression coefficients, Anova table, and tests of random effects:
 
 
 ```r
 # regression coefficients
-polite.ri.subject %>% summary %>% coef()
+polite.ri.subject %>% summary %>% coef() %>% pander(caption="Model coefficients")
 ```
 
-```
-##              Estimate Std. Error        df   t value     Pr(>|t|)
-## (Intercept) 202.58810  26.151105  5.150024  7.746827 0.0005008339
-## attitudepol -19.37584   6.406962 76.002550 -3.024185 0.0033990395
-```
+
+----------------------------------------------------------------------
+     &nbsp;        Estimate   Std. Error    df     t value   Pr(>|t|) 
+----------------- ---------- ------------ ------- --------- ----------
+ **(Intercept)**    256.7       15.23      4.378    16.86    3.78e-05 
+
+ **attitudepol**    -19.41      6.407      76.02    -3.03    0.003345 
+
+   **genderM**      -108.2      21.06      4.009   -5.137    0.006766 
+----------------------------------------------------------------------
+
+Table: Model coefficients
 
 ```r
 # anova-table
-anova(polite.ri.subject)
+anova(polite.ri.subject) %>% pander(caption="Anova table")
 ```
 
-```
-## Type III Analysis of Variance Table with Satterthwaite's method
-##          Sum Sq Mean Sq NumDF  DenDF F value   Pr(>F)   
-## attitude 7782.9  7782.9     1 76.003  9.1457 0.003399 **
-## ---
-## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-```
+
+----------------------------------------------------------------------
+    &nbsp;      Sum Sq   Mean Sq   NumDF   DenDF   F value    Pr(>F)  
+-------------- -------- --------- ------- ------- --------- ----------
+ **attitude**    7810     7810       1     76.02    9.179    0.003345 
+
+  **gender**    22457     22457      1     4.009    26.39    0.006766 
+----------------------------------------------------------------------
+
+Table: Anova table
 
 ```r
 # tests of random effects
-ranova(polite.ri.subject)
+ranova(polite.ri.subject) %>% pander(caption="Test of random intercepts")
 ```
 
-```
-## ANOVA-like table for random-effects: Single term deletions
-## 
-## Model:
-## frequency ~ attitude + (1 | subject)
-##               npar  logLik   AIC   LRT Df Pr(>Chisq)    
-## <none>           4 -402.35 812.7                        
-## (1 | subject)    3 -457.15 920.3 109.6  1  < 2.2e-16 ***
-## ---
-## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-```
+
+---------------------------------------------------------------------
+      &nbsp;         npar   logLik    AIC     LRT    Df   Pr(>Chisq) 
+------------------- ------ -------- ------- ------- ---- ------------
+    **<none>**        5     -393.4   796.7    NA     NA       NA     
+
+ **(1 | subject)**    4     -404.7   817.4   22.68   1    1.909e-06  
+---------------------------------------------------------------------
+
+Table: Test of random intercepts
 
 
 
@@ -172,7 +737,7 @@ ranova(polite.ri.subject)
 
 
 
-4. Fit a second random intercepts model, allowing for variation in both subjects and between the different scenarios. Use to `VarCorr` function to estimate how much variation (what percentage of the total) was between subjects, and what percentage was between scenarios.
+4. Fit a second random intercepts model, allowing for variation in both subjects and between the different scenarios.
 
 
 <div class='solution'><button class='solution-button'>Show me that model</button>
@@ -180,22 +745,24 @@ ranova(polite.ri.subject)
 
 
 ```r
-polite.ri.both <- lmer(frequency ~ attitude + 
+polite.ri.both <- lmer(frequency ~ attitude + gender +
                          (1|subject) + (1|scenario), data=politeness)
+
+# test of random effect
 ranova(polite.ri.both)
 ```
 
 ```
-## ANOVA-like table for random-effects: Single term deletions
-## 
-## Model:
-## frequency ~ attitude + (1 | subject) + (1 | scenario)
-##                npar  logLik    AIC     LRT Df Pr(>Chisq)    
-## <none>            5 -396.73 803.45                          
-## (1 | subject)     4 -457.15 922.30 120.851  1  < 2.2e-16 ***
-## (1 | scenario)    4 -402.35 812.70  11.249  1  0.0007968 ***
-## ---
-## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+ANOVA-like table for random-effects: Single term deletions
+
+Model:
+frequency ~ attitude + gender + (1 | subject) + (1 | scenario)
+               npar  logLik    AIC    LRT Df Pr(>Chisq)    
+<none>            6 -387.73 787.45                         
+(1 | subject)     5 -402.50 815.00 29.546  1  5.461e-08 ***
+(1 | scenario)    5 -393.37 796.74 11.289  1  0.0007796 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ```
 
 
@@ -207,33 +774,31 @@ ranova(polite.ri.both)
 5. How much variance was attributable to subjects or scenarios, compared with the total variance?
 
 
-<div class='solution'><button class='solution-button'>Show ne how to calculate this</button>
+<div class='solution'><button class='solution-button'>Show me how to calculate this</button>
 
 
-Remember to convert the `VarCorr` output to a dataframe to see the variance (rather than standard deviations) in the `vcov` column. You can then use `mutate` to calculate the within/betwen ratio (the ICC).
+Remember to convert the `VarCorr` output to a dataframe to see the variance (rather than standard deviations) in the `vcov` column. You can then use `mutate` or `transmute` to calculate the within/betwen ratio (the ICC).
 
 
 ```r
-VarCorr(polite.ri.both) %>%  
-  as.tibble() %>% 
-  select(grp, vcov) %>% 
-  mutate(icc = vcov /  sum(vcov)) %>% 
+polite.ri.both %>% VarCorr() %>% as_tibble() %>%
+  transmute(
+    Term=Hmisc::capitalize(grp),
+    `% variation`=round(vcov / sum(vcov) * 100, 1)
+  ) %>%
   pander()
 ```
 
 
----------------------------
-   grp      vcov     icc   
----------- ------ ---------
- scenario   219    0.04488 
+------------------------
+   Term     % variation 
+---------- -------------
+ Scenario      14.8     
 
- subject    4015   0.8227  
+ Subject       41.6     
 
- Residual   646    0.1324  
----------------------------
-
-
-
+ Residual      43.6     
+------------------------
 
 
 </div>
@@ -249,11 +814,12 @@ VarCorr(polite.ri.both) %>%
 
 
 ```r
-frequency ~ attitude + (attitude|subject) + (attitude|scenario)
+frequency ~ attitude + gender + (attitude|subject) + (attitude|scenario)
 ```
 
 ```
-## frequency ~ attitude + (attitude | subject) + (attitude | scenario)
+frequency ~ attitude + gender + (attitude | subject) + (attitude | 
+    scenario)
 ```
 
 
@@ -261,7 +827,7 @@ frequency ~ attitude + (attitude|subject) + (attitude|scenario)
 
 
 
-7. Use `ranova` to test whether the random slopes were significant predictors of variance in `frequency`.
+7. Use `ranova` to test whether the random slopes improved the model
 
 
 
@@ -272,7 +838,7 @@ First run the model:
 
 
 ```r
-polite.rslopes <- lmer(frequency ~ attitude + (attitude|subject) +
+polite.rslopes <- lmer(frequency ~ attitude + gender + (attitude|subject) +
                          (attitude|scenario), data=politeness)
 ```
 
@@ -293,72 +859,29 @@ ranova(polite.rslopes)
 ```
 
 ```
-## ANOVA-like table for random-effects: Single term deletions
-## 
-## Model:
-## frequency ~ attitude + (attitude | subject) + (attitude | scenario)
-##                                   npar  logLik    AIC     LRT Df Pr(>Chisq)
-## <none>                               9 -395.76 809.51                      
-## attitude in (attitude | subject)     7 -396.55 807.11 1.59356  2     0.4508
-## attitude in (attitude | scenario)    7 -395.95 805.89 0.38097  2     0.8266
+ANOVA-like table for random-effects: Single term deletions
+
+Model:
+frequency ~ attitude + gender + (attitude | subject) + (attitude | 
+    scenario)
+                                  npar  logLik    AIC     LRT Df Pr(>Chisq)
+<none>                              10 -387.54 795.08                      
+attitude in (attitude | subject)     8 -387.55 791.10 0.02468  2     0.9877
+attitude in (attitude | scenario)    8 -387.71 791.43 0.35218  2     0.8385
 ```
 
 Both of the `Pr(>Chisq)` values (the *p* values for the chi squared test) are non-significant.
 
+You might also note this more complex model had some problems fitting: Don't worry for now, but we will cover with this in the final session.
+
+
 
 </div>
 
 
 
 
-7. Use `anova` to test the same thing: whether adding the random slope for `attitude` within `scenario` or `subject` improved the model.
-
-
-
-<div class='solution'><button class='solution-button'>Show me how</button>
-
-
-First run two models, with and without the random slope you want to test:
-
-
-```r
-model.without <- lmer(frequency ~ attitude + 
-                         (1|subject) +
-                         (attitude|scenario), data=politeness)
-
-
-model.with <- lmer(frequency ~ attitude + 
-                         (attitude|subject) +
-                         (attitude|scenario), data=politeness)
-```
-
-And then use `anova`:
-
-
-```r
-anova(model.with, model.without)
-```
-
-```
-## Data: politeness
-## Models:
-## model.without: frequency ~ attitude + (1 | subject) + (attitude | scenario)
-## model.with: frequency ~ attitude + (attitude | subject) + (attitude | scenario)
-##               Df    AIC    BIC  logLik deviance  Chisq Chi Df Pr(>Chisq)
-## model.without  7 820.88 837.81 -403.44   806.88                         
-## model.with     9 823.32 845.09 -402.66   805.32 1.5578      2     0.4589
-```
-
-You should notice that the  *p* value for the test has the same number of degrees of freedom, and the same value (very slightly different due to rounding errors).
-
-The `Pr(>Chisq)` is again non-significant, indicating that the random slope within `subject` doesn't explain additional variance.
-
-
-</div>
-
-
-
-8. If a random slopes model is not 'significantly' better than a similar model which does not include the random slope term, is there any reason why we  might still prefer it, and use the 'full' model to base our inference on?
+7. If a random slopes model is not 'significantly' better than a similar model which does not include the random slope term, is there any reason why we  might still prefer it, and use the 'full' model to base our inference on?
 
 
 
@@ -373,7 +896,7 @@ Yes - simulation studies, including Barr et al 2013 suggest that a 'maximal' mod
 
 
 
-9. How might mixed models make the problem of 'researcher degrees of freedom' worse? What effect might this have? How can it be avoided?
+8. How might mixed models make the problem of 'researcher degrees of freedom' worse? What effect might this have? How can it be avoided?
 
 
 <div class='solution'><button class='solution-button'>Show answer</button>
@@ -392,216 +915,323 @@ Mixed models provide many more possible 'ways to do it'. In addition to differen
 
 
 
-<!---
+## Anova in mixed models
 
+The file [journal.pone.0226387.s001.sav](data/journal.pone.0226387.s001.sav) contains data from @kemps2019cognitive.
+These have been reshaped to long format and tidied up in [data/drinks.csv](data/drinks.csv).
 
-```r
-polite.ri1 <- lmer(frequency ~ attitude + (1|subject), data=politeness)
-summary(polite.ri1)
-```
+The study explored the effect of an cognitive bias modification intervention, and one of the outcomes was Attentional Bias in a dot-probe task.
 
-```
-## Linear mixed model fit by REML. t-tests use Satterthwaite's method [
-## lmerModLmerTest]
-## Formula: frequency ~ attitude + (1 | subject)
-##    Data: politeness
-## 
-## REML criterion at convergence: 804.7
-## 
-## Scaled residuals: 
-##     Min      1Q  Median      3Q     Max 
-## -2.2953 -0.6018 -0.2005  0.4774  3.1772 
-## 
-## Random effects:
-##  Groups   Name        Variance Std.Dev.
-##  subject  (Intercept) 3982     63.10   
-##  Residual              851     29.17   
-## Number of obs: 83, groups:  subject, 6
-## 
-## Fixed effects:
-##             Estimate Std. Error      df t value Pr(>|t|)    
-## (Intercept)  202.588     26.151   5.150   7.747 0.000501 ***
-## attitudepol  -19.376      6.407  76.003  -3.024 0.003399 ** 
-## ---
-## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-## 
-## Correlation of Fixed Effects:
-##             (Intr)
-## attitudepol -0.121
-```
-
-```r
-ranova(polite.ri1)
-```
-
-```
-## ANOVA-like table for random-effects: Single term deletions
-## 
-## Model:
-## frequency ~ attitude + (1 | subject)
-##               npar  logLik   AIC   LRT Df Pr(>Chisq)    
-## <none>           4 -402.35 812.7                        
-## (1 | subject)    3 -457.15 920.3 109.6  1  < 2.2e-16 ***
-## ---
-## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-```
-
-
-```r
-polite.ri <- lmer(frequency ~ attitude + (1|subject) + (1|scenario), data=politeness)
-summary(polite.ri)
-```
-
-```
-## Linear mixed model fit by REML. t-tests use Satterthwaite's method [
-## lmerModLmerTest]
-## Formula: frequency ~ attitude + (1 | subject) + (1 | scenario)
-##    Data: politeness
-## 
-## REML criterion at convergence: 793.5
-## 
-## Scaled residuals: 
-##     Min      1Q  Median      3Q     Max 
-## -2.2006 -0.5817 -0.0639  0.5625  3.4385 
-## 
-## Random effects:
-##  Groups   Name        Variance Std.Dev.
-##  scenario (Intercept)  219     14.80   
-##  subject  (Intercept) 4015     63.36   
-##  Residual              646     25.42   
-## Number of obs: 83, groups:  scenario, 7; subject, 6
-## 
-## Fixed effects:
-##             Estimate Std. Error      df t value Pr(>|t|)    
-## (Intercept)  202.588     26.754   5.575   7.572 0.000389 ***
-## attitudepol  -19.695      5.585  70.022  -3.527 0.000748 ***
-## ---
-## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-## 
-## Correlation of Fixed Effects:
-##             (Intr)
-## attitudepol -0.103
-```
-
-```r
-VarCorr(polite.ri)
-```
-
-```
-##  Groups   Name        Std.Dev.
-##  scenario (Intercept) 14.798  
-##  subject  (Intercept) 63.361  
-##  Residual             25.417
-```
-
-```r
-ranova(polite.ri)
-```
-
-```
-## ANOVA-like table for random-effects: Single term deletions
-## 
-## Model:
-## frequency ~ attitude + (1 | subject) + (1 | scenario)
-##                npar  logLik    AIC     LRT Df Pr(>Chisq)    
-## <none>            5 -396.73 803.45                          
-## (1 | subject)     4 -457.15 922.30 120.851  1  < 2.2e-16 ***
-## (1 | scenario)    4 -402.35 812.70  11.249  1  0.0007968 ***
-## ---
-## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-```
+There were two experimental conditions (between subjects) and participants were tested twice. The original paper reported results from a mixed model in which `Time` was a repeated/within-subjects factor.
 
 
 
 
 ```r
-politeness.agg <- politeness %>% 
-  group_by(subject, attitude) %>% 
-  summarise(frequency = mean(frequency))
-  
-polite.ri.agg <- lmer(frequency ~ attitude + (1|subject), data=politeness)
-polite.ri %>% summary %>%  coefficients
-```
-
-```
-##              Estimate Std. Error        df   t value     Pr(>|t|)
-## (Intercept) 202.58810  26.753654  5.575042  7.572352 0.0003892701
-## attitudepol -19.69454   5.584683 70.022146 -3.526528 0.0007475343
-```
-
-```r
-polite.ri.agg %>% summary %>%  coefficients
-```
-
-```
-##              Estimate Std. Error        df   t value     Pr(>|t|)
-## (Intercept) 202.58810  26.151105  5.150024  7.746827 0.0005008339
-## attitudepol -19.37584   6.406962 76.002550 -3.024185 0.0033990395
+drinks %>% head %>% pander("6 rows from the `drinks` dataset")
 ```
 
 
+---------------------------------------------------------
+ Participant   Condition   Age   Gender   Time   AttBias 
+------------- ----------- ----- -------- ------ ---------
+      1         Attend     18    Female   Pre    -5.794  
+
+      1         Attend     18    Female   Post   -17.86  
+
+      2          Avoid     19    Female   Pre     -5.19  
+
+      2          Avoid     19    Female   Post    26.08  
+
+      3         Attend     24     Male    Pre      27    
+
+      3         Attend     24     Male    Post    15.81  
+---------------------------------------------------------
+
+Table: 6 rows from the `drinks` dataset
 
 
-```r
-polite.rs <- lmer(frequency ~ attitude + 
-                    (attitude|subject) + 
-                    (attitude|scenario), data=politeness)
-polite.rs %>% summary %>%  coefficients
-```
+Plotting the data indicates a Time*Condition interaction:
 
-```
-##              Estimate Std. Error       df   t value     Pr(>|t|)
-## (Intercept) 202.58810  28.204932 5.376367  7.182719 0.0005975745
-## attitudepol -19.66341   7.058335 6.280892 -2.785842 0.0302626661
-```
+<img src="03-random-effects_files/figure-html/unnamed-chunk-36-1.png" width="672" />
 
-```r
-polite.rs %>% ranova
-```
 
-```
-## ANOVA-like table for random-effects: Single term deletions
-## 
-## Model:
-## frequency ~ attitude + (attitude | subject) + (attitude | scenario)
-##                                   npar  logLik    AIC     LRT Df Pr(>Chisq)
-## <none>                               9 -395.76 809.51                      
-## attitude in (attitude | subject)     7 -396.55 807.11 1.59356  2     0.4508
-## attitude in (attitude | scenario)    7 -395.95 805.89 0.38097  2     0.8266
-```
+
+:::{.exercise}
+
+1. Run a random intercepts model which would test the relationships shown in the plot above
+
+
+<div class='solution'><button class='solution-button'>Solution</button>
 
 
 
 ```r
-anova(polite.ri, polite.rs)
+(drinks.m1 <- lmer(AttBias ~ Condition * Time + (1|Participant), data=drinks))
 ```
 
 ```
-## Data: politeness
-## Models:
-## polite.ri: frequency ~ attitude + (1 | subject) + (1 | scenario)
-## polite.rs: frequency ~ attitude + (attitude | subject) + (attitude | scenario)
-##           Df    AIC    BIC  logLik deviance  Chisq Chi Df Pr(>Chisq)
-## polite.ri  5 817.04 829.13 -403.52   807.04                         
-## polite.rs  9 823.32 845.09 -402.66   805.32 1.7166      4     0.7877
+Linear mixed model fit by REML ['lmerModLmerTest']
+Formula: AttBias ~ Condition * Time + (1 | Participant)
+   Data: drinks
+REML criterion at convergence: 2033.767
+Random effects:
+ Groups      Name        Std.Dev.
+ Participant (Intercept)  4.975  
+ Residual                19.592  
+Number of obs: 232, groups:  Participant, 116
+Fixed Effects:
+           (Intercept)          ConditionAvoid                 TimePre  
+                 9.706                 -11.991                  -4.684  
+ConditionAvoid:TimePre  
+                13.086  
 ```
 
 
--->
+</div>
+
+
+
+2. Use the `anova` command to test the interaction of Condition and Time
+
+
+
+<div class='solution'><button class='solution-button'>Solution</button>
+
+
+
+```r
+drinks.m1 %>% anova
+```
+
+```
+Type III Analysis of Variance Table with Satterthwaite's method
+                Sum Sq Mean Sq NumDF DenDF F value  Pr(>F)  
+Condition      1525.01 1525.01     1   114  3.9729 0.04863 *
+Time            200.51  200.51     1   114  0.5224 0.47132  
+Condition:Time 2482.99 2482.99     1   114  6.4685 0.01232 *
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+```
+
+There does appear to be an interaction.
+
+
+</div>
+
+
+
+:::
+
+
+
+### Follow-up tests
+
+To run follow-up tests comparing individual cells in the design we can use another R package called `emmeans`.
+
+
+
+```r
+library(emmeans)
+```
+
+
+The `emmeans` function (which is inside the `emmeans` package we just loaded), can calculate means and confidence intervals for each cell in the design:
+
+
+```r
+emmeans(drinks.m1, ~Condition*Time)
+```
+
+```
+ Condition Time emmean   SE  df lower.CL upper.CL
+ Attend    Post   9.71 2.65 227    4.476    14.94
+ Avoid     Post  -2.28 2.65 227   -7.515     2.95
+ Attend    Pre    5.02 2.65 227   -0.207    10.25
+ Avoid     Pre    6.12 2.65 227    0.887    11.35
+
+Degrees-of-freedom method: kenward-roger 
+Confidence level used: 0.95 
+```
+
+In the code above we used the `emmeans` function, and gave it the saved random intercept model as input. In the second input (where is says `~Condition*Time`) we are using a formula to describe which part of the design we would like means for.
+
+Helpfully, you can also plot the results of this function, so the folliwing is a shortcut for writing a ggplot command yourself:
+
+
+```r
+plot(emmeans(drinks.m1, ~Condition*Time)) + xlab("Predicted value")
+```
+
+<img src="03-random-effects_files/figure-html/unnamed-chunk-41-1.png" width="672" />
+
+
+We can also save the results of `emmeans` and send it to the `contrast` function. This produces t tests for each pairwise comparison:
+
+
+```r
+savedmeans1 <- emmeans(drinks.m1, ~Condition*Time)
+contrast(savedmeans1, method='pairwise', adjust='none')
+```
+
+```
+ contrast                 estimate   SE  df t.ratio p.value
+ Attend,Post - Avoid,Post    11.99 3.75 227  3.195  0.0016 
+ Attend,Post - Attend,Pre     4.68 3.64 114  1.287  0.2006 
+ Attend,Post - Avoid,Pre      3.59 3.75 227  0.956  0.3400 
+ Avoid,Post - Attend,Pre     -7.31 3.75 227 -1.947  0.0528 
+ Avoid,Post - Avoid,Pre      -8.40 3.64 114 -2.309  0.0227 
+ Attend,Pre - Avoid,Pre      -1.09 3.75 227 -0.292  0.7708 
+
+Degrees-of-freedom method: kenward-roger 
+```
+
+And we can add `adjust="bonferonni"` or `adjust="tukey"` method to adjust for multiple comparisons
+
+
+```r
+contrast(savedmeans1, method='pairwise', adjust='tukey')
+```
+
+```
+ contrast                 estimate   SE  df t.ratio p.value
+ Attend,Post - Avoid,Post    11.99 3.75 227  3.195  0.0086 
+ Attend,Post - Attend,Pre     4.68 3.64 114  1.287  0.5728 
+ Attend,Post - Avoid,Pre      3.59 3.75 227  0.956  0.7744 
+ Avoid,Post - Attend,Pre     -7.31 3.75 227 -1.947  0.2116 
+ Avoid,Post - Avoid,Pre      -8.40 3.64 114 -2.309  0.1019 
+ Attend,Pre - Avoid,Pre      -1.09 3.75 227 -0.292  0.9913 
+
+Degrees-of-freedom method: kenward-roger 
+P value adjustment: tukey method for comparing a family of 4 estimates 
+```
+
+
+If we want to compare pairs of groups, we can adjust the formula we pass to the `emmeans` function. In the example below I compare Conditions averaged across both time periods:
+
+
+
+
+
+```r
+savedmeans2 <- emmeans(drinks.m1, ~Condition)
+contrast(savedmeans2, method='pairwise')
+```
+
+```
+ contrast       estimate   SE  df t.ratio p.value
+ Attend - Avoid     5.45 2.73 114 1.993   0.0486 
+
+Results are averaged over the levels of: Time 
+Degrees-of-freedom method: kenward-roger 
+```
+
+In this example we compare the Pre and Post measurement times *within* each group (here the bar symbol, `|`, is read as 'within'):
+
+
+```r
+savedmeans3 <- emmeans(drinks.m1, ~Time|Condition)
+contrast(savedmeans3, method='pairwise')
+```
+
+```
+Condition = Attend:
+ contrast   estimate   SE  df t.ratio p.value
+ Post - Pre     4.68 3.64 114  1.287  0.2006 
+
+Condition = Avoid:
+ contrast   estimate   SE  df t.ratio p.value
+ Post - Pre    -8.40 3.64 114 -2.309  0.0227 
+
+Degrees-of-freedom method: kenward-roger 
+```
+
+
+:::{.tip}
+
+##### Useful `emmeans` examples
+
+
+
+```r
+# get the means of all combinations of factors A and B
+emmeans(model, ~A+B)
+
+# menas the same as the line above
+emmeans(model, ~A*B)
+
+# show all pairwise contrasts for all combinations of A and B
+contrast(emmeans(model, pairwise~A+B), pairwise)
+
+# show tests of the effect of A within each level of B
+contrast(emmeans(model, pairwise~A|B), pairwise)
+
+# show the confidence interval for the tests above:
+confint(contrast(emmeans(model, pairwise~A|B), pairwise))
+```
+
+:::
+
+
+
+
+:::{.exercise}
+
+- Adjust the code using `emmeans` and `contrast` above to compare Pre vs Post scores (averaged across Condition)
+- Compare the conditions *within* each time period.
+
+
+<div class='solution'><button class='solution-button'>Solution</button>
+
+
+
+```r
+# compare times averaged across conditions
+contrast(emmeans(drinks.m1, ~Time), method='pairwise')
+```
+
+```
+ contrast   estimate   SE  df t.ratio p.value
+ Post - Pre    -1.86 2.57 114 -0.723  0.4713 
+
+Results are averaged over the levels of: Condition 
+Degrees-of-freedom method: kenward-roger 
+```
+
+```r
+# compare conditions within each time
+contrast(emmeans(drinks.m1, ~Condition|Time), method='pairwise')
+```
+
+```
+Time = Post:
+ contrast       estimate   SE  df t.ratio p.value
+ Attend - Avoid    11.99 3.75 227  3.195  0.0016 
+
+Time = Pre:
+ contrast       estimate   SE  df t.ratio p.value
+ Attend - Avoid    -1.09 3.75 227 -0.292  0.7708 
+
+Degrees-of-freedom method: kenward-roger 
+```
+
+
+
+</div>
+
+:::
+
 
 
 
 ## Further reading
 
-
-
 https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/j.2041-210x.2012.00261.x
 
+Meteyard summarises current good practice in running and reporting mixed models [@meteyard2020best].
 
 Barr et al go into more detail on why mixed models are preferable to RM anova, and this paper will be a useful reference for future sessions too:  [Barr, D. J., Levy, R., Scheepers, C., & Tily, H. J. (2013). Random effects structure for confirmatory hypothesis testing: Keep it maximal. Journal of memory and language, 68(3), 255-278.](http://eprints.gla.ac.uk/79067/)
 
 This paper expands on the original 'keep it maximal' paper, covering situations with interactions between within factors: [Barr, D. J. (2013). Random effects structure for testing interactions in linear mixed-effects models. Frontiers in psychology, 4, 328.](http://eprints.gla.ac.uk/88175/)
 
 See also: [Eager, C., & Roy, J. (2017). Mixed effects models are sometimes terrible. arXiv preprint arXiv:1701.04858.](https://arxiv.org/abs/1701.04858)
-
-

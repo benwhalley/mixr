@@ -30,8 +30,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="random-effects.html"/>
-<link rel="next" href="further-reading.html"/>
+<link rel="prev" href="mma.html"/>
+<link rel="next" href="anova-in-mixed-models.html"/>
 <script src="libs/header-attrs-2.1/header-attrs.js"></script>
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -161,11 +161,14 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul></li>
 <li class="chapter" data-level="" data-path="random-effects.html"><a href="random-effects.html"><i class="fa fa-check"></i>Random effects</a>
 <ul>
+<li class="chapter" data-level="" data-path="sleep-centering.html"><a href="sleep-centering.html"><i class="fa fa-check"></i>Sleep (centering)</a></li>
+<li class="chapter" data-level="" data-path="mma.html"><a href="mma.html"><i class="fa fa-check"></i>MMA</a></li>
 <li class="chapter" data-level="" data-path="politeness.html"><a href="politeness.html"><i class="fa fa-check"></i>Politeness</a></li>
+<li class="chapter" data-level="" data-path="anova-in-mixed-models.html"><a href="anova-in-mixed-models.html"><i class="fa fa-check"></i>Anova in mixed models</a></li>
 <li class="chapter" data-level="" data-path="further-reading.html"><a href="further-reading.html"><i class="fa fa-check"></i>Further reading</a></li>
 </ul></li>
 <li class="chapter" data-level="" data-path="bayesian-estimation.html"><a href="bayesian-estimation.html"><i class="fa fa-check"></i>Bayesian estimation</a></li>
-<li class="chapter" data-level="" data-path="assessments.html"><a href="assessments.html"><i class="fa fa-check"></i>Assessments</a></li>
+<li class="chapter" data-level="" data-path="assessment.html"><a href="assessment.html"><i class="fa fa-check"></i>Assessment</a></li>
 <li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
 <li class="divider"></li>
 <li><a href="https://creativecommons.org/licenses/by-sa/4.0/" target="blank">Licence: CC BY-SA 4</a></li>
@@ -189,33 +192,32 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
             <section class="normal" id="section-">
 <div id="politeness" class="section level2">
 <h2>Politeness</h2>
-<p>Winter &amp; Grawunder, 2012 describe a study of the pitch (frequency) of individuals’ speech when they recorded different phrases (scenarios). The scenarios differed in whether they required ‘politeness’ or were more informal in nature. A reduced version of this dataset is also described and analysed in a mixed-models tutorial (see <a href="http://www.bodowinter.com/tutorial/bw_LME_tutorial2.pdf" class="uri">http://www.bodowinter.com/tutorial/bw_LME_tutorial2.pdf</a>).</p>
+<p>Winter &amp; Grawunder, 2012 describe a study of the pitch (frequency) of individuals’ speech when they recorded different phrases (scenarios). The scenarios differed in whether they required ‘politeness’ or were more informal in nature. A reduced version of this dataset is also described and analysed in a mixed-models tutorial (see <a href="http://www.bodowinter.com/uploads/1/2/9/3/129362560/bw_lme_tutorial2.pdf" class="uri">http://www.bodowinter.com/uploads/1/2/9/3/129362560/bw_lme_tutorial2.pdf</a>).</p>
 <p>The data are available online and can be read from this URL:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="politeness.html#cb1-1"></a><span class="co"># this previously taken from http://www.bodowinter.com/tutorial/politeness_data.csv but that link now a 404</span></span>
-<span id="cb1-2"><a href="politeness.html#cb1-2"></a>politeness &lt;-<span class="st">  </span><span class="kw">read_csv</span>(<span class="st">&quot;https://raw.githubusercontent.com/opetchey/BIO144/master/3_datasets/politeness_data.csv&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="politeness.html#cb29-1"></a><span class="co"># this previously taken from http://www.bodowinter.com/tutorial/politeness_data.csv but that link is now broken</span></span>
+<span id="cb29-2"><a href="politeness.html#cb29-2"></a>politeness &lt;-<span class="st">  </span><span class="kw">read_csv</span>(<span class="st">&quot;https://raw.githubusercontent.com/opetchey/BIO144/master/3_datasets/politeness_data.csv&quot;</span>)</span></code></pre></div>
 <div class="exercise">
 <ol style="list-style-type: decimal">
-<li>Make a plot showing how average levels of frequency differs between individuals.</li>
+<li>Make a plot showing how average levels of frequency differs <em>between individuals</em>.</li>
 </ol>
 <div class="solution">
 <button class="solution-button">
 Show me the plot
 </button>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="politeness.html#cb2-1"></a>politeness <span class="op">%&gt;%</span></span>
-<span id="cb2-2"><a href="politeness.html#cb2-2"></a><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(subject, frequency)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_boxplot</span>()</span></code></pre></div>
-<p><img src="03-random-effects_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
-<p>You could also use <code>stat_summary()</code> instead of <code>geom_boxplot()</code> to get a point range plot.</p>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="politeness.html#cb30-1"></a>politeness <span class="op">%&gt;%</span></span>
+<span id="cb30-2"><a href="politeness.html#cb30-2"></a><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(subject, frequency)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_boxplot</span>()</span></code></pre></div>
+<p><img src="03-random-effects_files/figure-html/unnamed-chunk-25-1.png" width="672" /></p>
 </div>
 <ol start="2" style="list-style-type: decimal">
-<li>Make a plot showing how frequency differs between scenarios</li>
+<li>Make a plot showing how frequency differs <em>between scenarios</em></li>
 </ol>
 <div class="solution">
 <button class="solution-button">
 Show me the plot
 </button>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="politeness.html#cb3-1"></a>politeness <span class="op">%&gt;%</span></span>
-<span id="cb3-2"><a href="politeness.html#cb3-2"></a><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="kw">factor</span>(scenario), frequency)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_boxplot</span>()</span></code></pre></div>
-<p><img src="03-random-effects_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="politeness.html#cb31-1"></a>politeness <span class="op">%&gt;%</span></span>
+<span id="cb31-2"><a href="politeness.html#cb31-2"></a><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="kw">factor</span>(scenario), frequency)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_boxplot</span>()</span></code></pre></div>
+<p><img src="03-random-effects_files/figure-html/unnamed-chunk-26-1.png" width="672" /></p>
 </div>
 <ol start="3" style="list-style-type: decimal">
 <li>Based on the plots, which do you think accounts for more variation in frequency: <code>subject</code> or <code>scenario</code>?</li>
@@ -227,117 +229,231 @@ Show answer
 <p>It looks like subjects vary more in frequency than do scenarios, but there appears to be variation attributable to both variables.</p>
 </div>
 <ol start="4" style="list-style-type: decimal">
-<li>Fit a random intercepts model to the data, allowing for variation between subjects.</li>
+<li>Fit a random intercepts model to the data, allowing for variation between subjects. Include fixed effects for <code>attitude</code> and <code>gender</code>:</li>
 </ol>
 <div class="solution">
 <button class="solution-button">
 Show me that model
 </button>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="politeness.html#cb4-1"></a>(polite.ri.subject &lt;-<span class="st"> </span><span class="kw">lmer</span>(frequency <span class="op">~</span><span class="st"> </span>attitude <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span><span class="op">|</span>subject), <span class="dt">data=</span>politeness))</span></code></pre></div>
-<pre><code>## Linear mixed model fit by REML [&#39;lmerModLmerTest&#39;]
-## Formula: frequency ~ attitude + (1 | subject)
-##    Data: politeness
-## REML criterion at convergence: 804.7023
-## Random effects:
-##  Groups   Name        Std.Dev.
-##  subject  (Intercept) 63.10   
-##  Residual             29.17   
-## Number of obs: 83, groups:  subject, 6
-## Fixed Effects:
-## (Intercept)  attitudepol  
-##      202.59       -19.38</code></pre>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="politeness.html#cb32-1"></a>(polite.ri.subject &lt;-<span class="st"> </span><span class="kw">lmer</span>(frequency <span class="op">~</span><span class="st"> </span>attitude <span class="op">+</span><span class="st"> </span>gender <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span><span class="op">|</span>subject), <span class="dt">data=</span>politeness))</span></code></pre></div>
+<pre><code>Linear mixed model fit by REML [&#39;lmerModLmerTest&#39;]
+Formula: frequency ~ attitude + gender + (1 | subject)
+   Data: politeness
+REML criterion at convergence: 786.7439
+Random effects:
+ Groups   Name        Std.Dev.
+ subject  (Intercept) 24.57   
+ Residual             29.17   
+Number of obs: 83, groups:  subject, 6
+Fixed Effects:
+(Intercept)  attitudepol      genderM  
+     256.69       -19.41      -108.20  </code></pre>
 </div>
 <div class="solution">
 <button class="solution-button">
-What other commands should I run to interpret the model?
+What other commands should I run to interpret the model at this point?
 </button>
 <p>You might then also want to look at the regression coefficients, Anova table, and tests of random effects:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="politeness.html#cb6-1"></a><span class="co"># regression coefficients</span></span>
-<span id="cb6-2"><a href="politeness.html#cb6-2"></a>polite.ri.subject <span class="op">%&gt;%</span><span class="st"> </span>summary <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">coef</span>()</span></code></pre></div>
-<pre><code>##              Estimate Std. Error        df   t value     Pr(&gt;|t|)
-## (Intercept) 202.58810  26.151105  5.150024  7.746827 0.0005008339
-## attitudepol -19.37584   6.406962 76.002550 -3.024185 0.0033990395</code></pre>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="politeness.html#cb8-1"></a><span class="co"># anova-table</span></span>
-<span id="cb8-2"><a href="politeness.html#cb8-2"></a><span class="kw">anova</span>(polite.ri.subject)</span></code></pre></div>
-<pre><code>## Type III Analysis of Variance Table with Satterthwaite&#39;s method
-##          Sum Sq Mean Sq NumDF  DenDF F value   Pr(&gt;F)   
-## attitude 7782.9  7782.9     1 76.003  9.1457 0.003399 **
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="politeness.html#cb10-1"></a><span class="co"># tests of random effects</span></span>
-<span id="cb10-2"><a href="politeness.html#cb10-2"></a><span class="kw">ranova</span>(polite.ri.subject)</span></code></pre></div>
-<pre><code>## ANOVA-like table for random-effects: Single term deletions
-## 
-## Model:
-## frequency ~ attitude + (1 | subject)
-##               npar  logLik   AIC   LRT Df Pr(&gt;Chisq)    
-## &lt;none&gt;           4 -402.35 812.7                        
-## (1 | subject)    3 -457.15 920.3 109.6  1  &lt; 2.2e-16 ***
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="politeness.html#cb34-1"></a><span class="co"># regression coefficients</span></span>
+<span id="cb34-2"><a href="politeness.html#cb34-2"></a>polite.ri.subject <span class="op">%&gt;%</span><span class="st"> </span>summary <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">coef</span>() <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">pander</span>(<span class="dt">caption=</span><span class="st">&quot;Model coefficients&quot;</span>)</span></code></pre></div>
+<table style="width:99%;">
+<caption>Model coefficients</caption>
+<colgroup>
+<col width="25%" />
+<col width="15%" />
+<col width="18%" />
+<col width="11%" />
+<col width="13%" />
+<col width="15%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center"> </th>
+<th align="center">Estimate</th>
+<th align="center">Std. Error</th>
+<th align="center">df</th>
+<th align="center">t value</th>
+<th align="center">Pr(&gt;|t|)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center"><strong>(Intercept)</strong></td>
+<td align="center">256.7</td>
+<td align="center">15.23</td>
+<td align="center">4.378</td>
+<td align="center">16.86</td>
+<td align="center">3.78e-05</td>
+</tr>
+<tr class="even">
+<td align="center"><strong>attitudepol</strong></td>
+<td align="center">-19.41</td>
+<td align="center">6.407</td>
+<td align="center">76.02</td>
+<td align="center">-3.03</td>
+<td align="center">0.003345</td>
+</tr>
+<tr class="odd">
+<td align="center"><strong>genderM</strong></td>
+<td align="center">-108.2</td>
+<td align="center">21.06</td>
+<td align="center">4.009</td>
+<td align="center">-5.137</td>
+<td align="center">0.006766</td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb35-1"><a href="politeness.html#cb35-1"></a><span class="co"># anova-table</span></span>
+<span id="cb35-2"><a href="politeness.html#cb35-2"></a><span class="kw">anova</span>(polite.ri.subject) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">pander</span>(<span class="dt">caption=</span><span class="st">&quot;Anova table&quot;</span>)</span></code></pre></div>
+<table style="width:99%;">
+<caption>Anova table</caption>
+<colgroup>
+<col width="20%" />
+<col width="12%" />
+<col width="13%" />
+<col width="11%" />
+<col width="11%" />
+<col width="13%" />
+<col width="15%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center"> </th>
+<th align="center">Sum Sq</th>
+<th align="center">Mean Sq</th>
+<th align="center">NumDF</th>
+<th align="center">DenDF</th>
+<th align="center">F value</th>
+<th align="center">Pr(&gt;F)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center"><strong>attitude</strong></td>
+<td align="center">7810</td>
+<td align="center">7810</td>
+<td align="center">1</td>
+<td align="center">76.02</td>
+<td align="center">9.179</td>
+<td align="center">0.003345</td>
+</tr>
+<tr class="even">
+<td align="center"><strong>gender</strong></td>
+<td align="center">22457</td>
+<td align="center">22457</td>
+<td align="center">1</td>
+<td align="center">4.009</td>
+<td align="center">26.39</td>
+<td align="center">0.006766</td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb36-1"><a href="politeness.html#cb36-1"></a><span class="co"># tests of random effects</span></span>
+<span id="cb36-2"><a href="politeness.html#cb36-2"></a><span class="kw">ranova</span>(polite.ri.subject) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">pander</span>(<span class="dt">caption=</span><span class="st">&quot;Test of random intercepts&quot;</span>)</span></code></pre></div>
+<table style="width:97%;">
+<caption>Test of random intercepts</caption>
+<colgroup>
+<col width="27%" />
+<col width="9%" />
+<col width="12%" />
+<col width="11%" />
+<col width="11%" />
+<col width="6%" />
+<col width="18%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center"> </th>
+<th align="center">npar</th>
+<th align="center">logLik</th>
+<th align="center">AIC</th>
+<th align="center">LRT</th>
+<th align="center">Df</th>
+<th align="center">Pr(&gt;Chisq)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center"><strong><none></strong></td>
+<td align="center">5</td>
+<td align="center">-393.4</td>
+<td align="center">796.7</td>
+<td align="center">NA</td>
+<td align="center">NA</td>
+<td align="center">NA</td>
+</tr>
+<tr class="even">
+<td align="center"><strong>(1 | subject)</strong></td>
+<td align="center">4</td>
+<td align="center">-404.7</td>
+<td align="center">817.4</td>
+<td align="center">22.68</td>
+<td align="center">1</td>
+<td align="center">1.909e-06</td>
+</tr>
+</tbody>
+</table>
 </div>
 <ol start="4" style="list-style-type: decimal">
-<li>Fit a second random intercepts model, allowing for variation in both subjects and between the different scenarios. Use to <code>VarCorr</code> function to estimate how much variation (what percentage of the total) was between subjects, and what percentage was between scenarios.</li>
+<li>Fit a second random intercepts model, allowing for variation in both subjects and between the different scenarios.</li>
 </ol>
 <div class="solution">
 <button class="solution-button">
 Show me that model
 </button>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="politeness.html#cb12-1"></a>polite.ri.both &lt;-<span class="st"> </span><span class="kw">lmer</span>(frequency <span class="op">~</span><span class="st"> </span>attitude <span class="op">+</span><span class="st"> </span></span>
-<span id="cb12-2"><a href="politeness.html#cb12-2"></a><span class="st">                         </span>(<span class="dv">1</span><span class="op">|</span>subject) <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span><span class="op">|</span>scenario), <span class="dt">data=</span>politeness)</span>
-<span id="cb12-3"><a href="politeness.html#cb12-3"></a><span class="kw">ranova</span>(polite.ri.both)</span></code></pre></div>
-<pre><code>## ANOVA-like table for random-effects: Single term deletions
-## 
-## Model:
-## frequency ~ attitude + (1 | subject) + (1 | scenario)
-##                npar  logLik    AIC     LRT Df Pr(&gt;Chisq)    
-## &lt;none&gt;            5 -396.73 803.45                          
-## (1 | subject)     4 -457.15 922.30 120.851  1  &lt; 2.2e-16 ***
-## (1 | scenario)    4 -402.35 812.70  11.249  1  0.0007968 ***
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="politeness.html#cb37-1"></a>polite.ri.both &lt;-<span class="st"> </span><span class="kw">lmer</span>(frequency <span class="op">~</span><span class="st"> </span>attitude <span class="op">+</span><span class="st"> </span>gender <span class="op">+</span></span>
+<span id="cb37-2"><a href="politeness.html#cb37-2"></a><span class="st">                         </span>(<span class="dv">1</span><span class="op">|</span>subject) <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span><span class="op">|</span>scenario), <span class="dt">data=</span>politeness)</span>
+<span id="cb37-3"><a href="politeness.html#cb37-3"></a></span>
+<span id="cb37-4"><a href="politeness.html#cb37-4"></a><span class="co"># test of random effect</span></span>
+<span id="cb37-5"><a href="politeness.html#cb37-5"></a><span class="kw">ranova</span>(polite.ri.both)</span></code></pre></div>
+<pre><code>ANOVA-like table for random-effects: Single term deletions
+
+Model:
+frequency ~ attitude + gender + (1 | subject) + (1 | scenario)
+               npar  logLik    AIC    LRT Df Pr(&gt;Chisq)    
+&lt;none&gt;            6 -387.73 787.45                         
+(1 | subject)     5 -402.50 815.00 29.546  1  5.461e-08 ***
+(1 | scenario)    5 -393.37 796.74 11.289  1  0.0007796 ***
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
 </div>
 <ol start="5" style="list-style-type: decimal">
 <li>How much variance was attributable to subjects or scenarios, compared with the total variance?</li>
 </ol>
 <div class="solution">
 <button class="solution-button">
-Show ne how to calculate this
+Show me how to calculate this
 </button>
-<p>Remember to convert the <code>VarCorr</code> output to a dataframe to see the variance (rather than standard deviations) in the <code>vcov</code> column. You can then use <code>mutate</code> to calculate the within/betwen ratio (the ICC).</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="politeness.html#cb14-1"></a><span class="kw">VarCorr</span>(polite.ri.both) <span class="op">%&gt;%</span><span class="st">  </span></span>
-<span id="cb14-2"><a href="politeness.html#cb14-2"></a><span class="st">  </span><span class="kw">as.tibble</span>() <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb14-3"><a href="politeness.html#cb14-3"></a><span class="st">  </span><span class="kw">select</span>(grp, vcov) <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb14-4"><a href="politeness.html#cb14-4"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">icc =</span> vcov <span class="op">/</span><span class="st">  </span><span class="kw">sum</span>(vcov)) <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb14-5"><a href="politeness.html#cb14-5"></a><span class="st">  </span><span class="kw">pander</span>()</span></code></pre></div>
-<table style="width:39%;">
+<p>Remember to convert the <code>VarCorr</code> output to a dataframe to see the variance (rather than standard deviations) in the <code>vcov</code> column. You can then use <code>mutate</code> or <code>transmute</code> to calculate the within/betwen ratio (the ICC).</p>
+<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb39-1"><a href="politeness.html#cb39-1"></a>polite.ri.both <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">VarCorr</span>() <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">as_tibble</span>() <span class="op">%&gt;%</span></span>
+<span id="cb39-2"><a href="politeness.html#cb39-2"></a><span class="st">  </span><span class="kw">transmute</span>(</span>
+<span id="cb39-3"><a href="politeness.html#cb39-3"></a>    <span class="dt">Term=</span>Hmisc<span class="op">::</span><span class="kw">capitalize</span>(grp),</span>
+<span id="cb39-4"><a href="politeness.html#cb39-4"></a>    <span class="st">`</span><span class="dt">% variation</span><span class="st">`</span>=<span class="kw">round</span>(vcov <span class="op">/</span><span class="st"> </span><span class="kw">sum</span>(vcov) <span class="op">*</span><span class="st"> </span><span class="dv">100</span>, <span class="dv">1</span>)</span>
+<span id="cb39-5"><a href="politeness.html#cb39-5"></a>  ) <span class="op">%&gt;%</span></span>
+<span id="cb39-6"><a href="politeness.html#cb39-6"></a><span class="st">  </span><span class="kw">pander</span>()</span></code></pre></div>
+<table style="width:35%;">
 <colgroup>
 <col width="15%" />
-<col width="9%" />
-<col width="13%" />
+<col width="19%" />
 </colgroup>
 <thead>
 <tr class="header">
-<th align="center">grp</th>
-<th align="center">vcov</th>
-<th align="center">icc</th>
+<th align="center">Term</th>
+<th align="center">% variation</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td align="center">scenario</td>
-<td align="center">219</td>
-<td align="center">0.04488</td>
+<td align="center">Scenario</td>
+<td align="center">14.8</td>
 </tr>
 <tr class="even">
-<td align="center">subject</td>
-<td align="center">4015</td>
-<td align="center">0.8227</td>
+<td align="center">Subject</td>
+<td align="center">41.6</td>
 </tr>
 <tr class="odd">
 <td align="center">Residual</td>
-<td align="center">646</td>
-<td align="center">0.1324</td>
+<td align="center">43.6</td>
 </tr>
 </tbody>
 </table>
@@ -349,63 +465,38 @@ Show ne how to calculate this
 <button class="solution-button">
 Show me that model formula
 </button>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="politeness.html#cb15-1"></a>frequency <span class="op">~</span><span class="st"> </span>attitude <span class="op">+</span><span class="st"> </span>(attitude<span class="op">|</span>subject) <span class="op">+</span><span class="st"> </span>(attitude<span class="op">|</span>scenario)</span></code></pre></div>
-<pre><code>## frequency ~ attitude + (attitude | subject) + (attitude | scenario)</code></pre>
+<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb40-1"><a href="politeness.html#cb40-1"></a>frequency <span class="op">~</span><span class="st"> </span>attitude <span class="op">+</span><span class="st"> </span>gender <span class="op">+</span><span class="st"> </span>(attitude<span class="op">|</span>subject) <span class="op">+</span><span class="st"> </span>(attitude<span class="op">|</span>scenario)</span></code></pre></div>
+<pre><code>frequency ~ attitude + gender + (attitude | subject) + (attitude | 
+    scenario)</code></pre>
 </div>
 <ol start="7" style="list-style-type: decimal">
-<li>Use <code>ranova</code> to test whether the random slopes were significant predictors of variance in <code>frequency</code>.</li>
+<li>Use <code>ranova</code> to test whether the random slopes improved the model</li>
 </ol>
 <div class="solution">
 <button class="solution-button">
 Show me how
 </button>
 <p>First run the model:</p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="politeness.html#cb17-1"></a>polite.rslopes &lt;-<span class="st"> </span><span class="kw">lmer</span>(frequency <span class="op">~</span><span class="st"> </span>attitude <span class="op">+</span><span class="st"> </span>(attitude<span class="op">|</span>subject) <span class="op">+</span></span>
-<span id="cb17-2"><a href="politeness.html#cb17-2"></a><span class="st">                         </span>(attitude<span class="op">|</span>scenario), <span class="dt">data=</span>politeness)</span></code></pre></div>
+<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="politeness.html#cb42-1"></a>polite.rslopes &lt;-<span class="st"> </span><span class="kw">lmer</span>(frequency <span class="op">~</span><span class="st"> </span>attitude <span class="op">+</span><span class="st"> </span>gender <span class="op">+</span><span class="st"> </span>(attitude<span class="op">|</span>subject) <span class="op">+</span></span>
+<span id="cb42-2"><a href="politeness.html#cb42-2"></a><span class="st">                         </span>(attitude<span class="op">|</span>scenario), <span class="dt">data=</span>politeness)</span></code></pre></div>
 <div class="tip">
 <p>If you see a message saying <code>boundary (singular) fit: see ?isSingular</code> don’t worry for now. This IS actually quite important, but we will discuss it in more detail in the next session.</p>
 </div>
 <p>And then use <code>ranova</code>:</p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="politeness.html#cb18-1"></a><span class="kw">ranova</span>(polite.rslopes)</span></code></pre></div>
-<pre><code>## ANOVA-like table for random-effects: Single term deletions
-## 
-## Model:
-## frequency ~ attitude + (attitude | subject) + (attitude | scenario)
-##                                   npar  logLik    AIC     LRT Df Pr(&gt;Chisq)
-## &lt;none&gt;                               9 -395.76 809.51                      
-## attitude in (attitude | subject)     7 -396.55 807.11 1.59356  2     0.4508
-## attitude in (attitude | scenario)    7 -395.95 805.89 0.38097  2     0.8266</code></pre>
+<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb43-1"><a href="politeness.html#cb43-1"></a><span class="kw">ranova</span>(polite.rslopes)</span></code></pre></div>
+<pre><code>ANOVA-like table for random-effects: Single term deletions
+
+Model:
+frequency ~ attitude + gender + (attitude | subject) + (attitude | 
+    scenario)
+                                  npar  logLik    AIC     LRT Df Pr(&gt;Chisq)
+&lt;none&gt;                              10 -387.54 795.08                      
+attitude in (attitude | subject)     8 -387.55 791.10 0.02468  2     0.9877
+attitude in (attitude | scenario)    8 -387.71 791.43 0.35218  2     0.8385</code></pre>
 <p>Both of the <code>Pr(&gt;Chisq)</code> values (the <em>p</em> values for the chi squared test) are non-significant.</p>
+<p>You might also note this more complex model had some problems fitting: Don’t worry for now, but we will cover with this in the final session.</p>
 </div>
 <ol start="7" style="list-style-type: decimal">
-<li>Use <code>anova</code> to test the same thing: whether adding the random slope for <code>attitude</code> within <code>scenario</code> or <code>subject</code> improved the model.</li>
-</ol>
-<div class="solution">
-<button class="solution-button">
-Show me how
-</button>
-<p>First run two models, with and without the random slope you want to test:</p>
-<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="politeness.html#cb20-1"></a>model.without &lt;-<span class="st"> </span><span class="kw">lmer</span>(frequency <span class="op">~</span><span class="st"> </span>attitude <span class="op">+</span><span class="st"> </span></span>
-<span id="cb20-2"><a href="politeness.html#cb20-2"></a><span class="st">                         </span>(<span class="dv">1</span><span class="op">|</span>subject) <span class="op">+</span></span>
-<span id="cb20-3"><a href="politeness.html#cb20-3"></a><span class="st">                         </span>(attitude<span class="op">|</span>scenario), <span class="dt">data=</span>politeness)</span>
-<span id="cb20-4"><a href="politeness.html#cb20-4"></a></span>
-<span id="cb20-5"><a href="politeness.html#cb20-5"></a></span>
-<span id="cb20-6"><a href="politeness.html#cb20-6"></a>model.with &lt;-<span class="st"> </span><span class="kw">lmer</span>(frequency <span class="op">~</span><span class="st"> </span>attitude <span class="op">+</span><span class="st"> </span></span>
-<span id="cb20-7"><a href="politeness.html#cb20-7"></a><span class="st">                         </span>(attitude<span class="op">|</span>subject) <span class="op">+</span></span>
-<span id="cb20-8"><a href="politeness.html#cb20-8"></a><span class="st">                         </span>(attitude<span class="op">|</span>scenario), <span class="dt">data=</span>politeness)</span></code></pre></div>
-<p>And then use <code>anova</code>:</p>
-<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="politeness.html#cb21-1"></a><span class="kw">anova</span>(model.with, model.without)</span></code></pre></div>
-<pre><code>## Data: politeness
-## Models:
-## model.without: frequency ~ attitude + (1 | subject) + (attitude | scenario)
-## model.with: frequency ~ attitude + (attitude | subject) + (attitude | scenario)
-##               Df    AIC    BIC  logLik deviance  Chisq Chi Df Pr(&gt;Chisq)
-## model.without  7 820.88 837.81 -403.44   806.88                         
-## model.with     9 823.32 845.09 -402.66   805.32 1.5578      2     0.4589</code></pre>
-<p>You should notice that the <em>p</em> value for the test has the same number of degrees of freedom, and the same value (very slightly different due to rounding errors).</p>
-<p>The <code>Pr(&gt;Chisq)</code> is again non-significant, indicating that the random slope within <code>subject</code> doesn’t explain additional variance.</p>
-</div>
-<ol start="8" style="list-style-type: decimal">
 <li>If a random slopes model is not ‘significantly’ better than a similar model which does not include the random slope term, is there any reason why we might still prefer it, and use the ‘full’ model to base our inference on?</li>
 </ol>
 <div class="solution">
@@ -414,7 +505,7 @@ Show answer
 </button>
 <p>Yes - simulation studies, including Barr et al 2013 suggest that a ‘maximal’ model is likely to be more conservative than a model which excludes non-significant random effects terms.</p>
 </div>
-<ol start="9" style="list-style-type: decimal">
+<ol start="8" style="list-style-type: decimal">
 <li>How might mixed models make the problem of ‘researcher degrees of freedom’ worse? What effect might this have? How can it be avoided?</li>
 </ol>
 <div class="solution">
@@ -424,210 +515,14 @@ Show answer
 <p>Mixed models provide many more possible ‘ways to do it’. In addition to different fixed-effects specifications we can now also have many different random effects specifications. This increases degrees of freedom in the analysis, and makes it even more important to pre-specify analyses.</p>
 </div>
 </div>
-<!---
-
-
-```r
-polite.ri1 <- lmer(frequency ~ attitude + (1|subject), data=politeness)
-summary(polite.ri1)
-```
-
-```
-## Linear mixed model fit by REML. t-tests use Satterthwaite's method [
-## lmerModLmerTest]
-## Formula: frequency ~ attitude + (1 | subject)
-##    Data: politeness
-## 
-## REML criterion at convergence: 804.7
-## 
-## Scaled residuals: 
-##     Min      1Q  Median      3Q     Max 
-## -2.2953 -0.6018 -0.2005  0.4774  3.1772 
-## 
-## Random effects:
-##  Groups   Name        Variance Std.Dev.
-##  subject  (Intercept) 3982     63.10   
-##  Residual              851     29.17   
-## Number of obs: 83, groups:  subject, 6
-## 
-## Fixed effects:
-##             Estimate Std. Error      df t value Pr(>|t|)    
-## (Intercept)  202.588     26.151   5.150   7.747 0.000501 ***
-## attitudepol  -19.376      6.407  76.003  -3.024 0.003399 ** 
-## ---
-## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-## 
-## Correlation of Fixed Effects:
-##             (Intr)
-## attitudepol -0.121
-```
-
-```r
-ranova(polite.ri1)
-```
-
-```
-## ANOVA-like table for random-effects: Single term deletions
-## 
-## Model:
-## frequency ~ attitude + (1 | subject)
-##               npar  logLik   AIC   LRT Df Pr(>Chisq)    
-## <none>           4 -402.35 812.7                        
-## (1 | subject)    3 -457.15 920.3 109.6  1  < 2.2e-16 ***
-## ---
-## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-```
-
-
-```r
-polite.ri <- lmer(frequency ~ attitude + (1|subject) + (1|scenario), data=politeness)
-summary(polite.ri)
-```
-
-```
-## Linear mixed model fit by REML. t-tests use Satterthwaite's method [
-## lmerModLmerTest]
-## Formula: frequency ~ attitude + (1 | subject) + (1 | scenario)
-##    Data: politeness
-## 
-## REML criterion at convergence: 793.5
-## 
-## Scaled residuals: 
-##     Min      1Q  Median      3Q     Max 
-## -2.2006 -0.5817 -0.0639  0.5625  3.4385 
-## 
-## Random effects:
-##  Groups   Name        Variance Std.Dev.
-##  scenario (Intercept)  219     14.80   
-##  subject  (Intercept) 4015     63.36   
-##  Residual              646     25.42   
-## Number of obs: 83, groups:  scenario, 7; subject, 6
-## 
-## Fixed effects:
-##             Estimate Std. Error      df t value Pr(>|t|)    
-## (Intercept)  202.588     26.754   5.575   7.572 0.000389 ***
-## attitudepol  -19.695      5.585  70.022  -3.527 0.000748 ***
-## ---
-## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-## 
-## Correlation of Fixed Effects:
-##             (Intr)
-## attitudepol -0.103
-```
-
-```r
-VarCorr(polite.ri)
-```
-
-```
-##  Groups   Name        Std.Dev.
-##  scenario (Intercept) 14.798  
-##  subject  (Intercept) 63.361  
-##  Residual             25.417
-```
-
-```r
-ranova(polite.ri)
-```
-
-```
-## ANOVA-like table for random-effects: Single term deletions
-## 
-## Model:
-## frequency ~ attitude + (1 | subject) + (1 | scenario)
-##                npar  logLik    AIC     LRT Df Pr(>Chisq)    
-## <none>            5 -396.73 803.45                          
-## (1 | subject)     4 -457.15 922.30 120.851  1  < 2.2e-16 ***
-## (1 | scenario)    4 -402.35 812.70  11.249  1  0.0007968 ***
-## ---
-## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-```
-
-
-
-
-```r
-politeness.agg <- politeness %>% 
-  group_by(subject, attitude) %>% 
-  summarise(frequency = mean(frequency))
-  
-polite.ri.agg <- lmer(frequency ~ attitude + (1|subject), data=politeness)
-polite.ri %>% summary %>%  coefficients
-```
-
-```
-##              Estimate Std. Error        df   t value     Pr(>|t|)
-## (Intercept) 202.58810  26.753654  5.575042  7.572352 0.0003892701
-## attitudepol -19.69454   5.584683 70.022146 -3.526528 0.0007475343
-```
-
-```r
-polite.ri.agg %>% summary %>%  coefficients
-```
-
-```
-##              Estimate Std. Error        df   t value     Pr(>|t|)
-## (Intercept) 202.58810  26.151105  5.150024  7.746827 0.0005008339
-## attitudepol -19.37584   6.406962 76.002550 -3.024185 0.0033990395
-```
-
-
-
-
-```r
-polite.rs <- lmer(frequency ~ attitude + 
-                    (attitude|subject) + 
-                    (attitude|scenario), data=politeness)
-polite.rs %>% summary %>%  coefficients
-```
-
-```
-##              Estimate Std. Error       df   t value     Pr(>|t|)
-## (Intercept) 202.58810  28.204932 5.376367  7.182719 0.0005975745
-## attitudepol -19.66341   7.058335 6.280892 -2.785842 0.0302626661
-```
-
-```r
-polite.rs %>% ranova
-```
-
-```
-## ANOVA-like table for random-effects: Single term deletions
-## 
-## Model:
-## frequency ~ attitude + (attitude | subject) + (attitude | scenario)
-##                                   npar  logLik    AIC     LRT Df Pr(>Chisq)
-## <none>                               9 -395.76 809.51                      
-## attitude in (attitude | subject)     7 -396.55 807.11 1.59356  2     0.4508
-## attitude in (attitude | scenario)    7 -395.95 805.89 0.38097  2     0.8266
-```
-
-
-
-```r
-anova(polite.ri, polite.rs)
-```
-
-```
-## Data: politeness
-## Models:
-## polite.ri: frequency ~ attitude + (1 | subject) + (1 | scenario)
-## polite.rs: frequency ~ attitude + (attitude | subject) + (attitude | scenario)
-##           Df    AIC    BIC  logLik deviance  Chisq Chi Df Pr(>Chisq)
-## polite.ri  5 817.04 829.13 -403.52   807.04                         
-## polite.rs  9 823.32 845.09 -402.66   805.32 1.7166      4     0.7877
-```
-
-
--->
 </div>
             </section>
 
           </div>
         </div>
       </div>
-<a href="random-effects.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="further-reading.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="mma.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="anova-in-mixed-models.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>

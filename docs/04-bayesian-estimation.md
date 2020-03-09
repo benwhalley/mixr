@@ -20,3 +20,9 @@
 
 
 
+
+
+
+<!-- 
+The Bayesian New Statistics: Hypothesis testing, estimation, meta-analysis, and power analysis from a Bayesian perspective
+https://link.springer.com/article/10.3758/s13423-016-1221-4 -->

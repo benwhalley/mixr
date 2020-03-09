@@ -161,6 +161,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul></li>
 <li class="chapter" data-level="" data-path="random-effects.html"><a href="random-effects.html"><i class="fa fa-check"></i>Random effects</a>
 <ul>
+<li class="chapter" data-level="" data-path="sleep-centering.html"><a href="sleep-centering.html"><i class="fa fa-check"></i>Sleep (centering)</a></li>
+<li class="chapter" data-level="" data-path="mma.html"><a href="mma.html"><i class="fa fa-check"></i>MMA</a></li>
 <li class="chapter" data-level="" data-path="politeness.html"><a href="politeness.html"><i class="fa fa-check"></i>Politeness</a></li>
 <li class="chapter" data-level="" data-path="further-reading.html"><a href="further-reading.html"><i class="fa fa-check"></i>Further reading</a></li>
 </ul></li>
@@ -189,9 +191,76 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
             <section class="normal" id="section-">
 <div id="assessments" class="section level1">
 <h1>Assessments</h1>
-<p>TBC</p>
-<!-- TODO -->
+<ol style="list-style-type: decimal">
+<li>Make a plot which shows changes in PHQ9 scores over time, split by group. It can look like the plot below, or display the differences between groups over time in another suitable way:</li>
+</ol>
+<p><img src="assessment_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<ol start="2" style="list-style-type: decimal">
+<li><p>Fit a random intercepts model using <code>lmer</code>, including month as a fixed factor (a categorical variable). Also include treatment group, and the interaction of month and group.</p></li>
+<li><p>Report the model you run and interpret the model output, and report relevant statistics covered during the course. Be sure to report the % variance attributable to between-patient differences. Use the guidelines in <span class="citation">Meteyard and Davies (<a href="#ref-meteyard2020best" role="doc-biblioref">2020</a>)</span> when deciding what to report.</p></li>
+<li><p>Examine the code and output below. The variable <code>phq9.c</code> is a copy of the original dataset in which all the numeric variables have been mean-centered.</p></li>
+</ol>
+<ul>
+<li>Comment on each line, explaining what it does, and what the output (if any) means. Use the R help files as a reference to functions if needed.</li>
+<li>Why do you think that observations after month 12 are excluded from this analysis?</li>
+<li>Which model should we prefer, <code>phq9.m2</code> or <code>phq9.m3</code>?</li>
+<li>What terms have been omitted from <code>phq9.m3</code>? Why might this be the case?</li>
+</ul>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="assessments.html#cb1-1"></a>phq9.c2 &lt;-<span class="st"> </span>phq9.c <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb1-2"><a href="assessments.html#cb1-2"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">tx=</span><span class="kw">ifelse</span>(grp<span class="op">==</span><span class="st">&quot;TAU&quot;</span>, <span class="dv">0</span>, <span class="dv">1</span>)) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb1-3"><a href="assessments.html#cb1-3"></a><span class="st">  </span><span class="kw">filter</span>(month <span class="op">&lt;</span><span class="st"> </span><span class="dv">12</span>)</span>
+<span id="cb1-4"><a href="assessments.html#cb1-4"></a></span>
+<span id="cb1-5"><a href="assessments.html#cb1-5"></a>phq9.m2 &lt;-<span class="st"> </span><span class="kw">lmer</span>(phq9 <span class="op">~</span><span class="st"> </span>month <span class="op">*</span><span class="st"> </span>tx <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span> <span class="op">|</span><span class="st"> </span>patient), <span class="dt">data=</span>phq9.c2)</span>
+<span id="cb1-6"><a href="assessments.html#cb1-6"></a></span>
+<span id="cb1-7"><a href="assessments.html#cb1-7"></a>phq9.m3 &lt;-<span class="st"> </span><span class="kw">lmer</span>(phq9 <span class="op">~</span><span class="st"> </span>month <span class="op">*</span><span class="st"> </span>tx <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span> <span class="op">+</span><span class="st"> </span>month<span class="op">:</span>tx <span class="op">||</span><span class="st"> </span>patient), <span class="dt">data=</span>phq9.c2)</span>
+<span id="cb1-8"><a href="assessments.html#cb1-8"></a></span>
+<span id="cb1-9"><a href="assessments.html#cb1-9"></a><span class="kw">ranova</span>(phq9.m3)</span></code></pre></div>
+<pre><code>## ANOVA-like table for random-effects: Single term deletions
+## 
+## Model:
+## phq9 ~ month + tx + (1 | patient) + (0 + month:tx | patient) + 
+##     month:tx
+##                                      npar  logLik   AIC     LRT Df Pr(&gt;Chisq)
+## &lt;none&gt;                                  7 -7050.9 14116                      
+## (1 | patient)                           6 -8099.0 16210 2096.20  1  &lt; 2.2e-16
+## month:tx in (0 + month:tx | patient)    6 -7108.5 14229  115.32  1  &lt; 2.2e-16
+##                                         
+## &lt;none&gt;                                  
+## (1 | patient)                        ***
+## month:tx in (0 + month:tx | patient) ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="assessments.html#cb3-1"></a><span class="kw">anova</span>(phq9.m3)</span></code></pre></div>
+<pre><code>## Type III Analysis of Variance Table with Satterthwaite&#39;s method
+##          Sum Sq Mean Sq NumDF   DenDF F value    Pr(&gt;F)    
+## month    747.70  747.70     1 2102.47 55.4263 1.407e-13 ***
+## tx        93.59   93.59     1  248.58  6.9377  0.008969 ** 
+## month:tx  63.91   63.91     1  330.16  4.7373  0.030224 *  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="assessments.html#cb5-1"></a>phq9.m2 <span class="op">%&gt;%</span><span class="st"> </span>anova</span></code></pre></div>
+<pre><code>## Type III Analysis of Variance Table with Satterthwaite&#39;s method
+##          Sum Sq Mean Sq NumDF  DenDF F value    Pr(&gt;F)    
+## month    752.05  752.05     1 2244.3 49.4829 2.647e-12 ***
+## tx        98.93   98.93     1  250.2  6.5092   0.01133 *  
+## month:tx  90.60   90.60     1 2240.6  5.9612   0.01470 *  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="assessments.html#cb7-1"></a>phq9.m3 <span class="op">%&gt;%</span><span class="st"> </span>anova</span></code></pre></div>
+<pre><code>## Type III Analysis of Variance Table with Satterthwaite&#39;s method
+##          Sum Sq Mean Sq NumDF   DenDF F value    Pr(&gt;F)    
+## month    747.70  747.70     1 2102.47 55.4263 1.407e-13 ***
+## tx        93.59   93.59     1  248.58  6.9377  0.008969 ** 
+## month:tx  63.91   63.91     1  330.16  4.7373  0.030224 *  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
 
+</div>
+<h3>References</h3>
+<div id="refs" class="references">
+<div id="ref-meteyard2020best">
+<p>Meteyard, Lotte, and Robert AI Davies. 2020. “Best Practice Guidance for Linear Mixed-Effects Models in Psychological Science.” <em>Journal of Memory and Language</em> 112: 104092.</p>
+</div>
 </div>
             </section>
 

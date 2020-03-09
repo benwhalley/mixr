@@ -161,11 +161,14 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul></li>
 <li class="chapter" data-level="" data-path="random-effects.html"><a href="random-effects.html"><i class="fa fa-check"></i>Random effects</a>
 <ul>
+<li class="chapter" data-level="" data-path="sleep-centering.html"><a href="sleep-centering.html"><i class="fa fa-check"></i>Sleep (centering)</a></li>
+<li class="chapter" data-level="" data-path="mma.html"><a href="mma.html"><i class="fa fa-check"></i>MMA</a></li>
 <li class="chapter" data-level="" data-path="politeness.html"><a href="politeness.html"><i class="fa fa-check"></i>Politeness</a></li>
+<li class="chapter" data-level="" data-path="anova-in-mixed-models.html"><a href="anova-in-mixed-models.html"><i class="fa fa-check"></i>Anova in mixed models</a></li>
 <li class="chapter" data-level="" data-path="further-reading.html"><a href="further-reading.html"><i class="fa fa-check"></i>Further reading</a></li>
 </ul></li>
 <li class="chapter" data-level="" data-path="bayesian-estimation.html"><a href="bayesian-estimation.html"><i class="fa fa-check"></i>Bayesian estimation</a></li>
-<li class="chapter" data-level="" data-path="assessments.html"><a href="assessments.html"><i class="fa fa-check"></i>Assessments</a></li>
+<li class="chapter" data-level="" data-path="assessment.html"><a href="assessment.html"><i class="fa fa-check"></i>Assessment</a></li>
 <li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
 <li class="divider"></li>
 <li><a href="https://creativecommons.org/licenses/by-sa/4.0/" target="blank">Licence: CC BY-SA 4</a></li>
@@ -204,9 +207,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <button class="solution-button">
 Show me the code
 </button>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="r2-for-mixed-models.html#cb9-1"></a><span class="kw">library</span>(MuMIn)</span>
-<span id="cb9-2"><a href="r2-for-mixed-models.html#cb9-2"></a>pigs.ri &lt;-<span class="st"> </span><span class="kw">lmer</span>(weight <span class="op">~</span><span class="st"> </span>week <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span><span class="op">|</span>id), <span class="dt">data=</span>pigs)</span>
-<span id="cb9-3"><a href="r2-for-mixed-models.html#cb9-3"></a><span class="kw">r.squaredGLMM</span>(pigs.ri) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">round</span>(<span class="dv">2</span>) <span class="op">%&gt;%</span><span class="st">  </span><span class="kw">pander</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="r2-for-mixed-models.html#cb16-1"></a><span class="kw">library</span>(MuMIn)</span>
+<span id="cb16-2"><a href="r2-for-mixed-models.html#cb16-2"></a>pigs.ri &lt;-<span class="st"> </span><span class="kw">lmer</span>(weight <span class="op">~</span><span class="st"> </span>week <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span><span class="op">|</span>id), <span class="dt">data=</span>pigs)</span>
+<span id="cb16-3"><a href="r2-for-mixed-models.html#cb16-3"></a><span class="kw">r.squaredGLMM</span>(pigs.ri) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">round</span>(<span class="dv">2</span>) <span class="op">%&gt;%</span><span class="st">  </span><span class="kw">pander</span>()</span></code></pre></div>
 <table style="width:19%;">
 <colgroup>
 <col width="9%" />
