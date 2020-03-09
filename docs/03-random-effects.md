@@ -1230,7 +1230,7 @@ https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/j.2041-210x.2012.00
 
 Meteyard summarises current good practice in running and reporting mixed models [@meteyard2020best].
 
-Barr et al go into more detail on why mixed models are preferable to RM anova, and this paper will be a useful reference for future sessions too:  [Barr, D. J., Levy, R., Scheepers, C., & Tily, H. J. (2013). Random effects structure for confirmatory hypothesis testing: Keep it maximal. Journal of memory and language, 68(3), 255-278.](http://eprints.gla.ac.uk/79067/)
+Barr et al (-@barr2013random) go into more detail on why mixed models are preferable to RM anova, and this paper will be a useful reference for future sessions too:  [Barr, D. J., Levy, R., Scheepers, C., & Tily, H. J. (2013). Random effects structure for confirmatory hypothesis testing: Keep it maximal. Journal of memory and language, 68(3), 255-278.](http://eprints.gla.ac.uk/79067/)
 
 This paper expands on the original 'keep it maximal' paper, covering situations with interactions between within factors: [Barr, D. J. (2013). Random effects structure for testing interactions in linear mixed-effects models. Frontiers in psychology, 4, 328.](http://eprints.gla.ac.uk/88175/)
 

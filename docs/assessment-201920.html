@@ -4,11 +4,11 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Assessment | MixR: Mixed Models in R</title>
-  <meta name="description" content="Assessment | MixR: Mixed Models in R" />
+  <title>“Assessment 2019/20” | MixR: Mixed Models in R</title>
+  <meta name="description" content="“Assessment 2019/20” | MixR: Mixed Models in R" />
   <meta name="generator" content="bookdown 0.17 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Assessment | MixR: Mixed Models in R" />
+  <meta property="og:title" content="“Assessment 2019/20” | MixR: Mixed Models in R" />
   <meta property="og:type" content="book" />
   
   
@@ -16,7 +16,7 @@
   
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Assessment | MixR: Mixed Models in R" />
+  <meta name="twitter:title" content="“Assessment 2019/20” | MixR: Mixed Models in R" />
   
   
   
@@ -168,7 +168,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="" data-path="further-reading.html"><a href="further-reading.html"><i class="fa fa-check"></i>Further reading</a></li>
 </ul></li>
 <li class="chapter" data-level="" data-path="bayesian-estimation.html"><a href="bayesian-estimation.html"><i class="fa fa-check"></i>Bayesian estimation</a></li>
-<li class="chapter" data-level="" data-path="assessment.html"><a href="assessment.html"><i class="fa fa-check"></i>Assessment</a></li>
+<li class="chapter" data-level="" data-path="assessment-201920.html"><a href="assessment-201920.html"><i class="fa fa-check"></i>“Assessment 2019/20”</a></li>
 <li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
 <li class="divider"></li>
 <li><a href="https://creativecommons.org/licenses/by-sa/4.0/" target="blank">Licence: CC BY-SA 4</a></li>
@@ -190,8 +190,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="assessment" class="section level1">
-<h1>Assessment</h1>
+<div id="assessment-201920" class="section level1">
+<h1>“Assessment 2019/20”</h1>
 <p>The REFRAMED trial was a large RCT evaluating a variant of dialectical behaviour therapy for patients with treatment-resistant depression <span class="citation">(Lynch et al. <a href="#ref-lynch2018radically" role="doc-biblioref">2018</a>)</span>. The design of the study is described in detail in <span class="citation">Lynch et al. (<a href="#ref-lynch2015refractory" role="doc-biblioref">2015</a>)</span>.</p>
 <p>The original, uncentered data, used for this analysis are <a href="data/reframed.csv">available here: <code>data/reframed.csv</code></a>.</p>
 <ol style="list-style-type: decimal">
@@ -211,14 +211,14 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li><p>Is model <code>phq9.m3</code> ‘maximal’ (<span class="citation">Barr et al. (<a href="#ref-barr2013random" role="doc-biblioref">2013</a>)</span>)?</p></li>
 </ul>
 <p>Section A:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="assessment.html#cb1-1"></a>phq9.c2 &lt;-<span class="st"> </span>phq9.c <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb1-2"><a href="assessment.html#cb1-2"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">tx=</span><span class="kw">ifelse</span>(grp<span class="op">==</span><span class="st">&quot;TAU&quot;</span>, <span class="dv">0</span>, <span class="dv">1</span>)) <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb1-3"><a href="assessment.html#cb1-3"></a><span class="st">  </span><span class="kw">filter</span>(month <span class="op">&lt;</span><span class="st"> </span><span class="dv">12</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="assessment-201920.html#cb1-1"></a>phq9.c2 &lt;-<span class="st"> </span>phq9.c <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb1-2"><a href="assessment-201920.html#cb1-2"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">tx=</span><span class="kw">ifelse</span>(grp<span class="op">==</span><span class="st">&quot;TAU&quot;</span>, <span class="dv">0</span>, <span class="dv">1</span>)) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb1-3"><a href="assessment-201920.html#cb1-3"></a><span class="st">  </span><span class="kw">filter</span>(month <span class="op">&lt;</span><span class="st"> </span><span class="dv">12</span>)</span></code></pre></div>
 <p>Section B:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="assessment.html#cb2-1"></a>phq9.m2 &lt;-<span class="st"> </span><span class="kw">lmer</span>(phq9 <span class="op">~</span><span class="st"> </span>month <span class="op">*</span><span class="st"> </span>tx <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span> <span class="op">|</span><span class="st"> </span>patient), <span class="dt">data=</span>phq9.c2)</span>
-<span id="cb2-2"><a href="assessment.html#cb2-2"></a>phq9.m3 &lt;-<span class="st"> </span><span class="kw">lmer</span>(phq9 <span class="op">~</span><span class="st"> </span>month <span class="op">*</span><span class="st"> </span>tx <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span> <span class="op">+</span><span class="st"> </span>month<span class="op">:</span>tx <span class="op">||</span><span class="st"> </span>patient), <span class="dt">data=</span>phq9.c2)</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="assessment-201920.html#cb2-1"></a>phq9.m2 &lt;-<span class="st"> </span><span class="kw">lmer</span>(phq9 <span class="op">~</span><span class="st"> </span>month <span class="op">*</span><span class="st"> </span>tx <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span> <span class="op">|</span><span class="st"> </span>patient), <span class="dt">data=</span>phq9.c2)</span>
+<span id="cb2-2"><a href="assessment-201920.html#cb2-2"></a>phq9.m3 &lt;-<span class="st"> </span><span class="kw">lmer</span>(phq9 <span class="op">~</span><span class="st"> </span>month <span class="op">*</span><span class="st"> </span>tx <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span> <span class="op">+</span><span class="st"> </span>month<span class="op">:</span>tx <span class="op">||</span><span class="st"> </span>patient), <span class="dt">data=</span>phq9.c2)</span></code></pre></div>
 <p>Section C:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="assessment.html#cb3-1"></a><span class="kw">ranova</span>(phq9.m2)</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="assessment-201920.html#cb3-1"></a><span class="kw">ranova</span>(phq9.m2)</span></code></pre></div>
 <pre><code>ANOVA-like table for random-effects: Single term deletions
 
 Model:
@@ -228,7 +228,7 @@ phq9 ~ month + tx + (1 | patient) + month:tx
 (1 | patient)    5 -8104.6 16219 1992.1  1  &lt; 2.2e-16 ***
 ---
 Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="assessment.html#cb5-1"></a><span class="kw">ranova</span>(phq9.m3)</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="assessment-201920.html#cb5-1"></a><span class="kw">ranova</span>(phq9.m3)</span></code></pre></div>
 <pre><code>ANOVA-like table for random-effects: Single term deletions
 
 Model:
@@ -245,7 +245,7 @@ month:tx in (0 + month:tx | patient) ***
 ---
 Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
 <p>Section D:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="assessment.html#cb7-1"></a>phq9.m2 <span class="op">%&gt;%</span><span class="st"> </span>anova</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="assessment-201920.html#cb7-1"></a>phq9.m2 <span class="op">%&gt;%</span><span class="st"> </span>anova</span></code></pre></div>
 <pre><code>Type III Analysis of Variance Table with Satterthwaite&#39;s method
          Sum Sq Mean Sq NumDF  DenDF F value    Pr(&gt;F)    
 month    752.05  752.05     1 2244.3 49.4829 2.647e-12 ***
@@ -253,7 +253,7 @@ tx        98.93   98.93     1  250.2  6.5092   0.01133 *
 month:tx  90.60   90.60     1 2240.6  5.9612   0.01470 *  
 ---
 Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="assessment.html#cb9-1"></a>phq9.m3 <span class="op">%&gt;%</span><span class="st"> </span>anova</span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="assessment-201920.html#cb9-1"></a>phq9.m3 <span class="op">%&gt;%</span><span class="st"> </span>anova</span></code></pre></div>
 <pre><code>Type III Analysis of Variance Table with Satterthwaite&#39;s method
          Sum Sq Mean Sq NumDF   DenDF F value    Pr(&gt;F)    
 month    747.70  747.70     1 2102.47 55.4263 1.407e-13 ***
