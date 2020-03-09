@@ -164,10 +164,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="" data-path="sleep-centering.html"><a href="sleep-centering.html"><i class="fa fa-check"></i>Sleep (centering)</a></li>
 <li class="chapter" data-level="" data-path="mma.html"><a href="mma.html"><i class="fa fa-check"></i>MMA</a></li>
 <li class="chapter" data-level="" data-path="politeness.html"><a href="politeness.html"><i class="fa fa-check"></i>Politeness</a></li>
-<li class="chapter" data-level="" data-path="anova-in-mixed-models.html"><a href="anova-in-mixed-models.html"><i class="fa fa-check"></i>Anova in mixed models</a></li>
+<li class="chapter" data-level="" data-path="model-complexity.html"><a href="model-complexity.html"><i class="fa fa-check"></i>Model complexity</a></li>
+<li class="chapter" data-level="" data-path="extensions.html"><a href="extensions.html"><i class="fa fa-check"></i>Extensions</a></li>
 <li class="chapter" data-level="" data-path="further-reading.html"><a href="further-reading.html"><i class="fa fa-check"></i>Further reading</a></li>
 </ul></li>
-<li class="chapter" data-level="" data-path="bayesian-estimation.html"><a href="bayesian-estimation.html"><i class="fa fa-check"></i>Bayesian estimation</a></li>
 <li class="chapter" data-level="" data-path="assessment.html"><a href="assessment.html"><i class="fa fa-check"></i>Assessment</a></li>
 <li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
 <li class="divider"></li>
@@ -197,7 +197,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>In statistics, a likelihood ratio test (LR test) is a statistical test used for comparing the goodness of fit of two statistical models — a null model against an alternative model. The test is based on the likelihood ratio, which expresses how many times more likely the data are under one model than the other. This likelihood ratio … can then be used to compute a <em>p</em>-value … to decide whether to reject the null model.</p>
 </blockquote>
 <p>In R, the <code>anova</code> function can be used to compare two models of the same type. We just write:</p>
-<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="likelihood-ratio-tests.html#cb29-1"></a><span class="kw">anova</span>(model1, model2)</span></code></pre></div>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="likelihood-ratio-tests.html#cb22-1"></a><span class="kw">anova</span>(model1, model2)</span></code></pre></div>
 <ul>
 <li><p>For standard regression, this will produce an <em>F</em> test</p></li>
 <li><p>For mixed models (if you have loaded the <code>lmerTest</code> package), the <code>anova</code> function will actually returns a <span class="math inline">\(\chi^2\)</span> statistic from the likelihood ratio test.</p></li>
@@ -216,7 +216,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <button class="solution-button">
 Show the code
 </button>
-<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="likelihood-ratio-tests.html#cb30-1"></a><span class="kw">anova</span>(pigs.ri, pigs.rs)</span></code></pre></div>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="likelihood-ratio-tests.html#cb23-1"></a><span class="kw">anova</span>(pigs.ri, pigs.rs)</span></code></pre></div>
 <pre><code>## Data: pigs
 ## Models:
 ## pigs.ri: weight ~ week + (1 | id)
@@ -254,7 +254,7 @@ Check answer
 <div id="a-shortcut-for-testing-random-effects" class="section level4">
 <h4>A shortcut for testing random effects</h4>
 <p>As mentioned in class, the <code>ranova</code> function is a shortcut for testing random effects in an <code>lmer</code> model. To test if the random intercepts explain additional variance run:</p>
-<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="likelihood-ratio-tests.html#cb32-1"></a><span class="kw">ranova</span>(pigs.ri)</span></code></pre></div>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="likelihood-ratio-tests.html#cb25-1"></a><span class="kw">ranova</span>(pigs.ri)</span></code></pre></div>
 <pre><code>## ANOVA-like table for random-effects: Single term deletions
 ## 
 ## Model:
@@ -266,7 +266,7 @@ Check answer
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
 <p>This shows the comparison of the random intercepts model against a simpler model which ignores clustering by-piglet. We can clearly see that piglets do differ from one another (the p value is very small).</p>
 <p>This is the same test for the random <em>slopes</em>:</p>
-<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="likelihood-ratio-tests.html#cb34-1"></a><span class="kw">ranova</span>(pigs.rs)</span></code></pre></div>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="likelihood-ratio-tests.html#cb27-1"></a><span class="kw">ranova</span>(pigs.rs)</span></code></pre></div>
 <pre><code>## ANOVA-like table for random-effects: Single term deletions
 ## 
 ## Model:

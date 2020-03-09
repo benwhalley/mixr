@@ -197,7 +197,7 @@ pigs %>%
 
 In the session I mentioned $R^2$ for mixed models. To calculate this you need to use the `MuMIn::r.squaredGLMM` function.
 
-The literature underpinning the calculations is fairly complex (see [Nakagawa and Schielzeth, 2013](https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/j.2041-210x.2012.00261.x) and [Johnson, 2014](https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/2041-210X.12225)) but the key idea is that we now have two different $R^2$ values:
+The literature underpinning the calculations is fairly complex [see @nakagawa2013general and @johnson2014extension] but the key idea is that we now have two different $R^2$ values:
 
 - The *marginal* $R^2$, which is the variance explained by the fixed effects (this is most similar to conventional $R^2$ from a linear model)
 

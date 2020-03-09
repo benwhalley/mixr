@@ -9,7 +9,7 @@ rmd_files:
         '01-repeat-measures.rmd',
         '02-mixed-models.rmd',
         '03-random-effects.rmd',
-        '04-bayesian-estimation.rmd',
+        #'04-bayesian-estimation.rmd',
         'assessment.rmd',
         'references.rmd',
     ]

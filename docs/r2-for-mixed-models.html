@@ -164,10 +164,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="" data-path="sleep-centering.html"><a href="sleep-centering.html"><i class="fa fa-check"></i>Sleep (centering)</a></li>
 <li class="chapter" data-level="" data-path="mma.html"><a href="mma.html"><i class="fa fa-check"></i>MMA</a></li>
 <li class="chapter" data-level="" data-path="politeness.html"><a href="politeness.html"><i class="fa fa-check"></i>Politeness</a></li>
-<li class="chapter" data-level="" data-path="anova-in-mixed-models.html"><a href="anova-in-mixed-models.html"><i class="fa fa-check"></i>Anova in mixed models</a></li>
+<li class="chapter" data-level="" data-path="model-complexity.html"><a href="model-complexity.html"><i class="fa fa-check"></i>Model complexity</a></li>
+<li class="chapter" data-level="" data-path="extensions.html"><a href="extensions.html"><i class="fa fa-check"></i>Extensions</a></li>
 <li class="chapter" data-level="" data-path="further-reading.html"><a href="further-reading.html"><i class="fa fa-check"></i>Further reading</a></li>
 </ul></li>
-<li class="chapter" data-level="" data-path="bayesian-estimation.html"><a href="bayesian-estimation.html"><i class="fa fa-check"></i>Bayesian estimation</a></li>
 <li class="chapter" data-level="" data-path="assessment.html"><a href="assessment.html"><i class="fa fa-check"></i>Assessment</a></li>
 <li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
 <li class="divider"></li>
@@ -193,7 +193,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="r2-for-mixed-models" class="section level2">
 <h2><span class="math inline">\(R^2\)</span> for mixed models</h2>
 <p>In the session I mentioned <span class="math inline">\(R^2\)</span> for mixed models. To calculate this you need to use the <code>MuMIn::r.squaredGLMM</code> function.</p>
-<p>The literature underpinning the calculations is fairly complex (see <a href="https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/j.2041-210x.2012.00261.x">Nakagawa and Schielzeth, 2013</a> and <a href="https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/2041-210X.12225">Johnson, 2014</a>) but the key idea is that we now have two different <span class="math inline">\(R^2\)</span> values:</p>
+<p>The literature underpinning the calculations is fairly complex <span class="citation">(see Nakagawa and Schielzeth <a href="#ref-nakagawa2013general" role="doc-biblioref">2013</a>, and @johnson2014extension)</span> but the key idea is that we now have two different <span class="math inline">\(R^2\)</span> values:</p>
 <ul>
 <li><p>The <em>marginal</em> <span class="math inline">\(R^2\)</span>, which is the variance explained by the fixed effects (this is most similar to conventional <span class="math inline">\(R^2\)</span> from a linear model)</p></li>
 <li><p>The <em>conditional</em> <span class="math inline">\(R^2\)</span>, which is the variance explained by both the fixed effects, <em>and</em> the random effects.</p></li>
@@ -207,9 +207,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <button class="solution-button">
 Show me the code
 </button>
-<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="r2-for-mixed-models.html#cb16-1"></a><span class="kw">library</span>(MuMIn)</span>
-<span id="cb16-2"><a href="r2-for-mixed-models.html#cb16-2"></a>pigs.ri &lt;-<span class="st"> </span><span class="kw">lmer</span>(weight <span class="op">~</span><span class="st"> </span>week <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span><span class="op">|</span>id), <span class="dt">data=</span>pigs)</span>
-<span id="cb16-3"><a href="r2-for-mixed-models.html#cb16-3"></a><span class="kw">r.squaredGLMM</span>(pigs.ri) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">round</span>(<span class="dv">2</span>) <span class="op">%&gt;%</span><span class="st">  </span><span class="kw">pander</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="r2-for-mixed-models.html#cb9-1"></a><span class="kw">library</span>(MuMIn)</span>
+<span id="cb9-2"><a href="r2-for-mixed-models.html#cb9-2"></a>pigs.ri &lt;-<span class="st"> </span><span class="kw">lmer</span>(weight <span class="op">~</span><span class="st"> </span>week <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span><span class="op">|</span>id), <span class="dt">data=</span>pigs)</span>
+<span id="cb9-3"><a href="r2-for-mixed-models.html#cb9-3"></a><span class="kw">r.squaredGLMM</span>(pigs.ri) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">round</span>(<span class="dv">2</span>) <span class="op">%&gt;%</span><span class="st">  </span><span class="kw">pander</span>()</span></code></pre></div>
 <table style="width:19%;">
 <colgroup>
 <col width="9%" />
@@ -231,6 +231,12 @@ Show me the code
 <p><code>R2m</code> refers to the marginal <span class="math inline">\(R^2\)</span>, <code>R2c</code> refers to the conditional value.</p>
 <p>This means that, without the random intercepts, we could explain about 93% of the variance. With random intercepts we can explain over 98%.</p>
 </div>
+</div>
+</div>
+<h3>References</h3>
+<div id="refs" class="references">
+<div id="ref-nakagawa2013general">
+<p>Nakagawa, Shinichi, and Holger Schielzeth. 2013. “A General and Simple Method for Obtaining R2 from Generalized Linear Mixed-Effects Models.” <em>Methods in Ecology and Evolution</em> 4 (2): 133–42.</p>
 </div>
 </div>
             </section>

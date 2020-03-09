@@ -30,7 +30,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="bayesian-estimation.html"/>
+<link rel="prev" href="further-reading.html"/>
 <link rel="next" href="references.html"/>
 <script src="libs/header-attrs-2.1/header-attrs.js"></script>
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
@@ -164,10 +164,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="" data-path="sleep-centering.html"><a href="sleep-centering.html"><i class="fa fa-check"></i>Sleep (centering)</a></li>
 <li class="chapter" data-level="" data-path="mma.html"><a href="mma.html"><i class="fa fa-check"></i>MMA</a></li>
 <li class="chapter" data-level="" data-path="politeness.html"><a href="politeness.html"><i class="fa fa-check"></i>Politeness</a></li>
-<li class="chapter" data-level="" data-path="anova-in-mixed-models.html"><a href="anova-in-mixed-models.html"><i class="fa fa-check"></i>Anova in mixed models</a></li>
+<li class="chapter" data-level="" data-path="model-complexity.html"><a href="model-complexity.html"><i class="fa fa-check"></i>Model complexity</a></li>
+<li class="chapter" data-level="" data-path="extensions.html"><a href="extensions.html"><i class="fa fa-check"></i>Extensions</a></li>
 <li class="chapter" data-level="" data-path="further-reading.html"><a href="further-reading.html"><i class="fa fa-check"></i>Further reading</a></li>
 </ul></li>
-<li class="chapter" data-level="" data-path="bayesian-estimation.html"><a href="bayesian-estimation.html"><i class="fa fa-check"></i>Bayesian estimation</a></li>
 <li class="chapter" data-level="" data-path="assessment.html"><a href="assessment.html"><i class="fa fa-check"></i>Assessment</a></li>
 <li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
 <li class="divider"></li>
@@ -192,31 +192,45 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
             <section class="normal" id="section-">
 <div id="assessment" class="section level1">
 <h1>Assessment</h1>
-<p>The REFRAMED trial was a large RCT evaluating a variant of dialectical behaviour therapy for patients with treatment-resistant depression <span class="citation">(Lynch et al. <a href="#ref-lynch2018radically" role="doc-biblioref">2018</a>)</span>. The design of the study is described in detail in <span class="citation">Lynch et al. (<a href="#ref-lynch2015refractory" role="doc-biblioref">2015</a>)</span>.</p>
-<p>The original, uncentered data, used for this analysis are <a href="data/reframed.csv">available here: <code>data/reframed.csv</code></a>.</p>
+<p>The REFRAMED trial was a large RCT evaluating a variant of dialectical behaviour therapy
+for patients with treatment-resistant depression <span class="citation">(Lynch et al. <a href="#ref-lynch2018radically" role="doc-biblioref">2018</a>)</span>. The design of
+the study is described in detail in <span class="citation">Lynch et al. (<a href="#ref-lynch2015refractory" role="doc-biblioref">2015</a>)</span>.</p>
+<p>The original, uncentered data, used for this analysis are
+<a href="data/reframed.csv">available here: <code>data/reframed.csv</code></a>.</p>
 <ol style="list-style-type: decimal">
-<li>Make a plot which shows changes in PHQ9 scores over time, split by group. It can either look like the plot below, or display the differences between groups over time in another appropriate way:</li>
+<li>Make a plot which shows changes in PHQ9 scores over time, split by group. It can
+either look like the plot below, or display the differences between groups over time
+in another appropriate way:</li>
 </ol>
 <p><img src="assessment_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
 <ol start="2" style="list-style-type: decimal">
-<li><p>Fit a random intercepts model using <code>lmer</code>, including month as a fixed factor (a categorical variable). Also include treatment group, and the interaction of month and group.</p></li>
-<li><p>Report the model you run and interpret the model output, and report relevant statistics covered during the course. Be sure to report the % variance attributable to between-patient differences. Use the guidelines in <span class="citation">Meteyard and Davies (<a href="#ref-meteyard2020best" role="doc-biblioref">2020</a>)</span> when deciding what to report.</p></li>
-<li><p>Examine the code and output below. The variable <code>phq9.c</code> is a copy of the original dataset in which all the numeric variables have been mean-centered.</p></li>
+<li><p>Fit a random intercepts model using <code>lmer</code>, including month as a fixed factor (a
+categorical variable). Also include treatment group, and the interaction of month and
+group.</p></li>
+<li><p>Report the model you run and interpret the model output, and report relevant
+statistics covered during the course. Be sure to report the % variance attributable
+to between-patient differences. Use the guidelines in <span class="citation">Meteyard and Davies (<a href="#ref-meteyard2020best" role="doc-biblioref">2020</a>)</span> when deciding
+what to report.</p></li>
+<li><p>Examine the code and output below. The variable <code>phq9.c</code> is a copy of the original
+dataset in which all the numeric variables have been mean-centered.</p></li>
 </ol>
 <ul>
 <li><p>Give a descriptive label/subtitle to each of the sections A to D below.</p></li>
-<li><p>Comment on each line in the code, explaining what it does, and what the output (if any) means. Use the R help files as a reference to functions if needed.</p></li>
-<li><p>With reference to the plot above, why do you think that observations after month 12 are excluded from this analysis? Given the model formula used and the design of the study, what other observations might it be reasonable to exclude?</p></li>
+<li><p>Comment on each line in the code, explaining what it does, and what the output (if
+any) means. Use the R help files as a reference to functions if needed.</p></li>
+<li><p>With reference to the plot above, why do you think that observations after month 12
+are excluded from this analysis? Given the model formula used and the design of the
+study, what other observations might it be reasonable to exclude?</p></li>
 <li><p>Which model should we prefer, <code>phq9.m2</code> or <code>phq9.m3</code>?</p></li>
-<li><p>Is model <code>phq9.m3</code> ‘maximal’ (<span class="citation">Barr et al. (<a href="#ref-barr2013random" role="doc-biblioref">2013</a>)</span>)?</p></li>
+<li><p>Is model <code>phq9.m3</code> ‘maximal’ <span class="citation">Barr et al. (<a href="#ref-barr2013random" role="doc-biblioref">2013</a>)</span>?</p></li>
 </ul>
 <p>Section A:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="assessment.html#cb1-1"></a>phq9.c2 &lt;-<span class="st"> </span>phq9.c <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb1-2"><a href="assessment.html#cb1-2"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">tx=</span><span class="kw">ifelse</span>(grp<span class="op">==</span><span class="st">&quot;TAU&quot;</span>, <span class="dv">0</span>, <span class="dv">1</span>)) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="assessment.html#cb1-1"></a>phq9.c2 &lt;-<span class="st"> </span>phq9.c <span class="op">%&gt;%</span></span>
+<span id="cb1-2"><a href="assessment.html#cb1-2"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">tx=</span><span class="kw">ifelse</span>(grp<span class="op">==</span><span class="st">&quot;TAU&quot;</span>, <span class="dv">0</span>, <span class="dv">1</span>)) <span class="op">%&gt;%</span></span>
 <span id="cb1-3"><a href="assessment.html#cb1-3"></a><span class="st">  </span><span class="kw">filter</span>(month <span class="op">&lt;</span><span class="st"> </span><span class="dv">12</span>)</span></code></pre></div>
 <p>Section B:</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="assessment.html#cb2-1"></a>phq9.m2 &lt;-<span class="st"> </span><span class="kw">lmer</span>(phq9 <span class="op">~</span><span class="st"> </span>month <span class="op">*</span><span class="st"> </span>tx <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span> <span class="op">|</span><span class="st"> </span>patient), <span class="dt">data=</span>phq9.c2)</span>
-<span id="cb2-2"><a href="assessment.html#cb2-2"></a>phq9.m3 &lt;-<span class="st"> </span><span class="kw">lmer</span>(phq9 <span class="op">~</span><span class="st"> </span>month <span class="op">*</span><span class="st"> </span>tx <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span> <span class="op">+</span><span class="st"> </span>month<span class="op">:</span>tx <span class="op">||</span><span class="st"> </span>patient), <span class="dt">data=</span>phq9.c2)</span></code></pre></div>
+<span id="cb2-2"><a href="assessment.html#cb2-2"></a>phq9.m3 &lt;-<span class="st"> </span><span class="kw">lmer</span>(phq9 <span class="op">~</span><span class="st"> </span>month <span class="op">*</span><span class="st"> </span>tx <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span> <span class="op">+</span><span class="st"> </span>month<span class="op">:</span>tx <span class="op">|</span><span class="st"> </span>patient), <span class="dt">data=</span>phq9.c2)</span></code></pre></div>
 <p>Section C:</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="assessment.html#cb3-1"></a><span class="kw">ranova</span>(phq9.m2)</span></code></pre></div>
 <pre><code>ANOVA-like table for random-effects: Single term deletions
@@ -283,7 +297,7 @@ Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&
           </div>
         </div>
       </div>
-<a href="bayesian-estimation.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="further-reading.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
 <a href="references.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>

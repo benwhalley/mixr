@@ -597,8 +597,60 @@ Mixed models provide many more possible 'ways to do it'. In addition to differen
 
 
 
+## Model complexity
 
-## Anova in mixed models
+
+Although @barr2013random exhort researchers to 'keep it maximal', and include as many random effects in the model as implied by the design, this isn't always possible.
+
+Mixed models with many random effects can be difficult to fit. You will already have seen error messages about 'singular fits' and 'non-convergence'.
+
+Two important points:
+
+- Non-converged models, or models with fit errors should NOT be interpreted or reported. Results from them are quite likely to be unstable/incorrect.
+
+- The easiest/most immediate way to get rid of the errors is to simplify the model
+
+
+Taking one of the examples from above:
+
+```{r}
+(sleep.rs <- lmer(Reaction ~ Days + (Days|Subject), data=ss))
+```
+
+
+This model contains 3 random effects parameters which have to be estimated from the data (not including the residual variance):
+
+
+```{r}
+sleep.rs %>% VarCorr
+```
+
+
+They are:
+
+- Random intercept term for Subject 
+- Random slope for Days within Subject
+- The covariance of intercept and slope within Subject
+
+
+Often, we will not have enough data to properly estimate all these paramaters. However, as Barr et al recommend, we can exclude parameters from the model by:
+
+- Explicitly specifying the random intercept with `(1|grouping)`
+- Adding another term which is `(0 + variable | grouping)`
+
+Here, the `0+` means remove the random intercept. By specifying the random effects in different parts (i.e. within separate sets of brackets) lmer knows the terms are not correlated.
+
+```{r}
+sleep.rs.simplified <- lmer(Reaction ~ Days + (1|Subject) + (0+Days|Subject), data=ss)
+sleep.rs.simplified %>% VarCorr
+```
+
+
+
+
+## Extensions
+
+### Factorial anova in mixed models
 
 The file [journal.pone.0226387.s001.sav](data/journal.pone.0226387.s001.sav) contains data from @kemps2019cognitive.
 These have been reshaped to long format and tidied up in [data/drinks.csv](data/drinks.csv).
@@ -784,12 +836,7 @@ contrast(emmeans(drinks.m1, ~Condition|Time), method='pairwise')
 
 ## Further reading
 
-https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/j.2041-210x.2012.00261.x
-
 Meteyard summarises current good practice in running and reporting mixed models [@meteyard2020best].
 
-Barr et al (-@barr2013random) go into more detail on why mixed models are preferable to RM anova, and this paper will be a useful reference for future sessions too:  [Barr, D. J., Levy, R., Scheepers, C., & Tily, H. J. (2013). Random effects structure for confirmatory hypothesis testing: Keep it maximal. Journal of memory and language, 68(3), 255-278.](http://eprints.gla.ac.uk/79067/)
+Barr et al -@barr2013random go into more detail on why mixed models are preferable to RM anova, and this paper will be a useful reference for future sessions too. See also @eager2017mixed which points out some of the failings of mixed models as typically used.
 
-This paper expands on the original 'keep it maximal' paper, covering situations with interactions between within factors: [Barr, D. J. (2013). Random effects structure for testing interactions in linear mixed-effects models. Frontiers in psychology, 4, 328.](http://eprints.gla.ac.uk/88175/)
-
-See also: [Eager, C., & Roy, J. (2017). Mixed effects models are sometimes terrible. arXiv preprint arXiv:1701.04858.](https://arxiv.org/abs/1701.04858)
