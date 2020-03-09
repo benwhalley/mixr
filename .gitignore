@@ -4,3 +4,4 @@ mixr.rds
 data/eme-data-supplement
 *_cache
 _bookdown_files
+.Rproj.user
