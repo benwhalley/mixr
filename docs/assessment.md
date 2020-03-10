@@ -15,7 +15,10 @@ The original, uncentered data, used for this analysis are
    either look like the plot below, or display the differences between groups over time
    in another appropriate way:
 
-<img src="assessment_files/figure-html/unnamed-chunk-3-1.png" width="672" />
+
+
+![Changes in PHQ9 Scores during the REFRAMED trial](images/reframedplotassess.png)
+
 
 2. Fit a random intercepts model using `lmer`, including month as a fixed factor (a
    categorical variable). Also include treatment group, and the interaction of month and
