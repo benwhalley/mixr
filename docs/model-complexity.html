@@ -200,7 +200,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li><p>The easiest/most immediate way to get rid of the errors is to simplify the model</p></li>
 </ul>
 <p>Taking one of the examples from above:</p>
-<div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb45-1"><a href="model-complexity.html#cb45-1"></a>(sleep.rs &lt;-<span class="st"> </span><span class="kw">lmer</span>(Reaction <span class="op">~</span><span class="st"> </span>Days <span class="op">+</span><span class="st"> </span>(Days<span class="op">|</span>Subject), <span class="dt">data=</span>ss))</span></code></pre></div>
+<div class="sourceCode" id="cb82"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb82-1"><a href="model-complexity.html#cb82-1"></a>(sleep.rs &lt;-<span class="st"> </span><span class="kw">lmer</span>(Reaction <span class="op">~</span><span class="st"> </span>Days <span class="op">+</span><span class="st"> </span>(Days<span class="op">|</span>Subject), <span class="dt">data=</span>ss))</span></code></pre></div>
 <pre><code>Linear mixed model fit by REML [&#39;lmerModLmerTest&#39;]
 Formula: Reaction ~ Days + (Days | Subject)
    Data: ss
@@ -215,7 +215,7 @@ Fixed Effects:
 (Intercept)         Days  
      251.41        10.47  </code></pre>
 <p>This model contains 3 random effects parameters which have to be estimated from the data (not including the residual variance):</p>
-<div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb47-1"><a href="model-complexity.html#cb47-1"></a>sleep.rs <span class="op">%&gt;%</span><span class="st"> </span>VarCorr</span></code></pre></div>
+<div class="sourceCode" id="cb84"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb84-1"><a href="model-complexity.html#cb84-1"></a>sleep.rs <span class="op">%&gt;%</span><span class="st"> </span>VarCorr</span></code></pre></div>
 <pre><code> Groups   Name        Std.Dev. Corr 
  Subject  (Intercept) 24.7366       
           Days         5.9229  0.066
@@ -232,8 +232,8 @@ Fixed Effects:
 <li>Adding another term which is <code>(0 + variable | grouping)</code></li>
 </ul>
 <p>Here, the <code>0+</code> means remove the random intercept. By specifying the random effects in different parts (i.e. within separate sets of brackets) lmer knows the terms are not correlated.</p>
-<div class="sourceCode" id="cb49"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb49-1"><a href="model-complexity.html#cb49-1"></a>sleep.rs.simplified &lt;-<span class="st"> </span><span class="kw">lmer</span>(Reaction <span class="op">~</span><span class="st"> </span>Days <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span><span class="op">|</span>Subject) <span class="op">+</span><span class="st"> </span>(<span class="dv">0</span><span class="op">+</span>Days<span class="op">|</span>Subject), <span class="dt">data=</span>ss)</span>
-<span id="cb49-2"><a href="model-complexity.html#cb49-2"></a>sleep.rs.simplified <span class="op">%&gt;%</span><span class="st"> </span>VarCorr</span></code></pre></div>
+<div class="sourceCode" id="cb86"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb86-1"><a href="model-complexity.html#cb86-1"></a>sleep.rs.simplified &lt;-<span class="st"> </span><span class="kw">lmer</span>(Reaction <span class="op">~</span><span class="st"> </span>Days <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span><span class="op">|</span>Subject) <span class="op">+</span><span class="st"> </span>(<span class="dv">0</span><span class="op">+</span>Days<span class="op">|</span>Subject), <span class="dt">data=</span>ss)</span>
+<span id="cb86-2"><a href="model-complexity.html#cb86-2"></a>sleep.rs.simplified <span class="op">%&gt;%</span><span class="st"> </span>VarCorr</span></code></pre></div>
 <pre><code> Groups    Name        Std.Dev.
  Subject   (Intercept) 25.0499 
  Subject.1 Days         5.9887 

@@ -207,9 +207,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <button class="solution-button">
 Show me the code
 </button>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="r2-for-mixed-models.html#cb9-1"></a><span class="kw">library</span>(MuMIn)</span>
-<span id="cb9-2"><a href="r2-for-mixed-models.html#cb9-2"></a>pigs.ri &lt;-<span class="st"> </span><span class="kw">lmer</span>(weight <span class="op">~</span><span class="st"> </span>week <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span><span class="op">|</span>id), <span class="dt">data=</span>pigs)</span>
-<span id="cb9-3"><a href="r2-for-mixed-models.html#cb9-3"></a><span class="kw">r.squaredGLMM</span>(pigs.ri) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">round</span>(<span class="dv">2</span>) <span class="op">%&gt;%</span><span class="st">  </span><span class="kw">pander</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="r2-for-mixed-models.html#cb16-1"></a><span class="kw">library</span>(MuMIn)</span>
+<span id="cb16-2"><a href="r2-for-mixed-models.html#cb16-2"></a>pigs.ri &lt;-<span class="st"> </span><span class="kw">lmer</span>(weight <span class="op">~</span><span class="st"> </span>week <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span><span class="op">|</span>id), <span class="dt">data=</span>pigs)</span>
+<span id="cb16-3"><a href="r2-for-mixed-models.html#cb16-3"></a><span class="kw">r.squaredGLMM</span>(pigs.ri) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">round</span>(<span class="dv">2</span>) <span class="op">%&gt;%</span><span class="st">  </span><span class="kw">pander</span>()</span></code></pre></div>
 <table style="width:19%;">
 <colgroup>
 <col width="9%" />

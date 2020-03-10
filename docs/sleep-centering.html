@@ -215,7 +215,7 @@ Solution
 <div id="centering-coefficients" class="section level4">
 <h4>Centering coefficients</h4>
 <p>The plot above was based on the following random slopes model:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="sleep-centering.html#cb1-1"></a>(sleep.m1 &lt;-<span class="st"> </span><span class="kw">lmer</span>(Reaction <span class="op">~</span><span class="st"> </span>Days <span class="op">+</span><span class="st"> </span>(Days <span class="op">|</span><span class="st"> </span>Subject), ss))</span></code></pre></div>
+<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb38-1"><a href="sleep-centering.html#cb38-1"></a>(sleep.m1 &lt;-<span class="st"> </span><span class="kw">lmer</span>(Reaction <span class="op">~</span><span class="st"> </span>Days <span class="op">+</span><span class="st"> </span>(Days <span class="op">|</span><span class="st"> </span>Subject), ss))</span></code></pre></div>
 <pre><code>Linear mixed model fit by REML [&#39;lmerModLmerTest&#39;]
 Formula: Reaction ~ Days + (Days | Subject)
    Data: ss
@@ -230,7 +230,7 @@ Fixed Effects:
 (Intercept)         Days  
      251.41        10.47  </code></pre>
 <p>If we look at the dataset, we can see that there are 10 rows for each <code>Subject</code>, with days indexed from 0 to 9.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="sleep-centering.html#cb3-1"></a>sleepstudy <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">head</span>(<span class="dv">15</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">pander</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb40-1"><a href="sleep-centering.html#cb40-1"></a>sleepstudy <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">head</span>(<span class="dv">15</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">pander</span>()</span></code></pre></div>
 <table style="width:39%;">
 <colgroup>
 <col width="15%" />
@@ -325,7 +325,7 @@ Fixed Effects:
 <p>As we know from linear regression, when we include parameters thet estimated in such a way that when we look at them individually they are the estimate for an individual row <strong><em>if all the other predictors were set to zero</em></strong>.</p>
 <p>In multiple regression this is important because it affects how we interpret the paramaters. When we include multiple predictors it can be hard to read the table of model parameters because we need to add together multiple paramaters to make a prediction. We can get around this using the <code>predict</code> function, but the key is that the scale of the</p>
 <p>For example, if we use the mtcars data we can see that to estimate a heavy automatic car (high <code>wt</code> and <code>am</code>=1), we would have to do some arithmetic:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="sleep-centering.html#cb4-1"></a><span class="kw">lm</span>(mpg<span class="op">~</span>wt<span class="op">*</span>am, <span class="dt">data=</span>mtcars)</span></code></pre></div>
+<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb41-1"><a href="sleep-centering.html#cb41-1"></a><span class="kw">lm</span>(mpg<span class="op">~</span>wt<span class="op">*</span>am, <span class="dt">data=</span>mtcars)</span></code></pre></div>
 <pre><code>
 Call:
 lm(formula = mpg ~ wt * am, data = mtcars)
@@ -335,8 +335,8 @@ Coefficients:
      31.416       -3.786       14.878       -5.298  </code></pre>
 <p>Because weight in this sample ranges from 1.513 to 5.424, simply adding the intercpt, <code>wt</code> and <code>am</code> paramaters would not be an estimate for any car in the sample, because none of them had zero weight.</p>
 <p>If, on the other hand, we had <strong><em>mean-centered</em></strong> <code>wt</code> — that is, subtracted the mean from each value — then we could interpret the other coefficients as being the prediction when <em><code>wt</code> was at the average value in the sample</em>.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="sleep-centering.html#cb6-1"></a>mt2 &lt;-<span class="st"> </span>mtcars <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">wt =</span> wt <span class="op">-</span><span class="st"> </span><span class="kw">mean</span>(wt))</span>
-<span id="cb6-2"><a href="sleep-centering.html#cb6-2"></a><span class="kw">lm</span>(mpg<span class="op">~</span>wt<span class="op">*</span>am, <span class="dt">data=</span>mt2)</span></code></pre></div>
+<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb43-1"><a href="sleep-centering.html#cb43-1"></a>mt2 &lt;-<span class="st"> </span>mtcars <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">wt =</span> wt <span class="op">-</span><span class="st"> </span><span class="kw">mean</span>(wt))</span>
+<span id="cb43-2"><a href="sleep-centering.html#cb43-2"></a><span class="kw">lm</span>(mpg<span class="op">~</span>wt<span class="op">*</span>am, <span class="dt">data=</span>mt2)</span></code></pre></div>
 <pre><code>
 Call:
 lm(formula = mpg ~ wt * am, data = mt2)
@@ -349,11 +349,11 @@ Coefficients:
 <button class="solution-button">
 Show R squared figures
 </button>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="sleep-centering.html#cb8-1"></a><span class="co"># original</span></span>
-<span id="cb8-2"><a href="sleep-centering.html#cb8-2"></a>broom<span class="op">::</span><span class="kw">glance</span>(<span class="kw">lm</span>(mpg<span class="op">~</span>wt<span class="op">*</span>am, <span class="dt">data=</span>mtcars)) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">pull</span>(r.squared)</span></code></pre></div>
+<div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb45-1"><a href="sleep-centering.html#cb45-1"></a><span class="co"># original</span></span>
+<span id="cb45-2"><a href="sleep-centering.html#cb45-2"></a>broom<span class="op">::</span><span class="kw">glance</span>(<span class="kw">lm</span>(mpg<span class="op">~</span>wt<span class="op">*</span>am, <span class="dt">data=</span>mtcars)) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">pull</span>(r.squared)</span></code></pre></div>
 <pre><code>[1] 0.8330375</code></pre>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="sleep-centering.html#cb10-1"></a><span class="co"># centered</span></span>
-<span id="cb10-2"><a href="sleep-centering.html#cb10-2"></a>broom<span class="op">::</span><span class="kw">glance</span>(<span class="kw">lm</span>(mpg<span class="op">~</span>wt<span class="op">*</span>am, <span class="dt">data=</span>mt2)) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">pull</span>(r.squared)</span></code></pre></div>
+<div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb47-1"><a href="sleep-centering.html#cb47-1"></a><span class="co"># centered</span></span>
+<span id="cb47-2"><a href="sleep-centering.html#cb47-2"></a>broom<span class="op">::</span><span class="kw">glance</span>(<span class="kw">lm</span>(mpg<span class="op">~</span>wt<span class="op">*</span>am, <span class="dt">data=</span>mt2)) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">pull</span>(r.squared)</span></code></pre></div>
 <pre><code>[1] 0.8330375</code></pre>
 </div>
 </div>
@@ -394,13 +394,13 @@ Fixed Effects:
 <p>BUT this small change is important because our paramaters are estimates when all the <em>other</em> predictors = zero.</p>
 <p>This means that when we use the centered predictor our random intercept variance — the variation between people — is estimated for the midpoint of the study, because day 5 is coded as zero in <code>Days.c</code>.</p>
 <p>We can see the effect on the variance paramaters if we compare the output of VarCorr. First uncentered:</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="sleep-centering.html#cb14-1"></a><span class="kw">VarCorr</span>(sleep.m1)</span></code></pre></div>
+<div class="sourceCode" id="cb51"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb51-1"><a href="sleep-centering.html#cb51-1"></a><span class="kw">VarCorr</span>(sleep.m1)</span></code></pre></div>
 <pre><code> Groups   Name        Std.Dev. Corr 
  Subject  (Intercept) 24.7366       
           Days         5.9229  0.066
  Residual             25.5918       </code></pre>
 <p>And then centered:</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="sleep-centering.html#cb16-1"></a><span class="kw">VarCorr</span>(sleep.m1.c)</span></code></pre></div>
+<div class="sourceCode" id="cb53"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb53-1"><a href="sleep-centering.html#cb53-1"></a><span class="kw">VarCorr</span>(sleep.m1.c)</span></code></pre></div>
 <pre><code> Groups   Name        Std.Dev. Corr 
  Subject  (Intercept) 37.5221       
           Days.c       5.9212  0.753
@@ -415,24 +415,24 @@ Fixed Effects:
 <p>It depends on what your question is!</p>
 <p>In the <code>sleepstudy</code> example we might argue that the first (uncentered) model makes more sense because there is a definite start to the experiment: At Day 0 we have people in their ‘natural’ state, before we deprive them of sleep. So in this model the <code>(Intercept)</code> term describes the varation between people in the normal state.</p>
 <p>However in other cases this wouldn’t be true. For example, let’s say we used the Scottish schools data and included the <code>year</code> each cohort was taken in as a predictor:</p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="sleep-centering.html#cb18-1"></a>schools<span class="fl">.1</span> &lt;-<span class="st"> </span><span class="kw">lmer</span>(score <span class="op">~</span><span class="st"> </span>year <span class="op">+</span><span class="st"> </span>(year<span class="op">|</span>schoolid), <span class="dt">data=</span>schools)</span>
-<span id="cb18-2"><a href="sleep-centering.html#cb18-2"></a><span class="kw">VarCorr</span>(schools<span class="fl">.1</span>)                  </span></code></pre></div>
+<div class="sourceCode" id="cb55"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb55-1"><a href="sleep-centering.html#cb55-1"></a>schools<span class="fl">.1</span> &lt;-<span class="st"> </span><span class="kw">lmer</span>(score <span class="op">~</span><span class="st"> </span>year <span class="op">+</span><span class="st"> </span>(year<span class="op">|</span>schoolid), <span class="dt">data=</span>schools)</span>
+<span id="cb55-2"><a href="sleep-centering.html#cb55-2"></a><span class="kw">VarCorr</span>(schools<span class="fl">.1</span>)                  </span></code></pre></div>
 <pre><code> Groups   Name        Std.Dev.  Corr  
  schoolid (Intercept) 14.770619       
           year         0.011085 -1.000
  Residual             14.796990       </code></pre>
 <p>Now, the between-school variance is estimated in the year 0 (i.e. &gt;2000 years ago), which clearly doesn’t make much sense. If we compare the ICC (or % variance-attributable) within and between schools it makes a huge difference:</p>
-<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="sleep-centering.html#cb20-1"></a>schools<span class="fl">.2</span> &lt;-<span class="st"> </span><span class="kw">lmer</span>(score <span class="op">~</span><span class="st"> </span>cohort90 <span class="op">+</span><span class="st"> </span>(cohort90<span class="op">|</span>schoolid), <span class="dt">data=</span>schools)</span>
-<span id="cb20-2"><a href="sleep-centering.html#cb20-2"></a></span>
-<span id="cb20-3"><a href="sleep-centering.html#cb20-3"></a><span class="kw">bind_rows</span>(</span>
-<span id="cb20-4"><a href="sleep-centering.html#cb20-4"></a>  <span class="kw">VarCorr</span>(schools<span class="fl">.1</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">as.tibble</span>() <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">Centered=</span><span class="st">&quot;No&quot;</span>),</span>
-<span id="cb20-5"><a href="sleep-centering.html#cb20-5"></a>  <span class="kw">VarCorr</span>(schools<span class="fl">.2</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">as.tibble</span>() <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">Centered=</span><span class="st">&quot;Yes&quot;</span>)) <span class="op">%&gt;%</span></span>
-<span id="cb20-6"><a href="sleep-centering.html#cb20-6"></a><span class="st">  </span><span class="kw">filter</span>(<span class="kw">is.na</span>(var2)) <span class="op">%&gt;%</span></span>
-<span id="cb20-7"><a href="sleep-centering.html#cb20-7"></a><span class="st">  </span><span class="kw">group_by</span>(Centered) <span class="op">%&gt;%</span></span>
-<span id="cb20-8"><a href="sleep-centering.html#cb20-8"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">icc=</span><span class="kw">round</span>(vcov <span class="op">/</span><span class="st"> </span><span class="kw">sum</span>(vcov) <span class="op">*</span><span class="st"> </span><span class="dv">100</span>, <span class="dv">2</span>)) <span class="op">%&gt;%</span></span>
-<span id="cb20-9"><a href="sleep-centering.html#cb20-9"></a><span class="st">  </span><span class="kw">select</span>(grp, var1, icc) <span class="op">%&gt;%</span></span>
-<span id="cb20-10"><a href="sleep-centering.html#cb20-10"></a><span class="st">  </span><span class="kw">rename</span>(<span class="dt">Grouping=</span>grp, <span class="dt">Parameter=</span>var1, <span class="st">`</span><span class="dt">%</span><span class="st">`</span>=icc) <span class="op">%&gt;%</span></span>
-<span id="cb20-11"><a href="sleep-centering.html#cb20-11"></a><span class="st">  </span><span class="kw">pander</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb57"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb57-1"><a href="sleep-centering.html#cb57-1"></a>schools<span class="fl">.2</span> &lt;-<span class="st"> </span><span class="kw">lmer</span>(score <span class="op">~</span><span class="st"> </span>cohort90 <span class="op">+</span><span class="st"> </span>(cohort90<span class="op">|</span>schoolid), <span class="dt">data=</span>schools)</span>
+<span id="cb57-2"><a href="sleep-centering.html#cb57-2"></a></span>
+<span id="cb57-3"><a href="sleep-centering.html#cb57-3"></a><span class="kw">bind_rows</span>(</span>
+<span id="cb57-4"><a href="sleep-centering.html#cb57-4"></a>  <span class="kw">VarCorr</span>(schools<span class="fl">.1</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">as.tibble</span>() <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">Centered=</span><span class="st">&quot;No&quot;</span>),</span>
+<span id="cb57-5"><a href="sleep-centering.html#cb57-5"></a>  <span class="kw">VarCorr</span>(schools<span class="fl">.2</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">as.tibble</span>() <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">Centered=</span><span class="st">&quot;Yes&quot;</span>)) <span class="op">%&gt;%</span></span>
+<span id="cb57-6"><a href="sleep-centering.html#cb57-6"></a><span class="st">  </span><span class="kw">filter</span>(<span class="kw">is.na</span>(var2)) <span class="op">%&gt;%</span></span>
+<span id="cb57-7"><a href="sleep-centering.html#cb57-7"></a><span class="st">  </span><span class="kw">group_by</span>(Centered) <span class="op">%&gt;%</span></span>
+<span id="cb57-8"><a href="sleep-centering.html#cb57-8"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">icc=</span><span class="kw">round</span>(vcov <span class="op">/</span><span class="st"> </span><span class="kw">sum</span>(vcov) <span class="op">*</span><span class="st"> </span><span class="dv">100</span>, <span class="dv">2</span>)) <span class="op">%&gt;%</span></span>
+<span id="cb57-9"><a href="sleep-centering.html#cb57-9"></a><span class="st">  </span><span class="kw">select</span>(grp, var1, icc) <span class="op">%&gt;%</span></span>
+<span id="cb57-10"><a href="sleep-centering.html#cb57-10"></a><span class="st">  </span><span class="kw">rename</span>(<span class="dt">Grouping=</span>grp, <span class="dt">Parameter=</span>var1, <span class="st">`</span><span class="dt">%</span><span class="st">`</span>=icc) <span class="op">%&gt;%</span></span>
+<span id="cb57-11"><a href="sleep-centering.html#cb57-11"></a><span class="st">  </span><span class="kw">pander</span>()</span></code></pre></div>
 <table style="width:61%;">
 <colgroup>
 <col width="15%" />

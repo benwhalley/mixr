@@ -197,7 +197,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p class="caption">photo:<a href="https://pixabay.com/photos/mma-mixed-martial-arts-grachan-cage-2944759/">pixabay</a></p>
 </div>
 <p>The following data are a tidied-up version of the data made available by the authors of the MMA paper we discussed in class <span class="citation">(Pavelka et al. <a href="#ref-pavelka2020acute" role="doc-biblioref">2020</a>)</span>. The <code>included</code> column tells whether the row was included in the authors’ analysis from the paper. By filtering out non-included rows we can make our results match exactly.</p>
-<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="mma.html#cb21-1"></a>mma  &lt;-<span class="st"> </span><span class="kw">read_csv</span>(<span class="st">&#39;data/mma_bw.csv&#39;</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(included<span class="op">==</span><span class="ot">TRUE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb58"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb58-1"><a href="mma.html#cb58-1"></a>mma  &lt;-<span class="st"> </span><span class="kw">read_csv</span>(<span class="st">&#39;data/mma_bw.csv&#39;</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(included<span class="op">==</span><span class="ot">TRUE</span>)</span></code></pre></div>
 <div class="exercise">
 <ul>
 <li><p>Import the tidied the data (from <a href="data/mma_bw.csv">this file</a>)</p></li>
@@ -207,9 +207,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <button class="solution-button">
 How do I mean-centre things?
 </button>
-<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="mma.html#cb22-1"></a>mma.c &lt;-<span class="st"> </span>mma <span class="op">%&gt;%</span></span>
-<span id="cb22-2"><a href="mma.html#cb22-2"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">FI.c =</span> FI <span class="op">-</span><span class="st"> </span><span class="kw">mean</span>(FI), <span class="dt">stimulus.c =</span> stimulus <span class="op">-</span><span class="st"> </span><span class="kw">mean</span>(stimulus))</span>
-<span id="cb22-3"><a href="mma.html#cb22-3"></a>mma.c <span class="op">%&gt;%</span><span class="st"> </span>head</span></code></pre></div>
+<div class="sourceCode" id="cb59"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb59-1"><a href="mma.html#cb59-1"></a>mma.c &lt;-<span class="st"> </span>mma <span class="op">%&gt;%</span></span>
+<span id="cb59-2"><a href="mma.html#cb59-2"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">FI.c =</span> FI <span class="op">-</span><span class="st"> </span><span class="kw">mean</span>(FI), <span class="dt">stimulus.c =</span> stimulus <span class="op">-</span><span class="st"> </span><span class="kw">mean</span>(stimulus))</span>
+<span id="cb59-3"><a href="mma.html#cb59-3"></a>mma.c <span class="op">%&gt;%</span><span class="st"> </span>head</span></code></pre></div>
 <pre><code># A tibble: 6 x 8
   person condition    RT    FI stimulus included  FI.c stimulus.c
    &lt;dbl&gt; &lt;chr&gt;     &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt; &lt;lgl&gt;    &lt;dbl&gt;      &lt;dbl&gt;
@@ -224,7 +224,7 @@ How do I mean-centre things?
 <button class="solution-button">
 Show the model
 </button>
-<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="mma.html#cb24-1"></a>(mma.m1 &lt;-<span class="st"> </span><span class="kw">lmer</span>(RT <span class="op">~</span><span class="st"> </span><span class="dv">1</span> <span class="op">+</span><span class="st"> </span>condition <span class="op">+</span><span class="st"> </span>stimulus.c <span class="op">+</span><span class="st"> </span>FI.c <span class="op">+</span><span class="st"> </span>condition<span class="op">:</span>stimulus.c <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span><span class="op">|</span>person), <span class="dt">data=</span>mma.c))</span></code></pre></div>
+<div class="sourceCode" id="cb61"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb61-1"><a href="mma.html#cb61-1"></a>(mma.m1 &lt;-<span class="st"> </span><span class="kw">lmer</span>(RT <span class="op">~</span><span class="st"> </span><span class="dv">1</span> <span class="op">+</span><span class="st"> </span>condition <span class="op">+</span><span class="st"> </span>stimulus.c <span class="op">+</span><span class="st"> </span>FI.c <span class="op">+</span><span class="st"> </span>condition<span class="op">:</span>stimulus.c <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span><span class="op">|</span>person), <span class="dt">data=</span>mma.c))</span></code></pre></div>
 <pre><code>Linear mixed model fit by REML [&#39;lmerModLmerTest&#39;]
 Formula: RT ~ 1 + condition + stimulus.c + FI.c + condition:stimulus.c +  
     (1 | person)
@@ -252,7 +252,7 @@ Show answer
 </button>
 <p>Yes: the <code>conditionbefore</code> coefficient from your model should have been -4.03 also. The direction is reversed because the authors’ encoded their model slightly differently (their parameter would have been called <code>conditionafter</code>) but the meaning is the same.</p>
 <p>To see the SE, use <code>summary</code> and <code>coef</code> together:</p>
-<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="mma.html#cb26-1"></a><span class="kw">summary</span>(mma.m1) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">coef</span>() <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">pander</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb63"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb63-1"><a href="mma.html#cb63-1"></a><span class="kw">summary</span>(mma.m1) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">coef</span>() <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">pander</span>()</span></code></pre></div>
 <table>
 <colgroup>
 <col width="37%" />
@@ -325,8 +325,8 @@ Show answer
 Show details
 </button>
 <p>This model, excluding fatigue (<code>FI</code>), predicts the same 4ms difference:</p>
-<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="mma.html#cb27-1"></a>mma.m2 &lt;-<span class="st"> </span><span class="kw">lmer</span>(RT <span class="op">~</span><span class="st"> </span><span class="dv">1</span> <span class="op">+</span><span class="st"> </span>condition <span class="op">*</span><span class="st"> </span>stimulus.c <span class="op">+</span><span class="st"> </span>(stimulus.c<span class="op">|</span>person), <span class="dt">data=</span>mma.c)</span>
-<span id="cb27-2"><a href="mma.html#cb27-2"></a><span class="kw">summary</span>(mma.m2) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">coef</span>() <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">pander</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb64"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb64-1"><a href="mma.html#cb64-1"></a>mma.m2 &lt;-<span class="st"> </span><span class="kw">lmer</span>(RT <span class="op">~</span><span class="st"> </span><span class="dv">1</span> <span class="op">+</span><span class="st"> </span>condition <span class="op">*</span><span class="st"> </span>stimulus.c <span class="op">+</span><span class="st"> </span>(stimulus.c<span class="op">|</span>person), <span class="dt">data=</span>mma.c)</span>
+<span id="cb64-2"><a href="mma.html#cb64-2"></a><span class="kw">summary</span>(mma.m2) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">coef</span>() <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">pander</span>()</span></code></pre></div>
 <table>
 <colgroup>
 <col width="38%" />
@@ -382,10 +382,10 @@ Show details
 </tbody>
 </table>
 <p>However this model fit includes all the excluded data and predicts a 2ms difference in the other direction, and is not statistically significant:</p>
-<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="mma.html#cb28-1"></a>mma.all  &lt;-<span class="st"> </span><span class="kw">read_csv</span>(<span class="st">&#39;data/mma_bw.csv&#39;</span>) <span class="op">%&gt;%</span></span>
-<span id="cb28-2"><a href="mma.html#cb28-2"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">stimulus.c =</span> stimulus<span class="op">-</span><span class="kw">mean</span>(stimulus), <span class="dt">FI.c =</span> FI<span class="op">-</span><span class="kw">mean</span>(FI), )</span>
-<span id="cb28-3"><a href="mma.html#cb28-3"></a>mma.m3 &lt;-<span class="st"> </span><span class="kw">lmer</span>(RT <span class="op">~</span><span class="st"> </span><span class="dv">1</span> <span class="op">+</span><span class="st"> </span>condition <span class="op">+</span><span class="st"> </span>stimulus.c <span class="op">+</span><span class="st"> </span>FI.c <span class="op">+</span><span class="st"> </span>condition<span class="op">:</span>stimulus.c <span class="op">+</span><span class="st">  </span>(<span class="dv">1</span> <span class="op">|</span><span class="st"> </span>person), <span class="dt">data=</span>mma.all)</span>
-<span id="cb28-4"><a href="mma.html#cb28-4"></a>mma.m3 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">summary</span>() <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">coef</span>() <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">pander</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb65"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb65-1"><a href="mma.html#cb65-1"></a>mma.all  &lt;-<span class="st"> </span><span class="kw">read_csv</span>(<span class="st">&#39;data/mma_bw.csv&#39;</span>) <span class="op">%&gt;%</span></span>
+<span id="cb65-2"><a href="mma.html#cb65-2"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">stimulus.c =</span> stimulus<span class="op">-</span><span class="kw">mean</span>(stimulus), <span class="dt">FI.c =</span> FI<span class="op">-</span><span class="kw">mean</span>(FI), )</span>
+<span id="cb65-3"><a href="mma.html#cb65-3"></a>mma.m3 &lt;-<span class="st"> </span><span class="kw">lmer</span>(RT <span class="op">~</span><span class="st"> </span><span class="dv">1</span> <span class="op">+</span><span class="st"> </span>condition <span class="op">+</span><span class="st"> </span>stimulus.c <span class="op">+</span><span class="st"> </span>FI.c <span class="op">+</span><span class="st"> </span>condition<span class="op">:</span>stimulus.c <span class="op">+</span><span class="st">  </span>(<span class="dv">1</span> <span class="op">|</span><span class="st"> </span>person), <span class="dt">data=</span>mma.all)</span>
+<span id="cb65-4"><a href="mma.html#cb65-4"></a>mma.m3 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">summary</span>() <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">coef</span>() <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">pander</span>()</span></code></pre></div>
 <table>
 <colgroup>
 <col width="37%" />

@@ -194,8 +194,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h2>Piglets (random intercepts)</h2>
 <p><img src="images/piglet-sm.jpg" /></p>
 <p>You can load the piglet data from this URL:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="piglets-random-slope.html#cb1-1"></a>pigs &lt;-<span class="st"> </span><span class="kw">read_csv</span>(<span class="st">&#39;http://bit.ly/psystats-pigs&#39;</span>)</span>
-<span id="cb1-2"><a href="piglets-random-slope.html#cb1-2"></a>pigs <span class="op">%&gt;%</span><span class="st"> </span>glimpse</span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="piglets-random-slope.html#cb8-1"></a>pigs &lt;-<span class="st"> </span><span class="kw">read_csv</span>(<span class="st">&#39;http://bit.ly/psystats-pigs&#39;</span>)</span>
+<span id="cb8-2"><a href="piglets-random-slope.html#cb8-2"></a>pigs <span class="op">%&gt;%</span><span class="st"> </span>glimpse</span></code></pre></div>
 <pre><code>## Observations: 432
 ## Variables: 3
 ## $ id     &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3,…
@@ -210,8 +210,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <button class="solution-button">
 How?
 </button>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="piglets-random-slope.html#cb3-1"></a><span class="kw">library</span>(lmerTest)</span>
-<span id="cb3-2"><a href="piglets-random-slope.html#cb3-2"></a><span class="kw">library</span>(tidyverse)</span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="piglets-random-slope.html#cb10-1"></a><span class="kw">library</span>(lmerTest)</span>
+<span id="cb10-2"><a href="piglets-random-slope.html#cb10-2"></a><span class="kw">library</span>(tidyverse)</span></code></pre></div>
 </div>
 <ol style="list-style-type: decimal">
 <li>Draw a smoothed line plot showing the average increase in weight over the weeks.</li>
@@ -232,8 +232,8 @@ Show me what that might look like
 <button class="solution-button">
 Remind me how
 </button>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="piglets-random-slope.html#cb4-1"></a>pigs.ri &lt;-<span class="st"> </span><span class="kw">lmer</span>(weight <span class="op">~</span><span class="st"> </span>week <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span><span class="op">|</span>id), <span class="dt">data=</span>pigs)</span>
-<span id="cb4-2"><a href="piglets-random-slope.html#cb4-2"></a><span class="kw">summary</span>(pigs.ri)</span></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="piglets-random-slope.html#cb11-1"></a>pigs.ri &lt;-<span class="st"> </span><span class="kw">lmer</span>(weight <span class="op">~</span><span class="st"> </span>week <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span><span class="op">|</span>id), <span class="dt">data=</span>pigs)</span>
+<span id="cb11-2"><a href="piglets-random-slope.html#cb11-2"></a><span class="kw">summary</span>(pigs.ri)</span></code></pre></div>
 <pre><code>## Linear mixed model fit by REML. t-tests use Satterthwaite&#39;s method [
 ## lmerModLmerTest]
 ## Formula: weight ~ week + (1 | id)
@@ -271,16 +271,16 @@ Remind me how
 Show answers
 </button>
 <p>The coefficients table has the information we need:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="piglets-random-slope.html#cb6-1"></a>pigs.ri <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">fixef</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="piglets-random-slope.html#cb13-1"></a>pigs.ri <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">fixef</span>()</span></code></pre></div>
 <pre><code>## (Intercept)        week 
 ##   19.355613    6.209896</code></pre>
 <p>The pigs start at an average of 19.36 + pigres[2]<code>=</code>sum(pigres)`kg, and increase by 6.21 each week.</p>
 <p>This corresponds fairly closely to averages calculated from the raw data:</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="piglets-random-slope.html#cb8-1"></a>pigs <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb8-2"><a href="piglets-random-slope.html#cb8-2"></a><span class="st">  </span><span class="kw">filter</span>(week <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">9</span>)) <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb8-3"><a href="piglets-random-slope.html#cb8-3"></a><span class="st">  </span><span class="kw">group_by</span>(week) <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb8-4"><a href="piglets-random-slope.html#cb8-4"></a><span class="st">  </span><span class="kw">summarise</span>(<span class="kw">mean</span>(weight)) <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb8-5"><a href="piglets-random-slope.html#cb8-5"></a><span class="st">  </span><span class="kw">pander</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="piglets-random-slope.html#cb15-1"></a>pigs <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb15-2"><a href="piglets-random-slope.html#cb15-2"></a><span class="st">  </span><span class="kw">filter</span>(week <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">9</span>)) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb15-3"><a href="piglets-random-slope.html#cb15-3"></a><span class="st">  </span><span class="kw">group_by</span>(week) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb15-4"><a href="piglets-random-slope.html#cb15-4"></a><span class="st">  </span><span class="kw">summarise</span>(<span class="kw">mean</span>(weight)) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb15-5"><a href="piglets-random-slope.html#cb15-5"></a><span class="st">  </span><span class="kw">pander</span>()</span></code></pre></div>
 <table style="width:31%;">
 <colgroup>
 <col width="9%" />

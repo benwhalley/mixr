@@ -215,12 +215,12 @@ In the code below I:</p>
 <li>Group by school and cohort to then</li>
 <li>Summarise (calculate the mean)</li>
 </ul>
-<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="school-leavers-longer-exercise.html#cb29-1"></a>schools &lt;-<span class="st"> </span><span class="kw">read_csv</span>(<span class="st">&#39;data/cmm/5.1.txt&#39;</span>)</span>
-<span id="cb29-2"><a href="school-leavers-longer-exercise.html#cb29-2"></a>schools_to_sample &lt;-<span class="st"> </span><span class="kw">sample</span>(schools<span class="op">$</span>schoolid <span class="op">%&gt;%</span><span class="st"> </span>unique, <span class="dv">20</span>)</span>
-<span id="cb29-3"><a href="school-leavers-longer-exercise.html#cb29-3"></a>schools <span class="op">%&gt;%</span></span>
-<span id="cb29-4"><a href="school-leavers-longer-exercise.html#cb29-4"></a><span class="st">  </span><span class="kw">filter</span>(schoolid <span class="op">%in%</span><span class="st"> </span>schools_to_sample) <span class="op">%&gt;%</span><span class="st">  </span></span>
-<span id="cb29-5"><a href="school-leavers-longer-exercise.html#cb29-5"></a><span class="st">  </span><span class="kw">group_by</span>(schoolid, cohort90) <span class="op">%&gt;%</span></span>
-<span id="cb29-6"><a href="school-leavers-longer-exercise.html#cb29-6"></a><span class="st">  </span><span class="kw">summarise</span>(<span class="dt">score=</span><span class="kw">mean</span>(score))</span></code></pre></div>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb36-1"><a href="school-leavers-longer-exercise.html#cb36-1"></a>schools &lt;-<span class="st"> </span><span class="kw">read_csv</span>(<span class="st">&#39;data/cmm/5.1.txt&#39;</span>)</span>
+<span id="cb36-2"><a href="school-leavers-longer-exercise.html#cb36-2"></a>schools_to_sample &lt;-<span class="st"> </span><span class="kw">sample</span>(schools<span class="op">$</span>schoolid <span class="op">%&gt;%</span><span class="st"> </span>unique, <span class="dv">20</span>)</span>
+<span id="cb36-3"><a href="school-leavers-longer-exercise.html#cb36-3"></a>schools <span class="op">%&gt;%</span></span>
+<span id="cb36-4"><a href="school-leavers-longer-exercise.html#cb36-4"></a><span class="st">  </span><span class="kw">filter</span>(schoolid <span class="op">%in%</span><span class="st"> </span>schools_to_sample) <span class="op">%&gt;%</span><span class="st">  </span></span>
+<span id="cb36-5"><a href="school-leavers-longer-exercise.html#cb36-5"></a><span class="st">  </span><span class="kw">group_by</span>(schoolid, cohort90) <span class="op">%&gt;%</span></span>
+<span id="cb36-6"><a href="school-leavers-longer-exercise.html#cb36-6"></a><span class="st">  </span><span class="kw">summarise</span>(<span class="dt">score=</span><span class="kw">mean</span>(score))</span></code></pre></div>
 <pre><code>## # A tibble: 113 x 3
 ## # Groups:   schoolid [20]
 ##    schoolid cohort90 score

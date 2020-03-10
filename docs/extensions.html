@@ -198,7 +198,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 These have been reshaped to long format and tidied up in <a href="data/drinks.csv">data/drinks.csv</a>.</p>
 <p>The study explored the effect of an cognitive bias modification intervention, and one of the outcomes was Attentional Bias in a dot-probe task.</p>
 <p>There were two experimental conditions (between subjects) and participants were tested twice. The original paper reported results from a mixed model in which <code>Time</code> was a repeated/within-subjects factor.</p>
-<div class="sourceCode" id="cb51"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb51-1"><a href="extensions.html#cb51-1"></a>drinks <span class="op">%&gt;%</span><span class="st"> </span>head <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">pander</span>(<span class="st">&quot;6 rows from the `drinks` dataset&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb88"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb88-1"><a href="extensions.html#cb88-1"></a>drinks <span class="op">%&gt;%</span><span class="st"> </span>head <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">pander</span>(<span class="st">&quot;6 rows from the `drinks` dataset&quot;</span>)</span></code></pre></div>
 <table style="width:81%;">
 <caption>6 rows from the <code>drinks</code> dataset</caption>
 <colgroup>
@@ -280,7 +280,7 @@ These have been reshaped to long format and tidied up in <a href="data/drinks.cs
 <button class="solution-button">
 Solution
 </button>
-<div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb52-1"><a href="extensions.html#cb52-1"></a>(drinks.m1 &lt;-<span class="st"> </span><span class="kw">lmer</span>(AttBias <span class="op">~</span><span class="st"> </span>Condition <span class="op">*</span><span class="st"> </span>Time <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span><span class="op">|</span>Participant), <span class="dt">data=</span>drinks))</span></code></pre></div>
+<div class="sourceCode" id="cb89"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb89-1"><a href="extensions.html#cb89-1"></a>(drinks.m1 &lt;-<span class="st"> </span><span class="kw">lmer</span>(AttBias <span class="op">~</span><span class="st"> </span>Condition <span class="op">*</span><span class="st"> </span>Time <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span><span class="op">|</span>Participant), <span class="dt">data=</span>drinks))</span></code></pre></div>
 <pre><code>Linear mixed model fit by REML [&#39;lmerModLmerTest&#39;]
 Formula: AttBias ~ Condition * Time + (1 | Participant)
    Data: drinks
@@ -303,7 +303,7 @@ ConditionAvoid:TimePre
 <button class="solution-button">
 Solution
 </button>
-<div class="sourceCode" id="cb54"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb54-1"><a href="extensions.html#cb54-1"></a>drinks.m1 <span class="op">%&gt;%</span><span class="st"> </span>anova</span></code></pre></div>
+<div class="sourceCode" id="cb91"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb91-1"><a href="extensions.html#cb91-1"></a>drinks.m1 <span class="op">%&gt;%</span><span class="st"> </span>anova</span></code></pre></div>
 <pre><code>Type III Analysis of Variance Table with Satterthwaite&#39;s method
                 Sum Sq Mean Sq NumDF DenDF F value  Pr(&gt;F)  
 Condition      1525.01 1525.01     1   114  3.9729 0.04863 *
@@ -318,9 +318,9 @@ Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&
 <div id="follow-up-tests" class="section level3">
 <h3>Follow-up tests</h3>
 <p>To run follow-up tests comparing individual cells in the design we can use another R package called <code>emmeans</code>.</p>
-<div class="sourceCode" id="cb56"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb56-1"><a href="extensions.html#cb56-1"></a><span class="kw">library</span>(emmeans)</span></code></pre></div>
+<div class="sourceCode" id="cb93"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb93-1"><a href="extensions.html#cb93-1"></a><span class="kw">library</span>(emmeans)</span></code></pre></div>
 <p>The <code>emmeans</code> function (which is inside the <code>emmeans</code> package we just loaded), can calculate means and confidence intervals for each cell in the design:</p>
-<div class="sourceCode" id="cb57"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb57-1"><a href="extensions.html#cb57-1"></a><span class="kw">emmeans</span>(drinks.m1, <span class="op">~</span>Condition<span class="op">*</span>Time)</span></code></pre></div>
+<div class="sourceCode" id="cb94"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb94-1"><a href="extensions.html#cb94-1"></a><span class="kw">emmeans</span>(drinks.m1, <span class="op">~</span>Condition<span class="op">*</span>Time)</span></code></pre></div>
 <pre><code> Condition Time emmean   SE  df lower.CL upper.CL
  Attend    Post   9.71 2.65 227    4.476    14.94
  Avoid     Post  -2.28 2.65 227   -7.515     2.95
@@ -331,11 +331,11 @@ Degrees-of-freedom method: kenward-roger
 Confidence level used: 0.95 </code></pre>
 <p>In the code above we used the <code>emmeans</code> function, and gave it the saved random intercept model as input. In the second input (where is says <code>~Condition*Time</code>) we are using a formula to describe which part of the design we would like means for.</p>
 <p>Helpfully, you can also plot the results of this function, so the folliwing is a shortcut for writing a ggplot command yourself:</p>
-<div class="sourceCode" id="cb59"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb59-1"><a href="extensions.html#cb59-1"></a><span class="kw">plot</span>(<span class="kw">emmeans</span>(drinks.m1, <span class="op">~</span>Condition<span class="op">*</span>Time)) <span class="op">+</span><span class="st"> </span><span class="kw">xlab</span>(<span class="st">&quot;Predicted value&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb96"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb96-1"><a href="extensions.html#cb96-1"></a><span class="kw">plot</span>(<span class="kw">emmeans</span>(drinks.m1, <span class="op">~</span>Condition<span class="op">*</span>Time)) <span class="op">+</span><span class="st"> </span><span class="kw">xlab</span>(<span class="st">&quot;Predicted value&quot;</span>)</span></code></pre></div>
 <p><img src="03-random-effects_files/figure-html/unnamed-chunk-44-1.png" width="672" /></p>
 <p>We can also save the results of <code>emmeans</code> and send it to the <code>contrast</code> function. This produces t tests for each pairwise comparison:</p>
-<div class="sourceCode" id="cb60"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb60-1"><a href="extensions.html#cb60-1"></a>savedmeans1 &lt;-<span class="st"> </span><span class="kw">emmeans</span>(drinks.m1, <span class="op">~</span>Condition<span class="op">*</span>Time)</span>
-<span id="cb60-2"><a href="extensions.html#cb60-2"></a><span class="kw">contrast</span>(savedmeans1, <span class="dt">method=</span><span class="st">&#39;pairwise&#39;</span>, <span class="dt">adjust=</span><span class="st">&#39;none&#39;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb97"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb97-1"><a href="extensions.html#cb97-1"></a>savedmeans1 &lt;-<span class="st"> </span><span class="kw">emmeans</span>(drinks.m1, <span class="op">~</span>Condition<span class="op">*</span>Time)</span>
+<span id="cb97-2"><a href="extensions.html#cb97-2"></a><span class="kw">contrast</span>(savedmeans1, <span class="dt">method=</span><span class="st">&#39;pairwise&#39;</span>, <span class="dt">adjust=</span><span class="st">&#39;none&#39;</span>)</span></code></pre></div>
 <pre><code> contrast                 estimate   SE  df t.ratio p.value
  Attend,Post - Avoid,Post    11.99 3.75 227  3.195  0.0016 
  Attend,Post - Attend,Pre     4.68 3.64 114  1.287  0.2006 
@@ -346,7 +346,7 @@ Confidence level used: 0.95 </code></pre>
 
 Degrees-of-freedom method: kenward-roger </code></pre>
 <p>And we can add <code>adjust="bonferonni"</code> or <code>adjust="tukey"</code> method to adjust for multiple comparisons</p>
-<div class="sourceCode" id="cb62"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb62-1"><a href="extensions.html#cb62-1"></a><span class="kw">contrast</span>(savedmeans1, <span class="dt">method=</span><span class="st">&#39;pairwise&#39;</span>, <span class="dt">adjust=</span><span class="st">&#39;tukey&#39;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb99"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb99-1"><a href="extensions.html#cb99-1"></a><span class="kw">contrast</span>(savedmeans1, <span class="dt">method=</span><span class="st">&#39;pairwise&#39;</span>, <span class="dt">adjust=</span><span class="st">&#39;tukey&#39;</span>)</span></code></pre></div>
 <pre><code> contrast                 estimate   SE  df t.ratio p.value
  Attend,Post - Avoid,Post    11.99 3.75 227  3.195  0.0086 
  Attend,Post - Attend,Pre     4.68 3.64 114  1.287  0.5728 
@@ -358,16 +358,16 @@ Degrees-of-freedom method: kenward-roger </code></pre>
 Degrees-of-freedom method: kenward-roger 
 P value adjustment: tukey method for comparing a family of 4 estimates </code></pre>
 <p>If we want to compare pairs of groups, we can adjust the formula we pass to the <code>emmeans</code> function. In the example below I compare Conditions averaged across both time periods:</p>
-<div class="sourceCode" id="cb64"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb64-1"><a href="extensions.html#cb64-1"></a>savedmeans2 &lt;-<span class="st"> </span><span class="kw">emmeans</span>(drinks.m1, <span class="op">~</span>Condition)</span>
-<span id="cb64-2"><a href="extensions.html#cb64-2"></a><span class="kw">contrast</span>(savedmeans2, <span class="dt">method=</span><span class="st">&#39;pairwise&#39;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb101"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb101-1"><a href="extensions.html#cb101-1"></a>savedmeans2 &lt;-<span class="st"> </span><span class="kw">emmeans</span>(drinks.m1, <span class="op">~</span>Condition)</span>
+<span id="cb101-2"><a href="extensions.html#cb101-2"></a><span class="kw">contrast</span>(savedmeans2, <span class="dt">method=</span><span class="st">&#39;pairwise&#39;</span>)</span></code></pre></div>
 <pre><code> contrast       estimate   SE  df t.ratio p.value
  Attend - Avoid     5.45 2.73 114 1.993   0.0486 
 
 Results are averaged over the levels of: Time 
 Degrees-of-freedom method: kenward-roger </code></pre>
 <p>In this example we compare the Pre and Post measurement times <em>within</em> each group (here the bar symbol, <code>|</code>, is read as ‘within’):</p>
-<div class="sourceCode" id="cb66"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb66-1"><a href="extensions.html#cb66-1"></a>savedmeans3 &lt;-<span class="st"> </span><span class="kw">emmeans</span>(drinks.m1, <span class="op">~</span>Time<span class="op">|</span>Condition)</span>
-<span id="cb66-2"><a href="extensions.html#cb66-2"></a><span class="kw">contrast</span>(savedmeans3, <span class="dt">method=</span><span class="st">&#39;pairwise&#39;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb103"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb103-1"><a href="extensions.html#cb103-1"></a>savedmeans3 &lt;-<span class="st"> </span><span class="kw">emmeans</span>(drinks.m1, <span class="op">~</span>Time<span class="op">|</span>Condition)</span>
+<span id="cb103-2"><a href="extensions.html#cb103-2"></a><span class="kw">contrast</span>(savedmeans3, <span class="dt">method=</span><span class="st">&#39;pairwise&#39;</span>)</span></code></pre></div>
 <pre><code>Condition = Attend:
  contrast   estimate   SE  df t.ratio p.value
  Post - Pre     4.68 3.64 114  1.287  0.2006 
@@ -379,20 +379,20 @@ Condition = Avoid:
 Degrees-of-freedom method: kenward-roger </code></pre>
 <div id="useful-emmeans-examples" class="section level5 tip">
 <h5>Useful <code>emmeans</code> examples</h5>
-<div class="sourceCode" id="cb68"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb68-1"><a href="extensions.html#cb68-1"></a><span class="co"># get the means of all combinations of factors A and B</span></span>
-<span id="cb68-2"><a href="extensions.html#cb68-2"></a><span class="kw">emmeans</span>(model, <span class="op">~</span>A<span class="op">+</span>B)</span>
-<span id="cb68-3"><a href="extensions.html#cb68-3"></a></span>
-<span id="cb68-4"><a href="extensions.html#cb68-4"></a><span class="co"># menas the same as the line above</span></span>
-<span id="cb68-5"><a href="extensions.html#cb68-5"></a><span class="kw">emmeans</span>(model, <span class="op">~</span>A<span class="op">*</span>B)</span>
-<span id="cb68-6"><a href="extensions.html#cb68-6"></a></span>
-<span id="cb68-7"><a href="extensions.html#cb68-7"></a><span class="co"># show all pairwise contrasts for all combinations of A and B</span></span>
-<span id="cb68-8"><a href="extensions.html#cb68-8"></a><span class="kw">contrast</span>(<span class="kw">emmeans</span>(model, pairwise<span class="op">~</span>A<span class="op">+</span>B), pairwise)</span>
-<span id="cb68-9"><a href="extensions.html#cb68-9"></a></span>
-<span id="cb68-10"><a href="extensions.html#cb68-10"></a><span class="co"># show tests of the effect of A within each level of B</span></span>
-<span id="cb68-11"><a href="extensions.html#cb68-11"></a><span class="kw">contrast</span>(<span class="kw">emmeans</span>(model, pairwise<span class="op">~</span>A<span class="op">|</span>B), pairwise)</span>
-<span id="cb68-12"><a href="extensions.html#cb68-12"></a></span>
-<span id="cb68-13"><a href="extensions.html#cb68-13"></a><span class="co"># show the confidence interval for the tests above:</span></span>
-<span id="cb68-14"><a href="extensions.html#cb68-14"></a><span class="kw">confint</span>(<span class="kw">contrast</span>(<span class="kw">emmeans</span>(model, pairwise<span class="op">~</span>A<span class="op">|</span>B), pairwise))</span></code></pre></div>
+<div class="sourceCode" id="cb105"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb105-1"><a href="extensions.html#cb105-1"></a><span class="co"># get the means of all combinations of factors A and B</span></span>
+<span id="cb105-2"><a href="extensions.html#cb105-2"></a><span class="kw">emmeans</span>(model, <span class="op">~</span>A<span class="op">+</span>B)</span>
+<span id="cb105-3"><a href="extensions.html#cb105-3"></a></span>
+<span id="cb105-4"><a href="extensions.html#cb105-4"></a><span class="co"># menas the same as the line above</span></span>
+<span id="cb105-5"><a href="extensions.html#cb105-5"></a><span class="kw">emmeans</span>(model, <span class="op">~</span>A<span class="op">*</span>B)</span>
+<span id="cb105-6"><a href="extensions.html#cb105-6"></a></span>
+<span id="cb105-7"><a href="extensions.html#cb105-7"></a><span class="co"># show all pairwise contrasts for all combinations of A and B</span></span>
+<span id="cb105-8"><a href="extensions.html#cb105-8"></a><span class="kw">contrast</span>(<span class="kw">emmeans</span>(model, pairwise<span class="op">~</span>A<span class="op">+</span>B), pairwise)</span>
+<span id="cb105-9"><a href="extensions.html#cb105-9"></a></span>
+<span id="cb105-10"><a href="extensions.html#cb105-10"></a><span class="co"># show tests of the effect of A within each level of B</span></span>
+<span id="cb105-11"><a href="extensions.html#cb105-11"></a><span class="kw">contrast</span>(<span class="kw">emmeans</span>(model, pairwise<span class="op">~</span>A<span class="op">|</span>B), pairwise)</span>
+<span id="cb105-12"><a href="extensions.html#cb105-12"></a></span>
+<span id="cb105-13"><a href="extensions.html#cb105-13"></a><span class="co"># show the confidence interval for the tests above:</span></span>
+<span id="cb105-14"><a href="extensions.html#cb105-14"></a><span class="kw">confint</span>(<span class="kw">contrast</span>(<span class="kw">emmeans</span>(model, pairwise<span class="op">~</span>A<span class="op">|</span>B), pairwise))</span></code></pre></div>
 </div>
 <div class="exercise">
 <ul>
@@ -403,15 +403,15 @@ Degrees-of-freedom method: kenward-roger </code></pre>
 <button class="solution-button">
 Solution
 </button>
-<div class="sourceCode" id="cb69"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb69-1"><a href="extensions.html#cb69-1"></a><span class="co"># compare times averaged across conditions</span></span>
-<span id="cb69-2"><a href="extensions.html#cb69-2"></a><span class="kw">contrast</span>(<span class="kw">emmeans</span>(drinks.m1, <span class="op">~</span>Time), <span class="dt">method=</span><span class="st">&#39;pairwise&#39;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb106"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb106-1"><a href="extensions.html#cb106-1"></a><span class="co"># compare times averaged across conditions</span></span>
+<span id="cb106-2"><a href="extensions.html#cb106-2"></a><span class="kw">contrast</span>(<span class="kw">emmeans</span>(drinks.m1, <span class="op">~</span>Time), <span class="dt">method=</span><span class="st">&#39;pairwise&#39;</span>)</span></code></pre></div>
 <pre><code> contrast   estimate   SE  df t.ratio p.value
  Post - Pre    -1.86 2.57 114 -0.723  0.4713 
 
 Results are averaged over the levels of: Condition 
 Degrees-of-freedom method: kenward-roger </code></pre>
-<div class="sourceCode" id="cb71"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb71-1"><a href="extensions.html#cb71-1"></a><span class="co"># compare conditions within each time</span></span>
-<span id="cb71-2"><a href="extensions.html#cb71-2"></a><span class="kw">contrast</span>(<span class="kw">emmeans</span>(drinks.m1, <span class="op">~</span>Condition<span class="op">|</span>Time), <span class="dt">method=</span><span class="st">&#39;pairwise&#39;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb108"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb108-1"><a href="extensions.html#cb108-1"></a><span class="co"># compare conditions within each time</span></span>
+<span id="cb108-2"><a href="extensions.html#cb108-2"></a><span class="kw">contrast</span>(<span class="kw">emmeans</span>(drinks.m1, <span class="op">~</span>Condition<span class="op">|</span>Time), <span class="dt">method=</span><span class="st">&#39;pairwise&#39;</span>)</span></code></pre></div>
 <pre><code>Time = Post:
  contrast       estimate   SE  df t.ratio p.value
  Attend - Avoid    11.99 3.75 227  3.195  0.0016 
