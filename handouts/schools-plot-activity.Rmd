@@ -1,0 +1,41 @@
+---
+output: pdf_document
+title: Schools plot activity
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(pander)
+library(broom)
+library(webex)
+
+options(scipen=4, digits=4)
+knitr::opts_chunk$set(
+  echo = T,
+  include = T, 
+  cache=T,
+  comment="",
+  warning=F,
+  message = F
+)
+
+theme_set(theme_gray(base_size = 16))
+```
+
+
+
+
+
+![](../images/repeated-measures-schools-plot.pdf)
+
+
+- Which schools would you most and least want to sample another child from? Why?
+
+- Why would it be better to sample from another school, than another pupil from school in the set plotted?
+
+
+
+
+
+
+

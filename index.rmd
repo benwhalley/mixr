@@ -1,15 +1,24 @@
 ---
 title: 'MixR: Mixed Models in R'
 author: 'Ben Whalley'
-site: bookdown::bookdown_site
+date: "Feb 2021"
 bibliography: [references.bib]
 biblio-style: apa6
 link-citations: yes
+output:
+  webex::html_clean
 ---
 
+
 ```{r, include=F, echo=F}
-knitr::opts_chunk$set(echo = TRUE, collapse=TRUE, cache=TRUE, comment=NA, message=FALSE)
+knitr::opts_chunk$set(echo = TRUE,
+  collapse=TRUE,
+  comment=NA,
+  cache = TRUE,
+  message=FALSE)
 ```
+
+
 
 # {-}
 
@@ -19,16 +28,23 @@ knitr::opts_chunk$set(echo = TRUE, collapse=TRUE, cache=TRUE, comment=NA, messag
 ------------------
 
 
-
-<!-- ![](images/spaghetti.png) -->
-
 > This short course aims to extend your existing skills, and give you confidence when
-> working with and analysing repeated measures data. We cover examples typical
-> experimental and applied studies in psychology. We will cover repeat measures Anova
-> designs, mixed-effects models, touch on Bayesian parameter estimation for mixed
-> models, and learn how to test specific hypotheses from mixed models.
+> working with and analysing repeated measures data. We use examples from typical
+> experimental and applied studies in psychology. We cover repeat measures Anova
+> designs, more general mixed-effects and random-slope models, and touch on Bayesian
+> parameter estimation for mixed models. We also  learn how to test specific hypotheses 
+> from mixed models.
 
-### Approach
+
+# Sessions and worksheets
+
+1. [Sources of variability](01-repeat-measures.html)
+1. Mixed models
+1. 'Random' effects
+
+
+
+# Approach
 
 In common with all modules at Plymouth, we try to avoid the 'bag of tricks' approach to
 teaching research methods and try to integrate new skills into a broader approach to
@@ -40,7 +56,9 @@ collecting and using data. Our workflow is inspired by Wickham's model for data 
 In this option we do teach specific techniques, but the aim is always to help you
 integrate this new knowledge into your own research practice.
 
-### Access to R
+
+
+# Access to R
 
 Throughout the module we use R for data processing and analysis.
 
@@ -48,10 +66,9 @@ If you are taking this course at Plymouth University, the easiest way to run the
 examples here is to the school's RStudio Server.
 
 -   [Login to your account on the server here](https://rstudio.plymouth.ac.uk)
--   To get an account on the server, or reset a password,
-    [contact the Psychology technical office](http://www.psy.plymouth.ac.uk/home/)
 
-#### Installing at home
+
+### Installing at home
 
 If you want to install R on your own machine, instructions are available here:
 
@@ -59,7 +76,8 @@ If you want to install R on your own machine, instructions are available here:
 
 Be sure to install the recommended packages or the examples given here won't work.
 
-### License
+
+# License
 
 All content on this site distributed under a
 [Creative Commons](https://creativecommons.org/) licence. CC-BY-SA 4.0.

@@ -648,6 +648,24 @@ sleep.rs.simplified %>% VarCorr
 
 
 
+```{r echo=F, include=F}
+set.seed(12345)
+dfco <- tibble(intercept = rnorm(20, 5,.5), slope=rnorm(20, .5*(intercept-5),.3), i=1:20, re_cor="Correlated")
+dfuc <- tibble(intercept = rnorm(20, 5,.5), slope=rnorm(20, 0,.3), i=1:20, re_cor="Uncorrelated")
+df <- bind_rows(dfco, dfuc)
+df %>%
+  ggplot() +
+  geom_point(aes(y=10, x=10), alpha=0) +
+  geom_abline(aes(intercept=intercept, group=i, slope=slope ), alpha=.5) +
+  coord_cartesian(xlim=c(0,3), ylim=c(2,8)) +
+  geom_hline(yintercept=5, color="red")  +
+  facet_wrap(~re_cor) + ylab("Outcome") + xlab("Predictor") + scale_x_continuous(breaks=seq(0,3,2))
+
+ggsave('images/corrrandeffs.png', width=4, height=2)
+```
+
+
+
 ## Extensions
 
 ### Factorial anova in mixed models

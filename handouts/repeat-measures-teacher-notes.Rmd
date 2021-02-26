@@ -1,0 +1,203 @@
+---
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(pander)
+library(broom)
+library(webex)
+
+options(scipen=4, digits=4)
+knitr::opts_chunk$set(
+  echo = T,
+  include = T, 
+  cache=T,
+  comment=""
+)
+
+theme_set(theme_gray(base_size = 16))
+```
+
+
+# Teacher notes
+
+5: Intro
+
+- What are their aims for the module.
+- What sorts of data do we want to analyse? Do you have your own data?
+- Reflection on working styles/practices for learning R.
+
+
+10:   What is the point of repeated measures? What benefits do we gain?
+
+15:   Generate examples of repeated measures data and give examples myself
+
+20:   School exercise
+
+30:   Schools feedback/discussion
+
+35:   More schools, less information plot exercise
+
+40:  Quick recap on mean and variance.... Sum of the squares. Std Deviation is sqrt of variance.   (Sample variance is N-1)
+
+50:   Independent and identically distributed assumption. Ask them to generate examples which would/would not be IID
+
+60: Break
+
+70: Splitting the error graphs ... ask students to guess meaning
+
+95: Explicitly go through splitting error term slide and intro to mixed models
+
+
+105:   RCT example: Followup question: Given a fixed budget, would it become more or less important to sample as many different patients as possible, compared with sampling the same patients repeatedly?
+
+
+115: Quick demo of reshaping and plotting the fit data.
+
+Homework: Exercise online - reshaping data in prep for next week
+
+
+
+### Schools notes
+
+
+- Applied perspective -> no single right answer
+- wouldn't pick one of the answers near the extremes because
+- balancing different concerns:
+
+
+These:
+
+- Generalisability to all schools
+
+- Practical/cost/time (although strictly this wasn't part of the question)
+
+- Fair estimate for each school (because low scores could have consequences for teachers, if results were published)
+
+- See if schools *vary* in how effective they are?
+
+
+But this question was about estimating the **average effectiveness** across the whole of the UK. So it's really a question about how to maximise **power**.
+
+
+Highlight that POWER is not always highest with highest N.... also have to think about $k$ (groups)
+
+
+If students within schools are similar then ***we might gain more information*** when we sample from a new school, even though that costs us more and the total N goes down.
+
+<!--
+> A question that often comes up at this point is how many units are needed at each level. It is difficult to give specific advice but there are some general principles that are worth stating now. The key one is the target of inference: in other words, are the units in your dataset special ones that you are interested in in their own right, or are you regarding them as representatives of a larger population which you wish to use them to draw conclusions about? If the target of inference in an educational study is a particular school then you would need a lot of students in that school to get a precise effect. If the target of inference is between-school differences in general, then you would need a lot of schools to get a reliable estimate. That is, you could not sensibly use a multilevel model with only two schools even if you had a sample of 1000 students in each of them. In the educational literature it has been suggested that, given the size of effects that are commonly found for between-school differences, a minimum of 25 schools is needed to provide a precise estimate of between-school variance, with a preference for 100 or more schools[2]. You would not normally omit any school from the analysis merely because it has few students, but at the same time you will not be able to distinguish between-school and between-student variation if there is only one student in each and every school. Note that schools with only one pupil still add information to the estimates of the effects of the explanatory variables on the mean. There are, of course, some contexts where some or all of the higher-level units will have only a few lower-level units. An extreme and common case is when individuals are at level 1 and households are at level 2, because then the sample size within a level 2 unit is typically less than five people. This need not be a problem if the target of inference is households in general because the quality of estimates in this case is based on the total number of households in the sample and it should be possible to sample a large number of these. If the target of inference is a specific household, however, parameters will be poorly estimated because a single household has very few members. See Snijders and Bosker (1993)[3] for more details on sample size issues for multilevel models. -->
+
+
+
+
+
+\clearpage
+
+
+
+
+
+## Schools notes
+
+
+- Applied perspective -> no single right answer
+- wouldn't pick one of the answers near the extremes because 
+- balancing different concerns:
+
+
+These:
+
+- Generalisability to all schools
+
+- Practical/cost/time (although strictly this wasn't part of the question)
+
+- Fair estimate for each school (because low scores could have consequences for teachers, if results were published)
+
+- See if schools *vary* in how effective they are?
+
+
+But this question was about estimating the **average effectiveness** across the whole of the UK. So it's really a question about how to maximise **power**.
+
+
+Highlight that POWER is not always highest with highest N.... also have to think about $k$ (groups)
+
+
+
+If students within schools are similar then ***might gain more information*** when we sample from a new school, even though that costs us more and the total N goes down.
+
+
+
+
+
+\clearpage
+
+
+
+
+# Schools
+
+
+Imagine you work for the UK Department for Education (DfE). 
+
+**Your task is to find out whether a new educational intervention is effective**. The new intervention has been rolled out in 1000 randomly-selected schools in the UK.
+
+- You have a budget of around £10,000. 
+- The cost to visit a single school is £100
+- The cost to measure each pupil is £10
+- The average size of a school in the UK is roughly [250](https://www.theguardian.com/education/2013/may/17/primary-schools-supersize).
+
+Would you prefer to collect data from:
+
+```{r echo=F, results='asis'}
+budget <- 10000
+schoolcost  <- 100
+kidcost <- 10
+p  <- seq(.9,.1, -.1) # prop spent on schools
+schools = as.integer(p*budget / schoolcost)
+kids = as.integer((1-p)*budget / kidcost)
+expand.grid(schools=seq(3,200,10), kids=1:1000) %>% 
+  as.tibble() %>%
+  mutate(
+    cost = kids*kidcost+schools*schoolcost)%>%
+  filter(cost == budget & kids > schools)%>%
+  group_by(schools)%>%
+  arrange(-cost)%>%
+  slice(1:1)%>%
+  mutate(
+    s = sprintf("%s children across %s schools", 
+      kids,
+    schools
+    )) %>%
+pull(s) %>% pander::pandoc.list()
+```
+
+These options all cost around £10,000.
+
+Discuss the problem as a small group. Identify the different tradeoffs involved.
+
+
+
+
+
+\newpage
+
+
+## Schools plot task
+
+
+
+![](../images/repeated-measures-schools-plot.pdf)
+
+
+- Which schools would you most and least want to sample another child from? Why?
+
+- Why would it be better to sample from another school, than another pupil from school in the set plotted?
+
+
+
+
+
+
+

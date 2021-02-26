@@ -1,0 +1,316 @@
+---
+title: 'School Leaver Demo Code'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+This document isn't intended for standalone use, but you can follow along with the code
+and watch the live demo from the class.
+
+```{r}
+library(tidyverse)
+```
+
+The Scottish school leavers data we discussed in-class.
+
+```{r}
+schools <- read_csv('https://benwhalley.github.io/mixr/data/cmm/5.1.txt')
+```
+
+```{r}
+schools %>% glimpse
+```
+
+```{r}
+library(skimr)
+skim(schools)
+```
+
+# Exploring the data
+
+## What is the overall distribution of scores?
+
+```{r}
+schools %>% ggplot(aes(score)) +
+  geom_density()
+```
+
+## Do types of schools differ?
+
+```{r}
+schools$schtype <- recode(schools$schtype, `0`="State", `1`="Private")
+
+schools %>% ggplot(aes(score, color=schtype)) +
+  geom_density()
+```
+
+## Do urban and rural schools differ?
+
+Perhaps a bit:
+
+```{r}
+schools$schurban <- recode(schools$schurban, `0`="Rural", `1`="Urban")
+
+schools %>% ggplot(aes(score, color=schurban)) +
+  geom_density()
+```
+
+# Is there an interaction between location and type?
+
+Probably...
+
+```{r}
+schools %>%
+  ggplot(aes(schtype, score, color=schurban, group=schurban)) +
+  stat_summary(fun.data=mean_cl_normal) +
+  stat_summary(geom="line")
+```
+
+# Questions we might want to ask
+
+-   How much _variability_ is there between schools?
+-   What is the difference in scores between a high performing and low-performing
+    school?
+-   Is the variation between schools explainable? (e.g. rural/urban or state/private)?
+
+## How much variability is there between schools?
+
+This is just a sample of the data — there are too many schools to plot:
+
+```{r}
+set.seed(1)
+schools %>%
+  # head(1000) %>%
+  filter(schoolid %in% sample(unique(schoolid), 20)) %>%
+  ggplot(aes(factor(schoolid), score)) + geom_boxplot()
+```
+
+Another way of looking at variability between schools: we aggregate scores by-school:
+
+```{r}
+schools.agg <- schools %>%
+  group_by(schoolid) %>%
+  mutate(score = mean(score))
+```
+
+And then plot them:
+
+```{r}
+schools.agg %>%
+  ggplot(aes(score)) +
+  geom_density()
+```
+
+# What's the difference in scores between the best and worst schools?
+
+The min/max might be edge cases, so let's look at the quantiles:
+
+```{r}
+(score.quants <- quantile(schools.agg$score, probs = c(0.05, .25,.5,.75, .95)))
+```
+
+To be fancy we could add these lines to our plot:
+
+```{r}
+schools.agg %>%
+  ggplot(aes(score)) +
+  geom_density() +
+  geom_vline(data=tibble(q=score.quants),
+             aes(xintercept=q), color="red", linetype="dashed")
+```
+
+# Is the variation between schools explainable?
+
+```{r}
+schools.agg %>%
+  ggplot(aes(score, color=paste(schtype, schurban))) +
+  geom_density()
+```
+
+We could run a model on the aggregated data:
+
+```{r}
+lm.schools.agg <- lm( score ~ schurban * schtype, data=schools.agg)
+anova(lm.schools.agg)
+```
+
+BUT... what about this plot?
+
+```{r}
+set.seed(1)
+schools %>%
+  filter(schoolid %in% sample(unique(schoolid), 20)) %>%
+  ggplot(aes(factor(schoolid), score)) + geom_boxplot()
+```
+
+We saw from this plot that some schools had much less variance than others.
+
+Lower variance == Better estimate of the school mean. We want to acknowledge that in our
+estimates.
+
+-> We need to run a model on the RAW data, but which _partitions_ the variance within an
+between schools.
+
+This model will **allow for the fact that we know MORE about some schools than others**.
+
+# Running a model with `lmer`
+
+This model uses the raw data, splitting the variance within and between schools. It
+includes the same predictors as before:
+
+```{r}
+library(lmerTest)
+lmer.schools <- lmer(score ~ schurban * schtype + (1|schoolid), data=schools)
+
+anova(lmer.schools)
+```
+
+As it happens, this makes the p value slightly larger (but it's such a large dataset it
+doesn't change the inference).
+
+This is often the case: aggregating data will TEND to increase type 1 errors. However,
+allowing for within-unit variance can go both ways:
+
+Accounting for the PRECISION with which we estimate schools can help us too.
+
+Intuitively this makes sense: If a small school (small N) had an 'odd' result due to
+sampling error it would be over-weighted when we aggregate the scores.
+
+The aggregation throws away data about how CONFIDENT we were in each individual school's
+mean.
+
+By allowing for within-school variance we can quantify our uncertainty more accurately
+and make better inferences.
+
+## How much variation was between schools, and how much within?
+
+The `VarCorr` function summarises variances at each level.
+
+First though, let's run a model without any predictors as a baseline:
+
+```{r}
+lmer.schools.interceptonly <- lmer(score ~  1 + (1|schoolid), data=schools)
+```
+
+```{r}
+lmer.schools.interceptonly %>% VarCorr()
+```
+
+## Calculating VPC
+
+If you convert the output to a data-frame you also get the _variances_ which is helpful:
+
+```{r}
+lmer.schools.interceptonly %>% VarCorr() %>% as_data_frame()
+```
+
+Note - you can only calculate the VPC with VARIANCES, not with standard deviations.
+
+We can calculate the variance partition coefficient (proportion of variance) like this:
+
+```{r}
+library(pander)
+lmer.schools.interceptonly %>% VarCorr() %>% as_data_frame() %>%
+  mutate(vpc = vcov/sum(vcov)) %>%
+  pander()
+```
+
+The variation between schools is 19% So the variation _within_ schools is 81%. This is
+the UNEXPLAINED variation in this model.
+
+But can we explain it? Let's compare to our model _with_ the predictors?
+
+```{r}
+lmer.schools %>% VarCorr() %>% as_data_frame() %>%
+  mutate(vpc = vcov/sum(vcov)) %>%
+  pander()
+```
+
+This is an aside, and you don't need to do this, but because I'm going to calculate VPC
+often I might write my own function to simplify ny code:
+
+```{r}
+# my function takes an lmer model as in put, and returns a data frame with variances and vpcs
+vpc <- function(lmerModel) {
+  lmerModel %>%
+    VarCorr() %>%
+    as_data_frame() %>%
+    mutate(vpc = vcov/sum(vcov) * 100, 1) %>%
+    select(Group=grp, var1, var2, vcov, vpc)
+}
+
+lmer.schools %>% vpc %>% pander()
+```
+
+## Some of the variance could be explained!
+
+After including the predictors only 16% of variance is between schools, and 84% within.
+
+We could run further models including more predictors, since we have them:
+
+```{r}
+lmer.schools.everything <- lmer(score ~  schtype*schurban + female + factor(cohort90) + (1|schoolid), data=schools)
+
+lmer.schools.everything %>% vpc %>% pander()
+```
+
+And now we're down to 14% for between-school variance.
+
+## Why does this matter?
+
+Remember — the between school variation is important here because it represents the
+differences between the best and worst schools. If you were a teacher or pupil in these
+schools you would care about this!
+
+## A twist at the end...
+
+But... the thing we've been missing is that there is actually ANOTHER level of nesting
+in these data: your school class.
+
+Classes are nested within schools:
+
+Here the `/` denotes nesting of `sclass` within `schoolid`.
+
+```{r}
+lmer.schools.classes <- lmer(score ~  1 + (1| schoolid / sclass), data=schools)
+
+lmer.schools.classes %>%  vpc %>% pander()
+```
+
+Now the school variance goes down a bit (only 11.5%), but the unexplained variance
+(within schools) does down a lot.
+
+Now, we can see 14% of the variance is attributed to school _classes_.
+
+We might want to categorise this as a "teacher effect"
+
+# What have we learned?
+
+-   We can explain some of the variance by school location and type
+-   Quite a bit of the variance was still unexplained
+-   Adding additional levels of 'nesting' can help explain: teachers matter more than
+    schools!
+
+Also
+
+-   Aggregating data throws away information
+-   This _can_ affect inferences for predictors (like school location etc)
+-   We miss opportunities to explore and understand the variation in our data
+
+# Testing variances
+
+If the VPC was quite small we migth want to ask whether a particular level of nesting
+explained 'significant' variation in the outcome.
+
+Remembering that statistically significant != important, we can use NHST on variances in
+these models:
+
+```{r}
+lmer.schools.classes %>% ranova()
+```
+
+The `ranova` table tell us that classes and schools explain variance in outcomes, and
+this isn't due to chance.

@@ -1,20 +1,34 @@
-# Repeated measures {#repeated-measures}
+---
+title: 'Sources of variability (MixR)'
+author: 'Ben Whalley'
+date: "Feb 2021"
+bibliography: [references.bib]
+biblio-style: apa6
+link-citations: yes
+output:
+  webex::html_clean
+---
 
-![Image: [Jeff Peachey](https://jeffpeachey.com/2010/12/02/measure-twice-cut-once-woodcut-for-sale/)](images/measure_twice_cut_once.jpg)
+
+
+```{r, include=F, echo=F}
+library(webex)
+library(tidyverse)
+
+knitr::opts_chunk$set(echo = TRUE,
+  collapse=TRUE,
+  comment=NA,
+  cache = TRUE,
+  message=FALSE)
+```
+
 
 ### In brief
 
 > Many psychological studies, both applied and experimental, make repeated measurements
-> of some kind. Dealing with these with confidence is the focus of this option. In this
-> first session on repeated measures data we introduce the idea of partitioning
-> variance, and attributing it to different groupings in our data. We discuss how this
-> is related to statistical power, and fit the same pre-post RCT data with Ancova and a
-> ‘mixed’ model. At the end of this session you should be able to identify tradeoffs in
-> sampling strategies for repeat measures studies and understand the drivers for dealing
-> with repeat measures data with appropriate techniques.
+> of some kind. In this first session we discuss the implications of making repeating measues, 
+> and the concept of partitioning variance, attributing it to different groupings in our data.
 
-
-Slides for today are here: [repeated-measures.pptx](slides/repeated-measures.pptx).
 
 ```{r, echo=F, include=F}
 knitr::opts_chunk$set(echo = TRUE, collapse=TRUE, cache=TRUE, comment=">", message=FALSE)
@@ -26,11 +40,21 @@ theme_set(theme_minimal())
 
 
 
-## Exercises
+## Class activities
 
 
+:::{.exercise}
+
+- [Schools sampling strategy](handouts/schools-sampling-activity.pdf)
+
+- [Schools plot activity](handouts/schools-plot-activity.pdf)
+
+- [Code/output from the live demo](01-school-leaver-demo.html)
+
+:::
 
 <!-- A worked example
+
 To put some numbers to the claim above:
 
 Imagine we were studying a medium effect size (D=.5), in a situation where 15% of the variance in outcomes was explained by the school a child attended.
@@ -42,6 +66,8 @@ In this case, increasing the number of schools sampled from 20 to 21 would reduc
 That is, we sample fewer students, but gain statistical power.
  -->
 
+
+
 ### Scottish School Leavers
 
 > [5.1.txt](data/cmm/5.1.txt) contains data from the Scottish School Leavers Survey (SSLS), a nationally representative survey of young people. The file has data from seven cohorts of young people collected in the first sweep of the study, carried out at the end of the final year of compulsory schooling (aged 16-17) when most sample members had taken Standard grades.
@@ -51,7 +77,6 @@ These data form part of the Bristol CMM multilevel modelling course, which is fr
 
 ```{r readssldata}
 schools <- read_csv('data/cmm/5.1.txt')
-schools %>% skimr::skim()
 ```
 
 
@@ -60,162 +85,18 @@ schools %>% skimr::skim()
 
 - Read in the scottish school leaver data ([this file](data/cmm/5.1.txt))
 
-- Use ggplot to visualise how much variation in `score` there is within and between schools. You might need to subset the data to avoid being overwhelmed.
+- Use ggplot to visualise how much variation in `score` there is within and between schools. You might need to filter/subset the data in some way to avoid being overwhelmed.
 
 
-`r hide("Hints")`
+`r hide("Hints for the plot")`
 
 One option would be a boxplot where `schoolid` is the x axis. Another would be to use `stat_summary` which would show the mean and SE for each school.
 
 `r unhide()`
 
-- Use `group_by` and `summarize` to calculate the mean and variance of `score` within each of the schools, and the sample size in each school (you can use `n = length(score)` to count the number of observations within each school).
+- Use `lmer` (load the `lmerTest` library) to fit a random intercepts model with `score` as the outcome. Remember that `~1` will add an an intercept even if there are no predictors.
 
-- Plot the mean of each school (y axis) against the $1/var$ of the school (x axis).
-
-- Think about which observations you 'trust' most? Why?
-
-
-
-`r hide("What is 1/var?")`
-
-Taking $1/var$ is often called the 'inverse variance' of a measurement. The larger $1/var$ is, the more confidence we have in the measurement.
-
-If we want to take the average of all schools, then we might 'weight' measurements by their precision.
-
-This is, in fact, how meta analysis works: smaller studies are down-weighted in proportion to their precision, not just their sample size. The weighted average in a meta analysis could be calculated as where $y_i$ is the outcome in a particular study, $i$.
-
-$\hat{y} = \frac{\sum_i y_i / \sigma_i^2}{\sum_i 1/\sigma_i^2}$
-
-`r unhide()`
-
-
-
-`r hide("What pattern should I notice?!")`
-
-If you make a plot as suggested (below) you can see that, looking at the high precision schools (those on the right of the plot), there are more above the mean than below (dotted line). These are still smaller-school (or, fewer students sampled in these schools) but if we 'trust'  lower-variance estimates more, then we might want to allow for that when we estimate the mean of all schools.
-
-
-```{r precisionplot}
-schools.agg <- schools %>% group_by(schoolid) %>% summarize(score.m=mean(score), var=var(score), n=length(score))
-schools.agg %>%
-  ggplot(aes(1/var, score.m, size=n)) +
-  geom_point(alpha=.25) +
-  geom_hline(yintercept=mean(schools$score), linetype="dashed")
-```
-
-
-
-Precision-weighting (and mixed models) work on the principle that we want to use information about how precisely each schools' mean is estimated to inform our overall estimate.
-
-
-`r unhide()`
-
-:::
-
-
-
-#### Variance-weighting using mixed models
-
-Mixed models are another way to include information about variability when estimating the overall mean.
-
-Before we do this, let's calculate the mean of `score` in the sample as a reference to compare against:
-
-```{r meanscore}
-mean(schools$score)
-```
-
-We could equally have calculated the mean of all schools using `lm`:
-
-```{r meanfromlm}
-(m.lm <- lm(score ~ 1, data=schools))
-```
-
-In this model the formula is `score ~ 1`. The `1` represents an intercept, so the model is estimating the *average* value across all schools with no other predictors. This is not a weighted average though: we are ignoring the information about which school an observation came from.
-
-
-```{r diagnostplots, echo=F, include=F}
-# this is for ppt slides
-m.lm %>% broom::augment() %>% ggplot(aes(.resid)) + geom_histogram()
-car::qqPlot(m.lm)
-```
-
-
----------
-
-
-To calculate something more like a precision-weighted estimate---that is, one which takes into account how much variability there was *within* each school to calculate the average of all schools --- we can use a *mixed* model. In R we use the `lmer` function (in place of `lm`):
-
-
-```{r firstlmermodel}
-library(lmerTest)
-(m.lmer <- lmer( score ~ 1 + (1|schoolid), data = schools))
-```
-
-The output here has extra information compared to `lm`. However like `lm` the coefficients from the model are listed, which `lmer` calls 'fixed effects'.
-
-```{r, include=F, echo=F}
-weightdiff <-  round((m.lm %>% coef) - (m.lmer %>% fixef), 2) %>% unname()
-```
-
-
-In this case we only have an intercept, which we can compare with the lm output.
-
-- What is the difference between the weighted and unweighted average for all schools to 2 d.p.? `r fitb(answer=weightdiff, num=T, tol=.05)`
-
-`r hide("Show answer")`
-
-The difference is `r weightdiff`.
-
-`r unhide()`
-
----------
-
-
-One way to think about what is happening here is to compare the average for individual schools with the adjusted predictions made by the model.
-
-The function `ranef(m.lmer)` gives us a list of the estimated (weighted) averages for each school from the `lmer` model.
-
-We can make a plot which shows how much the weighted averages 'shrink' towards the overall mean. In the plot below:
-
-- the blue dashes are the *adjusted* estimates for each of 100 schools
-- the grey bubbles are the unweighted averages of those schools
-- the size of the grey bubbles represents the number of students sampled at that school
-- the blue and red lines are the weighted/unweighted average of all schools
-
-
-```{r shrinkageplot, echo=F}
-conmean <- m.lmer %>% fixef()
-ranef(m.lmer) %>% as_tibble() %>% mutate(grp=as.numeric(as.character(grp))) %>%
-  left_join(schools.agg, ., by=c(schoolid="grp")) %>%
-  sample_n(100) %>%
-  arrange(rnorm(100)) %>%
-  mutate(sid = row_number()) %>%
-  ggplot(aes(sid, score.m)) +
-  geom_segment(aes(x=sid, xend=sid, y=score.m, yend=condval+conmean), color="grey",  arrow = arrow(length = unit(0.02, "npc")))  +
-  geom_point(aes(size=n), color="black", alpha=.3) +
-  geom_point(aes(y=condval+conmean), color="blue", size=6, shape='-') +
-  ylab("Score") + xlab("School #") +
-  geom_hline(yintercept=conmean, colour="blue") +
-  geom_hline(yintercept=mean(schools$score), color="red", linetype="dotted")
-```
-
-
-:::{.exercise}
-
-- Examine the plot above. Which schools 'shrink' most?  That is, which have the biggest difference between unweighted and weighted values? Does the pattern make sense to you?
-
-- How do you feel about the size of the change (i.e. difference between red and blue lines)? Should we care?
-
-
-
-`r hide("Show discussion")`
-
-The schools that are i) furthest from the mean and/or ii) smallest in size shrink most. This makes sense because these are the schools that we are least confident about.
-
-The red line might not seem that different, but remember that the range of the y axis has to be large to show all the inter-school variation. A change in 0.5 points on this scale might well be important, and in limited-power settings (i.e. small psychological experiments) could also result in a change to the inference we make.
-
-`r unhide()`
+- 
 
 
 :::
@@ -223,136 +104,102 @@ The red line might not seem that different, but remember that the range of the y
 
 
 
+## Word-naming experiment
 
 
+In the PSYC753 [workshop on repeated measures anove we saw a dataset from a word naming study](https://benwhalley.github.io/datafluency/workshop-repeated-measures.html)
 
-#### 'Random' intercepts
+In this example we show how mixed models (using lmer) can replicate the Repeat Measure Anova
+analysis we ran in that workshop.
+
+You can load these data as follows:
+
+```{r}
+words <- read_csv("https://raw.githubusercontent.com/ajwills72/rminr/master/src/wordnaming2.csv")
+```
 
 
-In the model above, we told `lmer` that `schoolid` was a grouping variable in our data. The formula was:
-
-    y ~ 1 + (1|grouping)
-
-You can see from this formula there are actually two types of intercept in the model.
-
-- The first `1` indicates we should fit the intercept representing the mean of all schools
-- The second `1`, in the `(1|grouping)` part of the formula tells lmer to fit a *random intercept*.
-
-By random intercept, we actually mean *fit an intercept (mean) for each school* individually. This means the model is like the one shown in the lecture slides:
-
-![](images/variance-components-3-sumssquareswithinandbetween.png)
-
-The coloured lines in this plot are the random intercepts, and the dotted line is the overall intercept (average of all schools).
-
+Unlike in the RM Anova workshop we can use these data as-is, in long-from. 
+We don't need to do any aggregation.
 
 
 :::{.exercise}
 
-Look at the area covered by the grey squares, and the coloured squares, in the plot below.
-
-Can you identify which numbers in the `lmer` output would refer to the size of each set of squares?
-
-```{r include=F, echo=F}
-vs = VarCorr(m.lmer) %>% as.tibble() %>% pull(vcov)
-```
-
-
-- Grey squares: `r fitb(vs[1], num=T, tol=1)`
-- Coloured squares: `r fitb(vs[2], num=T, tol=1)`
+- Fit a random-intercepts model for `rt`. Allow intercepts to vary by `subj`. Don't include any other predictors for the moment.
 
 
 `r hide("Show hint")`
 
-The grey squares relate to the `schoolid` term in the 'Random effects' section. The coloured squares are the `Residual`.
+`rt` will be the outcome, to the left of the tilde (`~`)
+
+To fit the intercept only model you write `~1` instead of adding predictors
+
+The random effects are defined by writing `+ (1|groupingvariable)` 
 
 `r unhide()`
 
-`r hide("Show answers")`
 
-```{r, echo=F, warning=F, message=F}
-VarCorr(m.lmer) %>% as.tibble() %>% select(grp, vcov) %>%
-  mutate(squares=c("Grey", "Coloured")) %>% pander()
+- Save the model to a variable and use the `VarCorr` function on it. What proportion of the variation in reaction times is explained between-subjects, and how much is unexplained (within subject)? 
+
+
+`r hide("Show hint")`
+
+Remember to convert the `VarCorr` output to a dataframe to show the variances (not the standard deviations). You can use these to calculate the VPC
+
+`r unhide()`
+
+
+
+- Ad the `medit` and `congru` variables as predictors. Allow them to interact. Save the model and use the `anova` function on the saved model. Is the interaction between `medit` and `congru` statistically significant?
+
+
+`r hide("Show hint")`
+
+The relevant line in the Anova output is:
+
+```
+              Sum Sq Mean Sq NumDF DenDF F value    Pr(>F)    
+medit:congru 3521012 3521012     1 16519 532.587 < 2.2e-16 ***
 ```
 
-
-`r unhide()`
-
-:::
-
-
-#### Summary
-
-- A simple average ignores how much variation there was within schools.
-- The inverse of the variance is a measure of *precision*.
-- Adjusting our estimate for sample size and precision can change our estimate of the overall mean
-- Uncertain values are 'shrunk' towards the overall mean. That is: if a school has lots of variability, and a mean which is far from the overall average, we shrink our estimate for that school to account for the uncertainty.
-
-To do this in R:
-
-- use `lmer` not `lm`
-- include the grouping variable at the end of the formula (i.e. `(1|grouping)`)
-- the `lmer` model splits the total variance within and between schools (as we did in the example plots)
-
-
-:::{.exercise}
-
-- Can you think of examples in experimental settings where 'shrinkage' might be useful? Discuss why this might be the case.
-
-`r hide("Show an example")`
-
-One example would be in experiments where participants make many responses, e.g. in a computer-based task. If a participant is very variable in their responding then we might be less-certain about our estimate of their mean response.
-
-Traditionally experimenters might deal with variable responding by excluding participants or data. But this can be arbitrary (where do we set the threshold?) and also doesn't deal fully with the imprecision. For example, we might exclude responses were an RT is > 3000ms, but this would still allow some participants to be much more variable than others.
-
-'Shrinking' variable-responders towards the overall mean is a more principled way of dealing with this lack of precision.
-It avoids arbitrary cutoffs, can and might increase power when some participants have responded eratically or didn't fully engage with the task. It also enables us to explore variability within and between participants directly, as we'll see later.
+So yes, the interaction between them is statistically significant (the p value is tiny and way less than .001).
 
 `r unhide()`
 
 
-:::
 
-
-
-
-### Variance components
-
-
-We will cover this in more detail later, but it's worth also looking at another part of the `lmer` output. This time we pass the saved model to the `summary` function:
+`r hide("Show all the code to produce the answers")`
 
 ```{r}
-m.lmer %>% summary()
+library(lmerTest)
+
+words.subset <- words %>% 
+  filter(medit != "relax") %>% 
+  filter(congru != "neutral") 
+
+# run the model
+words.subj.interceptonly <- lmer(rt ~ 1 + (1|subj), data=words.subset)
+
+# calculate VPC (it's about 37% between, 63 within/unexplained)
+words.subj.interceptonly %>% 
+  VarCorr() %>%
+  as_data_frame() %>%
+  mutate(vpc = vcov/sum(vcov) * 100) %>% 
+  pander()
+
+words.subj.group <- lmer(rt ~ medit * congru + (1|subj), data=words.subset)
+
+# test effect of congruency and interaction with meditation group assignment
+anova(words.subj.group)
+
 ```
-
-
-In the output above we can see a section called 'Random effects'. By 'random', `lmer` is referring to estimates of variance not that the results are random! As an aside, the 'mixed' in the name mixed models refers to the mix of 'fixed' and 'random' effects. We'll discuss these terms more later on.
-
-We can see the there are two lines in this table, marked:
-
-- `schoolid (intercept)`
-- `Residual`
-
-```{r, echo=F, include=F}
-vs = VarCorr(m.lmer) %>% as.tibble() %>% pull(vcov) %>% round(., 1)
-(totalv <- VarCorr(m.lmer) %>% as.tibble() %>% pull(vcov) %>% sum)
-
-```
-
-If we add the `Variance` values together we get `r round(totalv, 0)`. This is, the total variance in the `score` outcome.
-
-However, because we have the variance split into two numbers we can calculate the *proportion* of total variance explained by differences between schools (what is left over is explained by variation between children).
-
-$var_{j} = \frac{between}{total}$
-
-
-:::{.exercise}
-
-Run `summary` on the saved lmer model and calculate the proportion of variance which is between schools, and how much is within schools.
-
-`r hide("Show answer")`
-
-`r vs[1]` / `r sum(vs)` * 100 = `r round(vpc <- vs[1] / sum(vs) * 100,0)`%
 
 `r unhide()`
 
+
+
 :::
+
+
+
+

@@ -1,0 +1,68 @@
+---
+output: pdf_document
+title: Schools activity
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(pander)
+library(broom)
+library(webex)
+
+options(scipen=4, digits=4)
+knitr::opts_chunk$set(
+  echo = T,
+  include = T, 
+  cache=T,
+  comment="",
+  warning=F,
+  message = F
+)
+
+theme_set(theme_gray(base_size = 16))
+```
+
+
+
+
+
+Imagine you work for the UK Department for Education (DfE). 
+
+**Your task is to find out whether a new educational intervention is effective**. The new intervention has been rolled out in 1000 randomly-selected schools in the UK.
+
+- You have a budget of around £10,000. 
+- The cost to visit a single school is £100
+- The cost to measure each pupil is £10
+- The average size of a school in the UK is roughly [250](https://www.theguardian.com/education/2013/may/17/primary-schools-supersize).
+
+Would you prefer to collect data from:
+
+```{r echo=F, results='asis'}
+budget <- 10000
+schoolcost  <- 100
+kidcost <- 10
+p  <- seq(.9,.1, -.1) # prop spent on schools
+schools = as.integer(p*budget / schoolcost)
+kids = as.integer((1-p)*budget / kidcost)
+expand.grid(schools=seq(3,200,10), kids=1:1000) %>% 
+  as.tibble() %>%
+  mutate(
+    cost = kids*kidcost+schools*schoolcost)%>%
+  filter(cost == budget & kids > schools)%>%
+  group_by(schools)%>%
+  arrange(-cost)%>%
+  slice(1:1)%>%
+  mutate(
+    s = sprintf("%s children across %s schools", 
+      kids,
+    schools
+    )) %>%
+pull(s) %>% pander::pandoc.list()
+```
+
+These options all cost around £10,000.
+
+Discuss the problem as a small group. Identify the different tradeoffs involved.
+
+
+
