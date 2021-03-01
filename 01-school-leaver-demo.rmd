@@ -101,8 +101,46 @@ And then plot them:
 ```{r}
 schools.agg %>%
   ggplot(aes(score)) +
-  geom_density()
+  geom_density() + 
+  geom_vline(aes(xintercept=mean(score))) +
+  stat_summary(aes(x=40, y=.04, label=paste("Mean", round(mean(score), 1))), geom="text") +
+  stat_summary(aes(x=40, y=.035, label=paste("SD", round(sd(score), 1))), geom="text")
 ```
+
+
+
+Or we can calculate the average variability within schools and compare that to the variability between:
+
+
+```{r}
+(between <- schools.agg %>% pull(score) %>% var)
+```
+
+
+```{r}
+(within <- schools %>% 
+  group_by(schoolid) %>% 
+  mutate(v = var(score)) %>% 
+  ungroup() %>% 
+  pull(v) %>% 
+  mean(., na.rm=T))    
+```
+
+
+We can divide one number by the other to get a rough comparison of how much 
+variation is between schools, and how much is within:
+
+
+```{r}
+between/(within+between)
+```
+
+So - about 15% is between schools if we estimate this way. Note - this isn't a 
+reliable estimate because the variances for smaller schools are averaged without 
+weighting them, but it gives us a ballpark.
+
+
+
 
 # What's the difference in scores between the best and worst schools?
 
@@ -165,6 +203,7 @@ includes the same predictors as before:
 library(lmerTest)
 lmer.schools <- lmer(score ~ schurban * schtype + (1|schoolid), data=schools)
 
+# note that anova function still works to test 'fixed' predictors
 anova(lmer.schools)
 ```
 
@@ -185,11 +224,11 @@ mean.
 By allowing for within-school variance we can quantify our uncertainty more accurately
 and make better inferences.
 
+
 ## How much variation was between schools, and how much within?
 
 The `VarCorr` function summarises variances at each level.
-
-First though, let's run a model without any predictors as a baseline:
+First, run a model without any predictors as a baseline:
 
 ```{r}
 lmer.schools.interceptonly <- lmer(score ~  1 + (1|schoolid), data=schools)
@@ -199,12 +238,13 @@ lmer.schools.interceptonly <- lmer(score ~  1 + (1|schoolid), data=schools)
 lmer.schools.interceptonly %>% VarCorr()
 ```
 
+
 ## Calculating VPC
 
 If you convert the output to a data-frame you also get the _variances_ which is helpful:
 
 ```{r}
-lmer.schools.interceptonly %>% VarCorr() %>% as_data_frame()
+lmer.schools.interceptonly %>% VarCorr() %>% as_tibble()    # or use as_data+frame
 ```
 
 Note - you can only calculate the VPC with VARIANCES, not with standard deviations.
@@ -213,7 +253,7 @@ We can calculate the variance partition coefficient (proportion of variance) lik
 
 ```{r}
 library(pander)
-lmer.schools.interceptonly %>% VarCorr() %>% as_data_frame() %>%
+lmer.schools.interceptonly %>% VarCorr() %>% as_tibble() %>%
   mutate(vpc = vcov/sum(vcov)) %>%
   pander()
 ```
@@ -224,26 +264,30 @@ the UNEXPLAINED variation in this model.
 But can we explain it? Let's compare to our model _with_ the predictors?
 
 ```{r}
-lmer.schools %>% VarCorr() %>% as_data_frame() %>%
+lmer.schools %>% VarCorr() %>% as_tibble() %>%
   mutate(vpc = vcov/sum(vcov)) %>%
   pander()
 ```
 
-This is an aside, and you don't need to do this, but because I'm going to calculate VPC
-often I might write my own function to simplify ny code:
+This is an aside——you don't need to do this in your own work unless it appeals to you---but because I'm going to calculate VPC often I might _write my own function_ to simplify ny code:
 
 ```{r}
 # my function takes an lmer model as in put, and returns a data frame with variances and vpcs
 vpc <- function(lmerModel) {
   lmerModel %>%
     VarCorr() %>%
-    as_data_frame() %>%
+    as_tibble() %>%
     mutate(vpc = vcov/sum(vcov) * 100, 1) %>%
     select(Group=grp, var1, var2, vcov, vpc)
 }
 
 lmer.schools %>% vpc %>% pander()
 ```
+
+
+Explanation: I've made my own function which simplifies the repetition involved when calculating the VPC. This makes my code easier to read, and may reduce errors. the function just accepts an lmer model as input, and applies the `VarCorr` function and then processes the results, returning a dataframe.
+
+
 
 ## Some of the variance could be explained!
 
@@ -252,7 +296,10 @@ After including the predictors only 16% of variance is between schools, and 84% 
 We could run further models including more predictors, since we have them:
 
 ```{r}
-lmer.schools.everything <- lmer(score ~  schtype*schurban + female + factor(cohort90) + (1|schoolid), data=schools)
+lmer.schools.everything <- lmer(score ~  
+                                  schtype * schurban + female + factor(cohort90) + 
+                                  (1|schoolid), 
+                                data=schools)
 
 lmer.schools.everything %>% vpc %>% pander()
 ```

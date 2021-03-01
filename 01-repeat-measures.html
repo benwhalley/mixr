@@ -1179,8 +1179,12 @@ img {
 <div id="in-brief" class="section level3">
 <h3>In brief</h3>
 <blockquote>
-<p>Many psychological studies, both applied and experimental, make repeated measurements of some kind. In this first session we discuss the implications of making repeating measues, and the concept of partitioning variance, attributing it to different groupings in our data.</p>
+<p>Many psychological studies, both applied and experimental, make repeated measurements of some kind. In this first session we discuss the implications of making repeating measues, and the concept of partitioning variance, attributing it to different groupings in our data. These exercises accompany a video walk-through of the techniques in R (see Panopto).</p>
 </blockquote>
+</div>
+<div id="code-from-walkthough" class="section level2">
+<h2>Code from walkthough</h2>
+<p>You can see the code from the video-walkthrough here: <a href="01-school-leaver-demo.rmd">01-school-leaver-demo.rmd</a></p>
 </div>
 <div id="class-activities" class="section level2">
 <h2>Class activities</h2>
@@ -1213,6 +1217,7 @@ That is, we sample fewer students, but gain statistical power.
 <div class="exercise">
 <ul>
 <li><p>Read in the scottish school leaver data (<a href="data/cmm/5.1.txt">this file</a>)</p></li>
+<li><p>Use <code>group_by</code> and <code>summarise</code> to calculate the average variation within schools, and compare this to the average variation between the average of each school.</p></li>
 <li><p>Use ggplot to visualise how much variation in <code>score</code> there is within and between schools. You might need to filter/subset the data in some way to avoid being overwhelmed.</p></li>
 </ul>
 <div class="solution">
@@ -1220,10 +1225,11 @@ That is, we sample fewer students, but gain statistical power.
 Hints for the plot
 </button>
 <p>One option would be a boxplot where <code>schoolid</code> is the x axis. Another would be to use <code>stat_summary</code> which would show the mean and SE for each school.</p>
+<p>You can use <code>head</code> or <code>filter</code> to subset the data. Remember that we need to sample whole schools though — not just indivuals. Otherwise we stil have the problem of too many schools to show.</p>
 </div>
 <ul>
 <li><p>Use <code>lmer</code> (load the <code>lmerTest</code> library) to fit a random intercepts model with <code>score</code> as the outcome. Remember that <code>~1</code> will add an an intercept even if there are no predictors.</p></li>
-<li></li>
+<li><p>Use <code>VarCorr</code> (remembering to convert the output to a dataframe to see the variances rather than standard devisations). Compute the proportion of variation</p></li>
 </ul>
 </div>
 </div>
@@ -1231,7 +1237,7 @@ Hints for the plot
 <div id="word-naming-experiment" class="section level2">
 <h2>Word-naming experiment</h2>
 <p>In the PSYC753 <a href="https://benwhalley.github.io/datafluency/workshop-repeated-measures.html">workshop on repeated measures anove we saw a dataset from a word naming study</a></p>
-<p>In this example we show how mixed models (using lmer) can replicate the Repeat Measure Anova analysis we ran in that workshop.</p>
+<p>In this example we show how mixed models (using lmer) can replicate the Repeat Measures (RM) Anova analysis we ran in that workshop.</p>
 <p>You can load these data as follows:</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a>words &lt;-<span class="st"> </span><span class="kw">read_csv</span>(<span class="st">&quot;https://raw.githubusercontent.com/ajwills72/rminr/master/src/wordnaming2.csv&quot;</span>)</span></code></pre></div>
 <p>Unlike in the RM Anova workshop we can use these data as-is, in long-from. We don’t need to do any aggregation.</p>
@@ -1266,7 +1272,7 @@ Show hint
 <p>The relevant line in the Anova output is:</p>
 <pre><code>              Sum Sq Mean Sq NumDF DenDF F value    Pr(&gt;F)    
 medit:congru 3521012 3521012     1 16519 532.587 &lt; 2.2e-16 ***</code></pre>
-<p>So yes, the interaction between them is statistically significant (the p value is tiny and way less than .001).</p>
+<p>So yes, the interaction between them is statistically significant (the <em>p</em> value is tiny and way less than .001).</p>
 </div>
 <div class="solution">
 <button class="solution-button">
@@ -1287,61 +1293,11 @@ Show all the code to produce the answers
 <span id="cb4-13"><a href="#cb4-13" aria-hidden="true"></a><span class="st">  </span><span class="kw">as_data_frame</span>() <span class="op">%&gt;%</span></span>
 <span id="cb4-14"><a href="#cb4-14" aria-hidden="true"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">vpc =</span> vcov<span class="op">/</span><span class="kw">sum</span>(vcov) <span class="op">*</span><span class="st"> </span><span class="dv">100</span>) <span class="op">%&gt;%</span><span class="st"> </span></span>
 <span id="cb4-15"><a href="#cb4-15" aria-hidden="true"></a><span class="st">  </span><span class="kw">pander</span>()</span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true"></a>Warning<span class="op">:</span><span class="st"> `</span><span class="dt">as_data_frame()</span><span class="st">`</span> is deprecated as of tibble <span class="dv">2</span>.<span class="dv">0</span>.<span class="fl">0.</span></span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true"></a>Please use <span class="st">`</span><span class="dt">as_tibble()</span><span class="st">`</span> instead.</span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true"></a>The signature and semantics have changed, see <span class="st">`</span><span class="dt">?as_tibble</span><span class="st">`</span>.</span>
-<span id="cb4-19"><a href="#cb4-19" aria-hidden="true"></a>This warning is displayed once every <span class="dv">8</span> hours.</span>
-<span id="cb4-20"><a href="#cb4-20" aria-hidden="true"></a>Call <span class="st">`</span><span class="dt">lifecycle::last_warnings()</span><span class="st">`</span> to see where this warning was generated.</span></code></pre></div>
-<table style="width:76%;">
-<colgroup>
-<col width="15%" />
-<col width="19%" />
-<col width="9%" />
-<col width="9%" />
-<col width="11%" />
-<col width="11%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th align="center">grp</th>
-<th align="center">var1</th>
-<th align="center">var2</th>
-<th align="center">vcov</th>
-<th align="center">sdcor</th>
-<th align="center">vpc</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="center">subj</td>
-<td align="center">(Intercept)</td>
-<td align="center">NA</td>
-<td align="center">4098</td>
-<td align="center">64.01</td>
-<td align="center">36.88</td>
-</tr>
-<tr class="even">
-<td align="center">Residual</td>
-<td align="center">NA</td>
-<td align="center">NA</td>
-<td align="center">7012</td>
-<td align="center">83.74</td>
-<td align="center">63.12</td>
-</tr>
-</tbody>
-</table>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true"></a></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true"></a>words.subj.group &lt;-<span class="st"> </span><span class="kw">lmer</span>(rt <span class="op">~</span><span class="st"> </span>medit <span class="op">*</span><span class="st"> </span>congru <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span><span class="op">|</span>subj), <span class="dt">data=</span>words.subset)</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true"></a></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true"></a><span class="co"># test effect of congruency and interaction with meditation group assignment</span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true"></a><span class="kw">anova</span>(words.subj.group)</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true"></a>Type III Analysis of Variance Table with Satterthwaite<span class="st">&#39;s method</span></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true"></a><span class="st">              Sum Sq Mean Sq NumDF DenDF F value    Pr(&gt;F)    </span></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true"></a><span class="st">medit         121913  121913     1   278  18.441 2.425e-05 ***</span></span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true"></a><span class="st">congru       3119879 3119879     1 16519 471.911 &lt; 2.2e-16 ***</span></span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true"></a><span class="st">medit:congru 3521012 3521012     1 16519 532.587 &lt; 2.2e-16 ***</span></span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true"></a><span class="st">---</span></span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true"></a><span class="st">Signif. codes:  0 &#39;</span><span class="op">**</span><span class="er">*</span><span class="st">&#39; 0.001 &#39;</span><span class="op">**</span><span class="st">&#39; 0.01 &#39;</span><span class="op">*</span><span class="st">&#39; 0.05 &#39;</span>.<span class="st">&#39; 0.1 &#39;</span> <span class="st">&#39; 1</span></span></code></pre></div>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true"></a></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true"></a>words.subj.group &lt;-<span class="st"> </span><span class="kw">lmer</span>(rt <span class="op">~</span><span class="st"> </span>medit <span class="op">*</span><span class="st"> </span>congru <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span><span class="op">|</span>subj), <span class="dt">data=</span>words.subset)</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true"></a></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true"></a><span class="co"># test effect of congruency and interaction with meditation group assignment</span></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true"></a><span class="kw">anova</span>(words.subj.group)</span></code></pre></div>
 </div>
 </div>
 </div>
@@ -1353,6 +1309,7 @@ Show all the code to produce the answers
             <div id="toc">
       	<button type="button" class="close">×</button>
         <ul>
+        <li><a href="#code-from-walkthough">Code from walkthough</a></li>
         <li><a href="#class-activities">Class activities</a></li>
         <li><a href="#word-naming-experiment">Word-naming experiment</a></li>
         </ul>

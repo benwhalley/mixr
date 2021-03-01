@@ -28,6 +28,7 @@ knitr::opts_chunk$set(echo = TRUE,
 > Many psychological studies, both applied and experimental, make repeated measurements
 > of some kind. In this first session we discuss the implications of making repeating measues, 
 > and the concept of partitioning variance, attributing it to different groupings in our data.
+> These exercises accompany a video walk-through of the techniques in R (see Panopto).
 
 
 ```{r, echo=F, include=F}
@@ -38,6 +39,11 @@ library(pander)
 theme_set(theme_minimal())
 ```
 
+
+
+## Code from walkthough
+
+You can see the code from the video-walkthrough here: [01-school-leaver-demo.rmd](01-school-leaver-demo.rmd)
 
 
 ## Class activities
@@ -85,18 +91,23 @@ schools <- read_csv('data/cmm/5.1.txt')
 
 - Read in the scottish school leaver data ([this file](data/cmm/5.1.txt))
 
+- Use `group_by` and `summarise` to calculate the average variation within schools, and compare this to the average variation between the average of each school.
+
 - Use ggplot to visualise how much variation in `score` there is within and between schools. You might need to filter/subset the data in some way to avoid being overwhelmed.
 
 
 `r hide("Hints for the plot")`
 
-One option would be a boxplot where `schoolid` is the x axis. Another would be to use `stat_summary` which would show the mean and SE for each school.
+One option would be a boxplot where `schoolid` is the x axis. Another would be to use `stat_summary` which would show the mean and SE for each school. 
+
+You can use `head` or `filter` to subset the data. Remember that we need to sample whole schools though — not just indivuals. Otherwise we stil have the problem of too many schools to show.
+
 
 `r unhide()`
 
 - Use `lmer` (load the `lmerTest` library) to fit a random intercepts model with `score` as the outcome. Remember that `~1` will add an an intercept even if there are no predictors.
 
-- 
+- Use `VarCorr` (remembering to convert the output to a dataframe to see the variances rather than standard devisations). Compute the proportion of variation
 
 
 :::
@@ -109,7 +120,7 @@ One option would be a boxplot where `schoolid` is the x axis. Another would be t
 
 In the PSYC753 [workshop on repeated measures anove we saw a dataset from a word naming study](https://benwhalley.github.io/datafluency/workshop-repeated-measures.html)
 
-In this example we show how mixed models (using lmer) can replicate the Repeat Measure Anova
+In this example we show how mixed models (using lmer) can replicate the Repeat Measures (RM) Anova
 analysis we ran in that workshop.
 
 You can load these data as follows:
@@ -162,7 +173,7 @@ The relevant line in the Anova output is:
 medit:congru 3521012 3521012     1 16519 532.587 < 2.2e-16 ***
 ```
 
-So yes, the interaction between them is statistically significant (the p value is tiny and way less than .001).
+So yes, the interaction between them is statistically significant (the *p* value is tiny and way less than .001).
 
 `r unhide()`
 
@@ -170,7 +181,7 @@ So yes, the interaction between them is statistically significant (the p value i
 
 `r hide("Show all the code to produce the answers")`
 
-```{r}
+```{r, echo=T, eval=F}
 library(lmerTest)
 
 words.subset <- words %>% 
