@@ -1,3 +1,30 @@
+
+
+```{r}
+popular2data <- haven::read_sav(file ="https://github.com/MultiLevelAnalysis/Datasets-third-edition-Multilevel-book/blob/master/chapter%202/popularity/SPSS/popular2.sav?raw=true") %>% 
+  select(-starts_with("Z"), -Cextrav, -Ctexp, -Csex) %>% 
+  mutate(sex=labelled::to_factor(sex))
+
+popular2data %>% write_csv('data/popular2data.csv')
+popular2data
+
+# check correlation
+popular2data %>% select(extrav, popular) %>% cor
+
+
+# standardise variables
+pop.c <- popular2data %>% mutate_at(vars(extrav, popular), scale, center=T)
+
+# try it as simple linear model - get a similar result
+lm(popular ~ extrav, data=pop.c) %>% coef %>% round(3)
+
+# correlation is higher if we account for class
+lmer(popular~extrav + (1|class), data= pop.c) %>% 
+  fixef() %>% round(3)
+
+```
+
+
 # Random effects {#random-effects}
 
 ![](images/randomeffectlines.png)

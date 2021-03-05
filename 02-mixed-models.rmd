@@ -1,4 +1,15 @@
-# Mixed models {#mixed-models}
+---
+title: 'Random effects'
+author: 'Ben Whalley'
+date: "Feb 2021"
+bibliography: [references.bib]
+biblio-style: apa6
+link-citations: yes
+output:
+  webex::html_clean
+---
+
+
 
 ```{r, include=F, message=F, warning=F}
 library(tidyverse)
@@ -10,20 +21,20 @@ library(broom)
 knitr::opts_chunk$set(cache=T, message=F, warning=F)
 ```
 
-![](images/smarties.png)
+
+![](images/randomeffectlines.png)
+
 
 ### In brief.
 
-> In this session we introduce model formulas for mixed models and specify random
-> intercepts and random slopes models. We also introduce the likelihood ratio test, and
+> In this worksheet we introduce model formulas for mixed models and specify random
+> intercepts and random slopes. We also cover the likelihood ratio test, and
 > significance tests for random effects parameters.
 
 
-Slides for today are here: [mixed-models.pptx](slides/mixed-models.pptx)
 
 
-
-## Piglets (random intercepts) {#piglets-random-slope}
+# Piglets data {#piglets-random-slope}
 
 ![](images/piglet-sm.jpg)
 
@@ -31,11 +42,10 @@ Slides for today are here: [mixed-models.pptx](slides/mixed-models.pptx)
 # this is where the data came from
 #pigs <- readstata13::read.dta13('http://www.stata-press.com/data/r14/pig.dta')
 #write_csv(pigs, 'data/pigs.csv')
-
 ```
 
 
-You can load the piglet data from this URL:
+You can load the piglet data you saw in class from this URL:
 
 ```{r}
 pigs <- read_csv('http://bit.ly/psystats-pigs')
@@ -43,9 +53,7 @@ pigs %>% glimpse
 ```
 
 
-
 The data are from a study of piglet weights, in the 9 weeks after they are weaned. There are multiple piglets (identified by the `id` variable). Weights are in kg.
-
 
 
 :::{.exercise}
@@ -80,17 +88,65 @@ Note that I set `geom_point(alpha=.2)` to reduce the weight of the points plotte
 `r unhide()`
 
 
+2. Add the argument `group=VAR` to the `aes` part of your plot to show individual lines for each piglet. 
+That is, your plot should have as many smoothed lines as there are piglets in the data.
+
+`r hide("Check what that might look like")`
+
+```{r, echo=F}
+pigs %>%
+  ggplot(aes(week, weight, group=id)) +
+  geom_point(alpha=.2) +
+  geom_smooth(se=F, size=.2, color="black") +
+  scale_x_continuous(breaks=1:10)
+```
+
+Note that I set `geom_smooth(size=.2)` to reduce the weight of the lines plotted and  so make individuals easier to distinguish.
+I left the  `geom_point` function in place to show both the lines and the original data.
+
+`r unhide()`
+
+
+3. As an experiment, try colouring each of the lines — that is, give each piglet it's own colour. If you decide you want to 
+hide the colour legend of this plot you can add: `+ theme(legend.position="none")` to the end of your code.
+
+`r hide("Check what that might look like")`
+
+```{r, echo=F}
+pigs %>%
+  ggplot(aes(week, weight, group=id, color=factor(id))) +
+  geom_point(alpha=.2) +
+  geom_smooth(se=F, size=.2) +
+  scale_x_continuous(breaks=1:10) + 
+  theme(legend.position="none")
+```
+
+Note that there are too many pigs to really distinguish each line properly, so in some ways the use of color 
+is inappropriate. However the colours do help a little bit to check that the lines
+mostly run parallel and there are no big deviations. This is the sort of plot I might use in 
+my own exploration of the data, but not in a publication or report.
+
+`r unhide()`
+
+
+4. Make a quick note: characterise the growth of the piglets in this dataset. How much variation is there between piglets? Is their growth well described by a linear effect of time?
+
+
 :::
 
 
+# Random intercepts models
 
+
+Random intercept models extend linear regression by splitting the error term, acknowledging grouping/nesting which 
+may be present in the sample.
 
 
 
 :::{.exercise}
 
 
-- Fit a random intercepts model where piglet weights are predicted by `week`.
+1. Fit a random intercepts model where piglet weights are predicted by `week`.
 
 
 `r hide("Remind me how")`
@@ -100,18 +156,21 @@ pigs.ri <- lmer(weight ~ week + (1|id), data=pigs)
 summary(pigs.ri)
 ```
 
+
 `r unhide()`
 
+---
 
-- Based on the model, what weight do the piglets start at?
-- Based on the model, how fast are the piglets growing?
+Use the fixed effects part of the summary output. Remember that fixed effects in these models are just like regression coefficients.
 
+2. What weight do the piglets start at?
+3. How fast are the piglets growing?
 
 
 `r hide("Show answers")`
 
 
-The coefficients table has the information we need:
+The coefficients are in the `summary` output, but the `fixef` function can also be used to show only these coefficients:
 
 ```{r}
 pigs.ri %>% fixef()
@@ -120,6 +179,7 @@ pigs.ri %>% fixef()
 ```{r, echo=F, include=F}
 pigres <- pigs.ri %>% fixef %>% round(2)
 ```
+
 The pigs start at an average of `r pigres[1]` + pigres[2]` = `sum(pigres)`kg, and increase by `r pigres[2]` each week.
 
 This corresponds fairly closely to averages calculated from the raw data:
@@ -141,46 +201,12 @@ pigs %>%
 
 
 
-## $R^2$ for mixed models
-
-In the session I mentioned $R^2$ for mixed models. To calculate this you need to use the `MuMIn::r.squaredGLMM` function.
-
-The literature underpinning the calculations is fairly complex [see @nakagawa2013general and @johnson2014extension] but the key idea is that we now have two different $R^2$ values:
-
-- The *marginal* $R^2$, which is the variance explained by the fixed effects (this is most similar to conventional $R^2$ from a linear model)
-
-- The *conditional* $R^2$, which is the variance explained by both the fixed effects, *and* the random effects.
-
-
-
-:::{.exercise}
-
-1. Using the random intercepts model you ran in the previous section  (where piglet weights were predicted by time), use the `MuMIn::r.squaredGLMM` function to calculate the marginal and conditional $R^2$.
-
-2. How much variance is explained by the `week` variable? How much extra variance can we explain by including the random intercepts?
-
-
-`r hide("Show me the code")`
-
-```{r}
-library(MuMIn)
-pigs.ri <- lmer(weight ~ week + (1|id), data=pigs)
-r.squaredGLMM(pigs.ri) %>% round(2) %>%  pander()
-```
-
-`R2m` refers to the marginal $R^2$, `R2c` refers to the conditional value.
-
-This means that, without the random intercepts, we could explain about 93% of the variance. With random intercepts we can explain over 98%.
-
-`r unhide()`
-
-:::
 
 
 
 
 
-## Random slopes
+# Random slopes
 
 
 In the session we discussed how to add additional 'random slope' terms. That is, terms which allow the effect of predictors to vary between individuals (or other groupings in the data).
@@ -201,7 +227,7 @@ income ~ time + (time | person)
 ```
 
 
-Or this one, where the effect of `intervention` are allowed to vary between different schools:
+Or this one, where the effect of `intervention` is allowed to vary between different schools:
 
 ```{r, eval=F}
 reading_age ~ intervention + (intervention | school)
@@ -221,14 +247,29 @@ reading_age ~ intervention + (intervention | school)
 pigs.rs <- lmer(weight ~ week + (week|id), data=pigs)
 ```
 
+
 Note: if you get a warning about 'model failed to converge' don't worry for now. This IS important, but we will discuss in the next session.
+
+
+```{r}
+# maximal random effects
+lmer(weight ~ 1 + (week|id), data=pigs)
+
+# drop covariance for intercept and slope
+lmer(weight ~ 1 + (1|id) + (0 + week | id), data=pigs)
+
+# add back fixed effect once random effects sorted
+lmer(weight ~ 1 + week + (1|id) + (0 + week | id), data=pigs)
+
+```
+
+
 
 
 `r unhide()`
 
 
-
-1. Compare the *average* slope for `week` between this random slopes model, and the random intercepts model you ran before.
+2. Compare the *average* slope for `week` between this random slopes model, and the random intercepts model you ran before.
 
 `r hide("Show me how")`
 
@@ -253,7 +294,62 @@ In this case the effect is so large it's not important, but in many real dataset
 `r unhide()`
 
 
+
+3. Use the `ranova` function to perform a likelihood ratio on this random effect of time. Is the substantial variance (between piglets) in the rate of growth.
+
 :::
+
+
+
+
+
+
+# Variance explained
+
+In the session I mentioned $R^2$ for mixed models. To calculate this you need to use the `r.squaredGLMM` function from the `MuMIn` package..
+
+The literature underpinning the calculations is fairly complex [see @nakagawa2013general and @johnson2014extension] but the key idea is that we now have two different $R^2$ values:
+
+- The *marginal* $R^2$, which is the variance explained by the fixed effects (this is most similar to conventional $R^2$ from a linear model)
+
+- The *conditional* $R^2$, which is the variance explained by both the fixed effects, *and* the random effects.
+
+
+
+:::{.exercise}
+
+1. Load the `MuMIn` package.
+
+1. Using the random intercepts model you ran in the previous section  (where piglet weights were predicted by time), use the `r.squaredGLMM` function to calculate the marginal and conditional $R^2$.
+
+2. How much variance is explained by the `week` variable? How much extra variance can we explain by including the random intercepts?
+
+3. Now compare the random intercepts and random slopes models. How much additional variance does the random slope explain?
+
+
+`r hide("Show me the code")`
+
+```{r}
+library(MuMIn)
+pigs.ri <- lmer(weight ~ week + (1|id), data=pigs)
+r.squaredGLMM(pigs.ri) %>% round(2) %>%  pander()
+
+pigs.rs <- lmer(weight ~ week + (week|id), data=pigs)
+r.squaredGLMM(pigs.rs) %>% round(2) %>%  pander()
+```
+
+`R2m` refers to the marginal $R^2$, `R2c` refers to the conditional value.
+
+This means that, without the random intercepts, we could explain about 93% of the variance. With random intercepts we can explain over 98%. With 
+random slopes it's over 99% of the variance.
+
+One lesson here: Piglet growth rates are quite simple to explain. You don't often get models that fit this well with psychological data!
+
+`r unhide()`
+
+:::
+
+
 
 
 
@@ -291,6 +387,8 @@ In both cases the interpretation is the same: The test says whether the extra pr
 1. Use the `anova` command to compare the random intercept and random slope models.
 
 `r hide("Show the code")`
+
+
 
 ```{r}
 anova(pigs.ri, pigs.rs)
@@ -360,10 +458,13 @@ You will see a column in the output called `LRT` and a corresponding *p* value f
 
 
 
-## Scottish school leavers data {#school-leavers-longer-exercise}
+# Scottish school leavers data {#school-leavers-longer-exercise}
 
 Combine the techniques you have used above to re-analyse the Scottish school leavers dataset we saw in session 1.
 In the data there is a variable called `cohort90`. This represents which year the data were sampled in relative to 1990: a value of `-6` means the data were sampled in 1984.
+
+
+:::{.exercise}
 
 - Read in the data from ([this file](data/cmm/5.1.txt))
 
@@ -403,6 +504,8 @@ schools %>%
 `r unhide()`
 
 
+:::
+
 ```{r, echo=F, include=F}
 schools <- read_csv('data/cmm/5.1.txt')
 schools %>% ggplot(aes(factor(cohort90), score)) + geom_boxplot()
@@ -419,3 +522,169 @@ ssl.rs <- lmer(score ~ cohort90 + (cohort90|schoolid), data=schools)
 
 ranova(ssl.rs)
 ```
+
+
+
+
+
+
+<!--
+
+Extra stuff for slides
+
+
+```{r}
+m1 <- lmer(weight ~ week + (week|id), data=pigs)
+```
+
+```{r}
+m2 <- lmer(weight ~ week + (week|id), data=pigs %>% mutate(week=week-mean(week)))
+```
+
+```{r}
+m3 <- lmer(weight ~ week + (week|id), data=pigs %>% mutate(week=week-max(week)))
+```
+```{r}
+lmerModel <- m1
+vpc <- function(lmerModel) {
+  lmerModel %>%
+    VarCorr() %>%
+    as_tibble() %>%
+    filter((str_detect(var1, "Interce")|grp=="Residual") & is.na(var2)) %>% 
+    mutate(vpc = vcov/sum(vcov) * 100, 1) 
+}
+m1 %>% vpc
+```
+
+
+
+```{r}
+m1 %>% vpc %>% pander
+m2 %>% vpc %>% pander
+m3 %>% vpc %>% pander
+```
+
+```{r}
+pigs %>% 
+  filter(id %in% 1:10) %>% 
+  ggplot(aes(week, weight, group=id, color=factor(id))) + 
+  geom_smooth(method=lm, se=F, alpha=.2, size=.2) + 
+  geom_point()
+ggsave('images/pigs-lines.png', width=4, height=3)
+```
+
+
+
+```{r}
+tibble(residual=m1 %>% residuals) %>% 
+  ggplot(aes(residual)) + geom_density()
+ggsave('images/pigs-resid.png', width=4, height=3)
+
+
+tibble(residual=m1 %>% residuals) %>% 
+  ggplot(aes(sample=residual)) + geom_qq_line() + geom_qq()
+ggsave('images/pigs-resid-qq.png', width=4, height=3)
+
+require("lattice")
+qqmath(m1, id=0.05) 
+
+plot(m1)
+```
+
+
+
+
+
+```{r,include=T}
+library(MASS)
+e1.sd <- 1 #the standard deviation of the error term in the relationship y~a+b*x+e1
+e2.sd <- 1 #the standard deviation of the error term in the relationship z~c+d*y+e2
+
+e.cor <- matrix(c(1,0.3,0.3,1),2)
+e.cov <- e.cor*as.matrix(c(e1.sd,e2.sd)) %*% t(as.matrix(c(e1.sd,e2.sd))) # the covarianc
+
+mvrnorm(n = 3000, rep(0, 2), e.cov) 
+  
+  
+set.seed(1)
+d1 <- tibble(intercept= seq(-0.4,.8, .02)) %>% 
+  mutate(slope=intercept+rnorm(n(), 0, .1)) 
+d1 %>% 
+  ggplot(aes(slope, intercept)) +
+    geom_abline(aes(color=factor(slope), intercept=intercept, slope=slope)) + 
+  coord_cartesian(xlim=c(0,1), ylim=c(-.4,1)) + 
+  theme(legend.position = "none") 
+    
+ggsave('images/fan.png', width=4, height=4)
+
+d1 %>% ggplot(aes(slope, intercept)) + geom_point()
+ggsave('images/fan-corr.png', width=4, height=4)
+
+
+d2 <- tibble(intercept= seq(-0.4,1, .05)) %>% 
+  mutate(slope=intercept+rnorm(n(), 0, .1)) 
+d2 %>% 
+  ggplot(aes(slope, intercept)) +
+  geom_abline(aes(color=factor(slope), intercept=intercept, slope=-slope)) + 
+  coord_cartesian(xlim=c(0,1), ylim=c(-.5,1)) + 
+  theme(legend.position = "none") +
+  scale_x_continuous(labels=seq(0,1,.25))
+    
+ggsave('images/fan-neg.png', width=4, height=4)
+
+d2 %>% ggplot(aes(slope, -intercept)) + geom_point()
+ggsave('images/fan-neg-corr.png', width=4, height=4)
+
+```
+
+```{r}
+set.seed(1)
+d3 <- tibble(intercept= seq(-0.2,.4, .02)) %>% 
+  mutate(slope=intercept+rnorm(n(), 0, .1)) 
+d3 %>% 
+  ggplot() +
+    geom_abline(aes(color=factor(slope), intercept=intercept, slope=slope)) + 
+  coord_cartesian(xlim=c(0,1), ylim=c(-.4,1)) + 
+  theme(legend.position = "none") +
+  geom_vline(aes(xintercept=0)) + 
+  xlab("Years")
+
+ggsave('images/slopes-zero.png', width=4, height = 3)    
+```
+
+```{r}
+
+d3 %>% 
+  ggplot() +
+    geom_abline(aes(color=factor(slope), intercept=intercept, slope=slope)) + 
+  coord_cartesian(xlim=c(0,1), ylim=c(-.4,1)) + 
+  theme(legend.position = "none") +
+  geom_vline(aes(xintercept=.5)) + 
+  scale_x_continuous(labels=c(-.5,-.25,0,.25,.5)) +
+  xlab("Years")
+ggsave('images/slopes-mean.png', width=4, height = 3)        
+```
+
+
+```{r}
+d3 %>% 
+  ggplot() +
+    geom_abline(aes(color=factor(slope), intercept=intercept, slope=slope)) + 
+  coord_cartesian(xlim=c(0,1), ylim=c(-.4,1)) + 
+  theme(legend.position = "none") +
+  geom_vline(aes(xintercept=1)) + 
+  scale_x_continuous(labels=c(-.5,-.25,0,.25,.5)-.5) +
+  xlab("Years")
+ggsave('images/slopes-end.png', width=4, height = 3)    
+    
+
+```
+
+
+
+
+-->
+
+
+
+# References

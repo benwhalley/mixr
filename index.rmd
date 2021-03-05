@@ -39,8 +39,8 @@ knitr::opts_chunk$set(echo = TRUE,
 # Sessions and worksheets
 
 1. [Sources of variability](01-repeat-measures.html)
-1. Mixed models
-1. 'Random' effects
+1. [Random effects models](02-mixed-models.html)
+1. Details and presentation
 
 
 
