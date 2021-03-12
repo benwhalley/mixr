@@ -40,7 +40,7 @@ knitr::opts_chunk$set(echo = TRUE,
 
 1. [Sources of variability](01-repeat-measures.html)
 1. [Random effects models](02-mixed-models.html)
-1. Details and presentation
+1. [Estimating and comparing](03-estimating.html)
 
 
 

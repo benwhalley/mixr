@@ -1,0 +1,747 @@
+---
+title: 'Estimating and checking mixed models'
+author: 'Ben Whalley'
+date: "Feb 2021"
+bibliography: [references.bib]
+biblio-style: apa6
+link-citations: yes
+output:
+  webex::html_clean
+---
+
+
+> This worksheet is intended to provide more detail on how to implement mixed models in your own research, 
+introduce techniques for model comparison and paramater testing, and 
+> In this session we specify more complex random effects, including examples from
+> experimental data with multiple sources of variation. 
+
+
+
+
+
+```{r include=F}
+library(tidyverse)
+library(webex)
+library(pander)
+library(lmerTest)
+knitr::opts_chunk$set(cache=T, message = F, warning=F, comment="", cache=T)
+panderOptions("table.split.table", Inf)
+```
+
+
+
+
+
+# Checking assumptions
+
+As discussed in class, mixed models have many of the same assumptions about residuals as does multiple regression. In particular,
+
+- Residuals should be normally distributed
+- Residuals should be similar across the range of fitted values (homoscedasticity)
+
+You can check these assumptions in a few ways. First, let's refit a model we've used before:
+
+
+```{r}
+pigs <- read_csv('http://bit.ly/psystats-pigs')
+
+m1 <- lmer(weight ~ week + (1|id), data=pigs)
+```
+
+
+We can then extract the residuals from the model using `augment` from the broom package:
+
+```{r}
+m1 %>% 
+  broom::augment() %>% 
+  select(.resid) %>% 
+  head()
+```
+
+A good way of checking normality is to simply make a density plot:
+
+```{r}
+m1.aug <- m1 %>% broom::augment()
+
+m1.aug %>% ggplot(aes(.resid)) + geom_density()
+```
+
+
+This looks OK-ish, but a better way to check is to make a [qqplot](https://en.wikipedia.org/wiki/Q–Q_plot):
+
+
+```{r}
+m1.aug %>% 
+  ggplot(aes(sample=.resid)) + geom_qq_line() + geom_qq() 
+```
+
+**Explanation**: If the residuals are normal we would see them falling along the line in this qqplot. That they deviate a little bit from the line suggests some non-normality.
+
+
+If we re-fit the model with random slopes, let's see if they improve:
+
+```{r}
+m2 <- lmer(weight ~ week + (week|id), data=pigs)
+m2 %>% 
+  broom::augment() %>% 
+  ggplot(aes(sample=.resid)) + geom_qq_line() + geom_qq() 
+```
+
+
+That's slightly better, as we can see if we plot both together:
+
+```{r}
+bind_rows(m1 %>% broom::augment() %>% mutate(model=1), m2 %>% broom::augment() %>% mutate(model=2)) %>% 
+  ggplot(aes(sample=.resid)) + geom_qq_line() + geom_qq() + facet_wrap(~paste("Model", model))
+```
+
+
+
+:::{.exercise}
+
+Use a qqplot to check the residuals for one of the other plots you made.
+
+:::
+
+
+## Checking heteroscedasticity
+
+The quickest way to check heteroscedasticity is to simply call `plot` on a lmer model:
+
+
+```{r}
+plot(m1)
+```
+
+In this case we can see a tendency for larger positive residuals at extreme values of the fitted weight (it's a bit like a smile). This suggests that our model can be improved.
+
+
+In contrast, the plot for model 2 shows much less of this tendency.
+
+```{r}
+plot(m2)
+```
+
+
+You can make this plot for yourself using ggplot if you like, too:
+
+```{r}
+m2 %>% 
+  broom::augment() %>% 
+  ggplot(aes(.fitted, .resid)) + 
+  geom_point() +
+  geom_smooth(se=F)
+```
+
+
+## Is my plot "OK"?
+
+The plots for m2 above look fine to me ;-). In general there's no single answer, and as long as the plots look 'OK' it's probably fine.
+Checking residuals plots is most useful in revealing gross violations of the model assumptions, and these will be obvious in the plots.
+
+
+## More information/guidance
+
+This page: https://www.ssc.wisc.edu/sscc/pubs/MM/MM_DiagInfer.html has much more info on diagnostics from mixed models.
+
+In general, my advice would be to avoid formal statistical tests of residuals, but to spend some time checking plots for residual-normality
+and heteroscedasticity and use them heuristically to ensure you are fitting a suitable model. These probably have the biggest impact on inferences/testing you might want to do on these models, and are low hanging fruit.
+
+
+
+## Checking random intercepts and slopes
+
+We also assume that the distribution of random slopes and intercepts are normal.
+
+We have to check these a slightly different way: we can get the between-cluster residuals by looking at the output of `ranef(model)`:
+
+
+```{r}
+ranef(m2) %>% as_tibble() %>% arrange(grp) %>% head()
+```
+**Explanation**: In this table, `condval` is the residual for the cluster indexed by `grp`. The `term` column says whether it's for the intercept or the slope.
+
+We can plot these data like any other:
+
+```{r}
+ranef(m2) %>% as_tibble() %>% 
+  ggplot(aes(sample=condval)) + 
+    geom_qq_line() + 
+    geom_qq() + 
+    facet_wrap(~term, scales="free")
+```
+
+
+In both cases these look 'OK'. It's out of scope for this  module to do anything about deviations from normality here, but:
+
+- Random effects residuals might often look less normal simply because there are fewer data points, and so it's harder to tell
+- Deviations from normality probably mean you need to look again at the model you are running
+
+
+**Don't interpret or use *p* values from a model which had large deviations from normality in residuals or random effects.**
+
+
+
+# Centering predictors (in regression)
+
+
+In linear regression:
+
+- coefficients in the model output are the **change in the outcome for a one unit change in the predictors, assuming all other predictors in the model are zero**. 
+- the intercept is the **expected value when all predictors are zero**
+
+
+This is important because it affects how we interpret the parameters. When we include multiple predictors it can be hard to read the table of model parameters because we need to add together multiple parameters to make a prediction. 
+
+For example, if we use the `mtcars` data to fit the model `mpg ~ wt` we can see that to estimate the value for a car we would have to do some arithmetic:
+
+```{r}
+lm(mpg~wt*am, data=mtcars)
+```
+
+Because weight in this sample ranges from `r min(mtcars$wt)` to `r max(mtcars$wt)`, with mean = `r mean(mtcars$wt)`. So, the intercept would not be an estimate for any car in the sample, because none of them actually had zero weight.
+
+
+## Changing the scale/location of predictors
+
+It's surprising to some people that changing the scale and/or location of predictors in multiple regression doesn't affect the way the model is fitted. Only the **interpretation** of the coefficients changes. The predictions the model makes would not change.
+
+For example it would be fine to:
+
+- subtract 10 or 100 or 1000 from every value of of a predictor
+- multiply every value of a predictor by 10, or divide by 100
+
+In both cases, the slope and the intercept coefficients would change, but the model $R^2$ and the predictions it makes would be the same (bar small differences caused by rounding errors).
+
+
+:::{.exercise}
+
+If you find this surprising or not-intuitive try it for yourself. Run a `lm` model using the `mtcars` data with `mpg` as the outcome and `wt` as the predictor. 
+
+- Use mutate to multiply, divide or add a constant to the `wt` values in the data.
+- Run different models with these different versions of the predictor
+- Check your $R^2$ values are the same
+- Check the predictions are the same
+- Notice what changes have taken place to the coefficients. 
+
+:::
+
+
+-------------
+
+
+This property --- that the model is invariant to the scaling of predictors --- is useful. We can **rescale predictors to make models easier to interpret**.
+
+For example, if we ***mean-centred*** `wt` in our model `mpg ~ wt` then then we could interpret the intercept as the prediction when `wt` was at the average value in the sample. By mean-centrer, we mean "`wt`, minus the average of `wt` in the sample".
+
+This is what it looks like:
+
+```{r}
+mtcars.c <- mtcars %>% mutate(wt = wt - mean(wt))
+lm(mpg ~ wt, data=mtcars.c)
+```
+And we can compare the intercept to the average `mpg` in the sample:
+
+```{r, include=F, echo=F}
+mtcars$mpg %>% mean %>% round(., 3)
+```
+
+
+**Explanation**: By centring the `wt` predictor the other coefficients, including the intercept changed. The intercept is the expectation when all predictors are zero. After centring,  zero is the average of this variable in the sample, so the intercept is the expectation for the average.
+
+
+
+
+
+# The `sleepstudy` data
+
+
+The `sleepstudy` dataset we use here is included in the lmerTest package, so to access it you just need to load that:
+
+```{r}
+library(lmerTest)
+```
+
+
+The data show the increases in reaction times over the course of a 10 days experiment in which participants suffered sleep deprivation.
+
+
+```{r, echo=F}
+ss = sleepstudy %>% mutate(Subject=as.numeric(as.character(Subject)))
+sleep.m1 <- lmer(Reaction ~ Days + (Days | Subject), ss)
+sleeprandom <- ranef(sleep.m1) %>% as_tibble() %>%
+  select(grp, term, condval) %>%
+  pivot_wider(., names_from=c("term"), values_from="condval") %>%
+  transmute(Subject=as.numeric(as.character(grp)), slope=Days+10, inter=`(Intercept)`+251) %>%
+  left_join(ss, by="Subject") %>%
+  ggplot(aes(x=Days, y=Reaction, color=as.factor(Subject))) +
+  geom_abline(aes(intercept=inter, group=Subject, slope=slope, color=as.factor(Subject)), alpha=.6) +
+  geom_abline(intercept=251, slope=10, color="black", alpha=.8,size=.8, linetype="dashed") +
+  geom_point(alpha=.6, position=position_jitter(width=.1)) +
+  coord_cartesian(xlim=c(0,10)) + guides(color=F)
+ggsave("images/sleeprandomslopes.png")
+```
+
+
+:::{.exercise}
+
+- Is there substantial variation between subjects in reaction times on average?
+- Is there substantial variation in the effect of sleep deprivation on individuals?
+
+`r hide()`
+
+
+You might spot that these data look quite similar to the piglets example we used in previous sessions, but the data points are much less well described by the lines in this plot (there's more 'noise'). This is typical for psychological data.
+
+
+There's certainly variation in the slopes between individuals; the effect of sleep deprivation does seem to differ markedly between individuals.
+
+However, deciding whether there is variation between people in average RTs is less clear-cut. We need to decide _on which day_ we want to compare the variation. 
+
+For example, at day 0 there doesn't seem to be much variation. But by day 5 there is, and by day 10 there is a lot.
+
+As we'll see, to estimate this variation from a model we need to be careful about how we include our covariates (e.g. days in this case).
+
+
+`r unhide()`
+
+:::
+
+
+
+# Centering in mixed models
+
+In multiple regression centring predictors can be a convenience, but doesn't affect the model fit[^collinfit]. We can always do arithmetic on our coefficients to convert from one configuration to the another when making predictions.
+
+[^collinfit]: This is mostly true. The only exception is when parameters are collinear (see PSYC753 materials); in this case numerical issues when fitting models can lead to small differences, but this is mostly not the case.
+
+
+***This is not true for mixed models***.  How we include/encode predictors **changes the estimates of variance parameters**. 
+
+To see why, consider the sleepstudy plot again:
+
+![](images/sleeprandomslopes.png)
+
+
+If we centred the Days coefficient, the  plot would look like this:
+
+```{r, echo=F}
+ss = sleepstudy %>% mutate(Subject=as.numeric(as.character(Subject)), Days.c = Days - mean(Days))
+(sleep.m1 <- lmer(Reaction ~ Days + (Days | Subject), ss))
+(sleep.m1.c <- lmer(Reaction ~ Days.c + (Days.c | Subject), ss))
+sleeprandom2 <- ranef(sleep.m1.c) %>% as_tibble() %>%
+  select(grp, term, condval) %>%
+  pivot_wider(., names_from=c("term"), values_from="condval") %>%
+  transmute(Subject=as.numeric(as.character(grp)), slope=Days.c+10, inter=`(Intercept)`+298) %>%
+  left_join(ss, by="Subject") %>%
+  ggplot(aes(x=Days.c, y=Reaction, color=as.factor(Subject))) +
+  geom_abline(aes(intercept=inter, group=Subject, slope=slope, color=as.factor(Subject)), alpha=.3) +
+  geom_abline(intercept=298, slope=10, color="black", alpha=.8,size=.8, linetype="dashed") +
+  geom_point(alpha=.3, position=position_jitter()) +
+  coord_cartesian(xlim=c(-5,5)) + guides(color=F)
+ggsave('images/sleeprandom2.png')
+```
+
+
+```{r, echo=F, include=F}
+# used for slides
+sleep.m1
+sleep.m1.c
+VarCorr(sleep.m1)
+VarCorr(sleep.m1.c)
+```
+
+
+
+Nothing has changed, *except the scale of the x axis*. The x axis is now `Days.c` which ranges from -5 to 5, and 0 is in the middle; previously `Days` ranged from 0 to 9, with 5 as the midpoint.
+
+**BUT this small change is important**  because our parameters are estimates when all the *other* predictors = zero.
+
+Let's estimate two models, one with Days as-is, and one with it centred:
+
+```{r}
+sleepstudy.c = sleepstudy %>% 
+  mutate(Days.c = Days - mean(Days))
+```
+
+```{r}
+(sleep.m1 <- lmer(Reaction ~ Days + (Days | Subject), data=sleepstudy.c))
+```
+
+```{r}
+(sleep.m1.c <- lmer(Reaction ~ Days.c + (Days.c | Subject), data=sleepstudy.c))
+```
+
+
+We should notice a few things here:
+
+- Both of the coefficients for Days (`Days` and `Days.c`) are the same. This is because we simply subtracted 4.5 from all the `Days` and so the slope does not change
+
+- The `intercept` values DOES change though. In the first model it is the expected value for participants on Day Zero. In the second model it's the expected value on day 4.5 (the average).
+
+
+However what we want focus on now is that:
+
+- The variance parameters have also changed. The between-participant variance is much higher in the second model than the first.
+
+
+
+If we compare the two plots we can see why:
+
+```{r}
+ggpubr::ggarrange(sleeprandom+ggtitle("Uncentered (intercept = Day 0)")+geom_vline(xintercept=0), 
+                  sleeprandom2+ggtitle("Centered (intercept = study midpoint)")+geom_vline(xintercept=0), 
+                  nrow=1, ncol=2)
+
+```
+
+Remember that the between-subjects variance is estimated when all other predictors = zero. So in the first model, we are estimating the
+between-subject variance on the first day of the study — before anyone is sleep deprived. In the second plot we are estimating it after 4.5 days — midway through the study. At this point the variation between participants has increased — in part because the effect of sleep deprivation varies between individuals.
+
+
+We could even supplement this with a third model, where we subtract 9 from `Days` and so `Days=0` becomes the end of the study:
+
+```{r}
+sleepstudy.c = sleepstudy %>% 
+  mutate(Days.c = Days - mean(Days), Days.sub9 = Days - 9)
+```
+
+```{r}
+(sleep.m3 <- lmer(Reaction ~ Days.sub9 + (Days.sub9 | Subject), data=sleepstudy.c))
+```
+
+Now we can see the between-subject variance has gone up even more (SD=60). 
+
+
+
+
+## How can we interpret this?
+
+This plot simplifies things and shows the difference between models with centred and uncentred predictors, and when the predictor is centred at the endpoint of the study. The vertical dashed lines show where the variance for the random intercept would be taken from in each case:
+
+```{r, echo=F}
+df <- tibble(intercept = rnorm(20, 5,.5), slope=rnorm(20, 0,.3), i=1:20)
+
+df %>%
+  ggplot() +
+  geom_abline(aes(intercept=intercept, group=i, slope=slope ), alpha=.5) +
+  coord_cartesian(xlim=c(0,9), ylim=c(0,10)) +
+  geom_hline(yintercept=0) +
+  geom_hline(yintercept=5, color="red")  +
+  geom_vline(xintercept=9, linetype="dashed") + 
+  geom_vline(xintercept=5, linetype="dashed") + 
+  geom_vline(xintercept=0, linetype="dashed") +
+  geom_text(aes(x=0.1, y=9.9), hjust=0, label="Uncentered intercept") +
+  geom_text(aes(x=5.1, y=9.9), hjust=0, label="Centered") +
+  geom_text(aes(x=8.9, y=9.9), hjust=1, label="Subtract 9") + ylab("Outcome") + 
+  xlab("Predictor")
+
+ggsave("images/mean-centre-mixed.png")
+```
+
+
+
+## What's the right thing to do?
+
+It depends on what your question is!
+
+In the `sleepstudy` example we might argue that the first (uncentred) model makes more sense because there is a definite start to the experiment: At Day 0 we have people in their 'natural' state, before we deprive them of sleep. So in this model the `(Intercept)` term describes the variation between people in the normal state.
+
+However if we wanted to describe the between-subject variance AFTER sleep deprivation then models 2 or 3 would make more sense.
+
+
+**If you're not sure, however, it's probably safer to centre predictors in mixed models.**
+
+In particular, variables like age or 'year' are worth centring because otherwise our model estimates variances at `year=0`, and you are very unlikely to have data on that, or be interested in the variance estimates for 2000 years ago!
+
+Likewise, centring gender and other categorical predictors can make sense because otherwise the variance estimates will be for the group that is coded zero. Sometimes this wont matter, but often it will.
+
+
+:::{.exercise}
+
+Return to the piglets example from sessions 1 and 2.
+
+- Refit the model with centred predictors
+- Calculate the variance partition by differences between piglets using centred and uncentred models. What differences do you spot?
+- Which parameterisation makes most sense in this case? Are we more interested in variation between pigs at the start or the middle of the study?
+
+:::
+
+
+
+
+
+
+# Politeness
+
+Winter & Grawunder, 2012 describe a study of the pitch (frequency) of individuals' speech when they recorded different phrases (scenarios). The scenarios differed in whether they required 'politeness' or were more informal in nature.  The data are available online and can be read from the URL:
+
+```{r}
+# A reduced version of this dataset is also described and analysed in a mixed-models tutorial here: http://www.bodowinter.com/uploads/1/2/9/3/129362560/bw_lme_tutorial2.pdf.
+politeness <-  read_csv("https://raw.githubusercontent.com/opetchey/BIO144/master/3_datasets/politeness_data.csv")
+```
+
+
+:::{.exercise}
+
+1. Make a plot showing how average levels of frequency differs *between individuals*.
+
+
+`r hide("Show me the plot")`
+
+```{r}
+politeness %>%
+  ggplot(aes(subject, frequency)) + geom_boxplot()
+```
+
+`r unhide()`
+
+
+2. Make a plot showing how frequency differs *between scenarios*
+
+
+`r hide("Show me the plot")`
+
+```{r}
+politeness %>%
+  ggplot(aes(factor(scenario), frequency)) + geom_boxplot()
+```
+
+`r unhide()`
+
+
+3. Based on the plots, which do you think accounts for more variation in frequency: `subject` or `scenario`?
+
+
+`r hide("Show answer")`
+
+It looks like subjects vary more in frequency than do scenarios, but there appears to be variation attributable to both variables.
+
+`r unhide()`
+
+
+
+4. Fit a random intercepts model to the data, allowing for variation between subjects. Include fixed effects for `attitude` and `gender`:
+
+`r hide('Show me that model')`
+
+```{r}
+(polite.ri.subject <- lmer(frequency ~ attitude + gender + (1|subject), data=politeness))
+```
+
+
+`r unhide()`
+
+
+`r hide("What other commands should I run to interpret the model at this point?")`
+You might then also want to look at the regression coefficients, Anova table, and tests of random effects:
+
+```{r}
+# regression coefficients
+polite.ri.subject %>% summary %>% coef() %>% pander(caption="Model coefficients")
+
+# anova-table
+anova(polite.ri.subject) %>% pander(caption="Anova table")
+
+# tests of random effects
+ranova(polite.ri.subject) %>% pander(caption="Test of random intercepts")
+```
+
+
+`r unhide()`
+
+
+
+4. Fit a second random intercepts model, allowing for variation in both subjects and between the different scenarios.
+
+`r hide("Show me that model")`
+
+```{r}
+polite.ri.both <- lmer(frequency ~ attitude + gender +
+                         (1|subject) + (1|scenario), data=politeness)
+
+# test of random effect
+ranova(polite.ri.both)
+```
+
+`r unhide()`
+
+
+5. How much variance was attributable to subjects or scenarios, compared with the total variance?
+
+`r hide("Show me how to calculate this")`
+
+Remember to convert the `VarCorr` output to a dataframe to see the variance (rather than standard deviations) in the `vcov` column. You can then use `mutate` or `transmute` to calculate the within/between ratio (the ICC).
+
+```{r}
+polite.ri.both %>% VarCorr() %>% as_tibble() %>%
+  transmute(
+    Term=grp,
+    `% variation`=round(vcov / sum(vcov) * 100, 1)
+  ) %>%
+  pander()
+```
+
+`r unhide()`
+
+
+6. Add random slopes to the model above. Allow the effect of `attitude` (whether the scenario was polite or informal) to differ between the scenarios sampled in this study:
+
+
+`r hide("Show me that model formula")`
+
+```{r}
+frequency ~ attitude + gender + (1|subject) + (attitude|scenario)
+```
+
+`r unhide()`
+
+
+7. Use `ranova` to test whether adding random slopes improved the model.
+
+
+`r hide("Show me how")`
+
+First run the model:
+
+```{r}
+polite.rslopes <- lmer(frequency ~ attitude + gender + (1|subject) +
+                         (attitude|scenario), data=politeness)
+```
+
+
+And then use `ranova`:
+
+```{r}
+ranova(polite.rslopes)
+```
+
+The `Pr(>Chisq)` value for the attitude random slope is not statistically-significant.
+
+
+`r unhide()`
+
+
+
+7. If a random slopes model is not 'significantly' better than a similar model which does not include the random slope term, is there any reason why we  might still prefer it, and use the 'full' model to base our inference on?
+
+
+`r hide("Show answer")`
+
+Yes - simulation studies, including Barr et al, 2013 suggest that a 'maximal' model is likely to be more conservative than a model which excludes non-significant random effects terms.
+
+`r unhide()`
+
+
+
+8. How might mixed models make the problem of 'researcher degrees of freedom' worse? What effect might this have? How can it be avoided?
+
+`r hide("Show answer")`
+
+Mixed models provide many more possible 'ways to do it'. In addition to different fixed-effects specifications we can now also have many different random effects specifications. This increases degrees of freedom in the analysis, and makes it even more important to pre-specify analyses.
+
+`r unhide()`
+
+
+:::
+
+
+
+
+# Model complexity
+
+
+Although @barr2013random exhort researchers to 'keep it maximal', and include as many random effects in the model as implied by the design, this isn't always possible.
+
+Mixed models with many random effects can be difficult to fit. If models become too complex, or we don't have enough data to estimate all the parameters, you will see error messages about 'singular fits' and 'non-convergence'.
+
+These errors sound scary, and should actually be taken seriously:
+
+- Non-converged models, or models with fit errors should NOT be interpreted or reported. 
+- Results from them are quite likely to be unstable/incorrect.
+- The easiest/most immediate way to get rid of the errors is to simplify the model
+
+
+
+## Simplifying a random slopes model
+
+Let's take one of the examples from above:
+
+```{r}
+(sleep.rs <- lmer(Reaction ~ Days + (Days|Subject), data=ss))
+```
+
+
+This model contains 3 random effects parameters which have to be estimated from the data, plus the residual variance. We can see this using the `VarCorr` function:
+
+
+```{r}
+sleep.rs %>% VarCorr
+```
+
+
+The coefficients which need to be estimated are:
+
+- Random intercept term for Subject 
+- Random slope for Days within Subject
+- The covariance of intercept and slope within Subject
+
+
+Often, we will not have enough data to properly estimate all these parameters.  Where this is the case, it's often best to simplify the model by excluding parameters.
+
+In this instance, the parameter we want to eliminate is the covariance of intercept and slope. 
+
+We can do this by changing the random effect specification from `(variable|grouping)` to say: `(1 | grouping) + (0 + variable | grouping)`
+
+Explanation: In the second formula we ask for the random intercept and random slope separately. In the part which says `0+variable` we are saying 'add the random slope but not a random intercept'. Because the intercept and slope are specified separately, R doesn't add the covariance between them.
+
+:::{.exercise}
+
+Use the sleepstudy data. Adjust the model `Reaction ~ Days + (Days|Subject)` to exclude the covariance of random intercepts and slopes.
+
+`r hide("Show me")`
+
+```{r}
+lmer(Reaction ~ Days + (1|Subject) + (0+Days|Subject), data=ss)
+```
+
+`r unhide()`
+
+:::
+
+
+
+
+```{r echo=F, include=F}
+set.seed(12345)
+dfco <- tibble(intercept = rnorm(20, 5,.5), slope=rnorm(20, .5*(intercept-5),.3), i=1:20, re_cor="Correlated")
+dfuc <- tibble(intercept = rnorm(20, 5,.5), slope=rnorm(20, 0,.3), i=1:20, re_cor="Uncorrelated")
+df <- bind_rows(dfco, dfuc)
+df %>%
+  ggplot() +
+  geom_point(aes(y=10, x=10), alpha=0) +
+  geom_abline(aes(intercept=intercept, group=i, slope=slope ), alpha=.5) +
+  coord_cartesian(xlim=c(0,3), ylim=c(2,8)) +
+  geom_hline(yintercept=5, color="red")  +
+  facet_wrap(~re_cor) + ylab("Outcome") + xlab("Predictor") + scale_x_continuous(breaks=seq(0,3,2))
+
+ggsave('images/corrrandeffs.png', width=4, height=2)
+```
+
+
+
+
+
+
+
+
+# Further reading
+
+Meteyard summarises current good practice in running and reporting mixed models [@meteyard2020best].
+
+Barr et al -@barr2013random go into more detail on why mixed models are preferable to RM anova, and this paper will be a useful reference for future sessions too. See also @eager2017mixed which points out some of the failings of mixed models as typically used.
+
+
+
+
+# References

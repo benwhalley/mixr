@@ -1,0 +1,348 @@
+
+## MMA
+
+![photo:[pixabay](https://pixabay.com/photos/mma-mixed-martial-arts-grachan-cage-2944759/)](images/mma.jpg)
+
+
+```{r, echo=F, include=F}
+# setting up data exported from jamovi
+# NOTE the csv file provided on plos one is corrupted. You must open the jamovi file and export from there to rds
+
+mma.wide <- read_rds('data/mma/mma.rds') %>%
+  mutate(person = row_number()) %>%
+  rename(FI = `Wingate_fatigue index [%]`) %>%
+  mutate(FI.c = FI - mean(FI))
+
+# see stats section in paper
+prerowstodrop <- mma.wide %>% select(starts_with('RT_before_')) %>% complete.cases()
+postrowstodrop <- mma.wide %>% select(starts_with('RT_after_')) %>% complete.cases()
+sum(!prerowstodrop)
+sum(!postrowstodrop)
+
+mma.repeated <- mma.wide %>%
+  select(person, matches('RT_|MT_')) %>%
+  pivot_longer(-person, names_to=c("outcome", "condition", "trial"), names_sep="_")
+
+mma <- mma.repeated %>%
+  pivot_wider(id_cols=c("person", "condition", "trial"), names_from=outcome, values_from=value) %>%
+  left_join(., mma.wide %>% select(person, FI, FI.c)) %>%
+  mutate(stimulus = as.numeric(trial)) %>%
+  mutate(condition=fct_rev(condition)) %>%
+  # filter(trial>4) %>%
+  # centering, see syntax file here: https://journals.plos.org/plosone/article/file?id=10.1371/journal.pone.0227675.s005&type=supplementary
+  mutate(stimulus.c = stimulus - mean(stimulus))
+
+#xtabs(~condition+condition_12, data=mma)
+
+rowstokeep <- mma %>% select(trial,RT,MT,FI) %>% complete.cases()
+
+mma.raw <- mma %>%
+  mutate(included=rowstokeep) %>%
+  mutate(included = ifelse(stimulus < 5, FALSE, included)) %>%
+  filter(included==TRUE)
+
+mma.raw %>% select(person, condition, RT, stimulus) %>%
+  write_csv('data/mma_bw.csv')
+
+mma  <- read_csv('data/mma_bw.csv')
+```
+
+
+The following data are a tidied-up version of the data made available by the authors of the MMA paper we discussed in class [@pavelka2020acute]. The `included` column tells whether the row was included in the authors' analysis from the paper.
+
+```{r}
+
+```
+
+
+
+:::{.exercise}
+
+- Import the tidied the data (from [this file](data/mma_bw.csv))
+
+- Fit the model described in the paper (in their supplement the authors reveal that `stimulus` and `FI` were mean-centered).
+
+`r hide("How do I mean-centre things?")`
+
+```{r}
+mma.c <- mma %>%
+  mutate(FI.c = FI - mean(FI), stimulus.c = stimulus - mean(stimulus))
+mma.c %>% head
+```
+
+`r unhide()`
+
+
+`r hide("Show the model")`
+
+```{r}
+(mma.m1 <- lmer(RT ~ 1 + condition + stimulus.c + FI.c + condition:stimulus.c + (1|person), data=mma.c))
+```
+
+`r unhide()`
+
+
+- Look at the effect of `condition` in your model. Does this match the authors' report that "POST RTs were found significantly higher than PRE (mean difference = 4.031 ms, SE = 1.726"?
+
+`r hide("Show answer")`
+
+Yes: the `conditionbefore` coefficient from your model should have been -4.03 also. The direction is reversed because the authors' encoded their model slightly differently (their parameter would have been called `conditionafter`) but the meaning is the same.
+
+To see the SE, use `summary` and `coef` together:
+
+```{r}
+summary(mma.m1) %>% coef() %>% pander()
+```
+
+
+This is 0.17660, which is what the authors report.
+
+
+`r unhide()`
+
+
+
+- Are the reported findings robust to minor changes in the model fitting? For example, if parameters are removed or if the excluded data is incorporated?
+
+`r hide("Show details")`
+
+
+This model, excluding fatigue (`FI`), predicts the same 4ms difference:
+
+```{r}
+mma.m2 <- lmer(RT ~ 1 + condition * stimulus.c + (stimulus.c|person), data=mma.c)
+summary(mma.m2) %>% coef() %>% pander()
+```
+
+However this model fit includes all the excluded data and predicts a 2ms difference in the other direction, and is not statistically significant:
+
+```{r}
+mma.all  <- read_csv('data/mma_bw.csv') %>%
+  mutate(stimulus.c = stimulus-mean(stimulus), FI.c = FI-mean(FI), )
+mma.m3 <- lmer(RT ~ 1 + condition + stimulus.c + FI.c + condition:stimulus.c +  (1 | person), data=mma.all)
+mma.m3 %>% summary() %>% coef() %>% pander()
+```
+
+
+`r unhide()`
+
+
+- How should we interpret these findings, based on the replications you have made?
+
+
+:::
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## Extensions
+
+### Factorial anova in mixed models
+
+The file [journal.pone.0226387.s001.sav](data/journal.pone.0226387.s001.sav) contains data from @kemps2019cognitive.
+These have been reshaped to long format and tidied up in [data/drinks.csv](data/drinks.csv).
+
+The study explored the effect of an cognitive bias modification intervention, and one of the outcomes was Attentional Bias in a dot-probe task.
+
+There were two experimental conditions (between subjects) and participants were tested twice. The original paper reported results from a mixed model in which `Time` was a repeated/within-subjects factor.
+
+```{r echo=F, include=F}
+drinks_ <- haven::read_sav('data/journal.pone.0226387.s001.sav') %>%
+  mutate_if(~class(.)=="haven_labelled", funs(as_factor))
+# drinks_ %>% glimpse
+
+longtmp <- drinks_ %>%
+  select(ParticipantID, Att_bias_pre_training, Att_bias_post_training) %>%
+  pivot_longer(-ParticipantID, names_pattern = "Att_bias_(pre|post)_training")
+class(drinks_$Gender)
+drinks <- left_join(longtmp, drinks_, by="ParticipantID") %>%
+  select(Participant=ParticipantID, Condition, Age, Gender, Time=name, AttBias=value) %>%
+  mutate(Time=Hmisc::capitalize(Time))
+drinks %>% write_csv('data/drinks.csv')
+drinks  <-  read_csv('data/drinks.csv')
+```
+
+```{r}
+drinks %>% head %>% pander("6 rows from the `drinks` dataset")
+```
+
+
+Plotting the data indicates a Time*Condition interaction:
+
+```{r, echo=F}
+drinks %>%
+  ggplot(aes(fct_rev(Time), AttBias, color=factor(Condition),
+             group=factor(Condition))) +
+  stat_summary(fun.data=mean_se, position=position_dodge(width=.1)) +
+  stat_summary(geom="line", fun.data=mean_se, position=position_dodge(width=.1)) +
+  xlab("Time") + ylab("Attentional Bias (ms change)") + scale_color_discrete("Condition")
+
+ggsave("images/drinksplot.png", width=4, height=3)
+```
+
+
+
+:::{.exercise}
+
+1. Run a random intercepts model which would test the relationships shown in the plot above
+
+`r hide("Solution")`
+
+```{r}
+(drinks.m1 <- lmer(AttBias ~ Condition * Time + (1|Participant), data=drinks))
+```
+
+`r unhide()`
+
+
+2. Use the `anova` command to test the interaction of Condition and Time
+
+
+`r hide("Solution")`
+
+```{r}
+drinks.m1 %>% anova
+```
+
+There does appear to be an interaction.
+
+`r unhide()`
+
+
+:::
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Follow-up tests
+
+To run follow-up tests comparing individual cells in the design we can use another R package called `emmeans`.
+
+
+```{r}
+library(emmeans)
+```
+
+
+The `emmeans` function (which is inside the `emmeans` package we just loaded), can calculate means and confidence intervals for each cell in the design:
+
+```{r}
+emmeans(drinks.m1, ~Condition*Time)
+```
+
+In the code above we used the `emmeans` function, and gave it the saved random intercept model as input. In the second input (where is says `~Condition*Time`) we are using a formula to describe which part of the design we would like means for.
+
+Helpfully, you can also plot the results of this function, so the folliwing is a shortcut for writing a ggplot command yourself:
+
+```{r}
+plot(emmeans(drinks.m1, ~Condition*Time)) + xlab("Predicted value")
+```
+
+
+We can also save the results of `emmeans` and send it to the `contrast` function. This produces t tests for each pairwise comparison:
+
+```{r}
+savedmeans1 <- emmeans(drinks.m1, ~Condition*Time)
+contrast(savedmeans1, method='pairwise', adjust='none')
+```
+
+And we can add `adjust="bonferonni"` or `adjust="tukey"` method to adjust for multiple comparisons
+
+```{r}
+contrast(savedmeans1, method='pairwise', adjust='tukey')
+```
+
+
+If we want to compare pairs of groups, we can adjust the formula we pass to the `emmeans` function. In the example below I compare Conditions averaged across both time periods:
+
+```{r echo=F, include=F}
+emmeans(drinks.m1, ~Condition)
+```
+
+
+```{r}
+savedmeans2 <- emmeans(drinks.m1, ~Condition)
+contrast(savedmeans2, method='pairwise')
+```
+
+In this example we compare the Pre and Post measurement times *within* each group (here the bar symbol, `|`, is read as 'within'):
+
+```{r}
+savedmeans3 <- emmeans(drinks.m1, ~Time|Condition)
+contrast(savedmeans3, method='pairwise')
+```
+
+
+:::{.tip}
+
+##### Useful `emmeans` examples
+
+
+```{r, echo=T, eval=F}
+# get the means of all combinations of factors A and B
+emmeans(model, ~A+B)
+
+# menas the same as the line above
+emmeans(model, ~A*B)
+
+# show all pairwise contrasts for all combinations of A and B
+contrast(emmeans(model, pairwise~A+B), pairwise)
+
+# show tests of the effect of A within each level of B
+contrast(emmeans(model, pairwise~A|B), pairwise)
+
+# show the confidence interval for the tests above:
+confint(contrast(emmeans(model, pairwise~A|B), pairwise))
+
+```
+
+:::
+
+
+
+
+:::{.exercise}
+
+- Adjust the code using `emmeans` and `contrast` above to compare Pre vs Post scores (averaged across Condition)
+- Compare the conditions *within* each time period.
+
+`r hide("Solution")`
+
+```{r}
+# compare times averaged across conditions
+contrast(emmeans(drinks.m1, ~Time), method='pairwise')
+# compare conditions within each time
+contrast(emmeans(drinks.m1, ~Condition|Time), method='pairwise')
+```
+
+
+`r unhide()`
+:::
+
